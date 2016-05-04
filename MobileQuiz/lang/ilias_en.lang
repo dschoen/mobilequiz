@@ -1,0 +1,126 @@
+// 
+// English Language File for MobileQuizObject Plugin
+//
+
+<!-- language file start MobileQuiz -->
+obj_xuiz#:#MobileQuiz
+objs_xuiz#:#MobileQuiz
+obj_xuiz_duplicate#:#Copy
+objs_xuiz_duplicate#:#Copy Mobilequiz
+obj_xuiz_select#:#Select TraQ
+xuiz_add#:#Add MobileQuiz
+xuiz_new#:#Add New Mobilequiz
+xuiz_read#:#Read access to TraQ
+xuiz_write#:#Edit TraQ
+xuiz_delete#:#Delete TraQ
+xuiz_visible#:#TraQ is visible
+xuiz_edit_permission#:#Change permission settings
+crs_create_xuiz#:#Create TraQ
+grp_create_xuiz#:#Create TraQ
+fold_create_xuiz#:#Create TraQ
+root_create_xuiz#:#Create TraQ
+cat_create_xuiz#:#Create TraQ
+
+<!-- Tabs -->
+tabmenu_questions#:#Questions
+tabmenu_properties#:#Properties
+tabmenu_showCurrentRound#:#Current quiz round
+tabmenu_show_result#:#Show result
+tabmenu_edit_quiz#:#Questions & Answers
+tabmenu_info#:#Further Information
+
+<!-- Properties -->						
+edit_properties#:#Edit Properties
+properties_title#:#Title
+properties_description#:#Description
+
+<!-- Add Question -->						
+question_add_head#:#Ask Question
+question_add_text#:#Question
+question_add_type#:#Type
+question_obj_create#:#Question has been sent successfully
+
+<!-- Question table -->	
+question_table_text#:#Question
+question_table_type#:#Type
+question_table_choices#:#Choices
+question_table_edit#:#Edit
+question_table_delete#:#Delete
+
+<!-- Choice table -->	
+choice_table_text#:#Answer
+choice_table_value#:#Value
+choice_table_edit#:#Edit
+choice_table_delete#:#Delete
+choice_table_head#:#Choices
+
+<!-- Add Choice -->	
+choice_add_head#:#Create new choice
+choice_add_text#:#Choice
+choice_add_texts#:#Choices
+choice_add_value#:#Value
+choice_add_numeric_minimum#:#Minimum
+choice_add_numeric_maximum#:#Maximum
+choice_add_numeric_steprange#:#Step range
+choice_add_numeric_correctvalue#:#Correct value
+choice_add_numeric_tolerenace_range#:#Tolerance
+choice_type_multiple#:#multiple choice
+choice_type_single#:#single choice
+choice_type_numeric#:#numeric
+choice_obj_create_success#:#Choice was successfully added.
+choice_obj_create_failure#:#A problem appears. Choice was not added.
+
+<!-- Show Round Results -->
+results_status#:#Status
+results_status_passive#:#Directfeedback
+results_status_active#:#Active
+results_status_inactive#:#Inactive
+results_status_activate#:#Activate
+results_status_deactivate#:#Deactivate
+results_round_options#:#Options
+results_choice#:#Choice
+results_chart#:#Times chosen
+results_out_of#:#times
+results_table_head#:#Chose round to show results:
+results_show_results#:#See result
+results_round#:#Round
+results_round_on#:#to
+results_round_at#:#at
+results_no_of_answers#:#Number of answers
+results_end_date#:#Date
+results_start_date#:#Startdate
+results_round_delete#:#delete
+results_round_correct#:#Correct
+results_round_out_of#:#out of
+results_round_status_change_success#:#The status of the round is successful changed.
+round_start_info#:#There is no active round at the moment.
+results_export#:#Export results
+results_summary#:#Altogether
+current_round#:#Active round
+current#:#Current
+results_show_qr#:#Show QR-Code
+
+<!-- Info -->
+info_text#:#Please give us a feedback for the MobileQuiz
+info_mailto#:#<a href="mailto:mobilequiz@uni-mannheim.de?subject=Feedback">Feedback</a>
+info_instructions#:#A german documentation can be found <a href="http://www.uni-mannheim.de/rum/Portal/Dokumentationen/Lernplattform%20ILIAS/MobileQuiz/">here</a>.
+
+<!-- Constants -->
+votes#:#votes
+save#:#Save
+cancel#:#Cancel
+edit#:#Edit
+status#:#Status
+offline#:#Offline
+yes#:#Yes
+no#:#No
+question_delete#:#delete
+question_edit#:#�ndern
+question_table_head#:#Questions
+round_start#:#Start a new round
+round_stop#:#Finish current round
+round#:#Round
+open_quiz#:#Go to quiz
+msg_obj_create#:#Successful
+successful#:#Successful
+successful_delete#:#successful deleted

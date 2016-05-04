@@ -1,0 +1,142 @@
+<div style="clear: both;">&nbsp;</div>
+<style>
+    .ilTableFootLight { display: none; }
+</style>
+<script type="text/javascript">
+    $(document).ready(function() {
+        var chart{VAL_ID};
+        $(document).ready(function() {
+            var colors = Highcharts.getOptions().colors;
+            options{VAL_ID} = {
+                chart: {
+                    renderTo: 'container{VAL_ID}',
+                    type: 'bar'
+                },
+                title: {
+                    text: '{VAL_TITLE}',
+                    style: {
+                        fontSize: '22px',
+                        width: '1340px'
+                    }
+                },
+                plotOptions: {
+                    bar: {
+                        dataLabels: {
+                            enabled: true
+                        }
+                    }
+                },
+                subtitle: {
+                    text: '{VAL_LANG_SUMMARY} {VAL_COUNT} {VAL_LANG_VOTES}'
+                },
+                xAxis: {
+                    categories: [ {VAL_LABEL} ],
+                    labels: {
+                        rotation: 0,
+                        align: 'right',
+                        formatter: function () {
+                            {VAL_LABEL_COLOR}
+                                return this.value;
+
+                        },
+                        style: {
+                            fontWeight: "bold",
+                            fontSize: '13px'
+                        }
+                    }
+
+                },
+                yAxis: {
+                    tickInterval: 1,
+                    min: 0,
+                    title: {
+                        text: '{VAL_LANG_VOTES}'
+                    },
+                    labels: {
+                        overflow: 'justify'
+                    }
+                },
+                legend: {
+                    enabled: false
+                },
+                tooltip: {
+                    enabled: false
+                },
+                credits: {
+                    enabled: false
+                },
+                series: [{
+                    data: [{VAL_DATA}],
+                    dataLabels: {
+                        enabled: true,
+                        rotation: 0,
+                        color: '#FFFFFF',
+                        align: 'center',
+                        x: 30,
+                        y: 0,
+                        style: {
+                            fontSize: '13px'
+                        },
+                        formatter: function() {
+                            if ( count{VAL_ID} == 0 ) count{VAL_ID} = 1;
+                            return this.y+" ("+ Math.round(this.y/count{VAL_ID}*100) +'%)';
+                        }
+                    }
+                }]
+            };
+
+            count{VAL_ID} = {VAL_COUNT};
+            chart{VAL_ID} = new Highcharts.Chart(options{VAL_ID});
+
+            // Dynamic Update
+            window.updateData{VAL_ID} = function updateData{VAL_ID}() {
+                $.getJSON('ilias.php?ref_id=48&round_id={VAL_ROUND_ID}&cmd=showRoundResults&cmdClass=ilobjmobilequizgui&cmdNode=2y:lo&baseClass=ilObjPluginDispatchGUI&api=result&question_id={VAL_ID}', function(e) {
+
+                    // Label
+                    /*var categoriesData{VAL_ID} = [];
+                     $.each(e.categories, function( key, value ) {
+                     categoriesData{VAL_ID}.push(value);
+                     });
+                     chart{VAL_ID}.xAxis[0].setCategories(categoriesData{VAL_ID}, true);*/
+
+                    // Data
+                    var seriesData{VAL_ID} = [];
+                    count = 0;
+                    id = 0;
+                    $.each(e.data, function( key, value ) {
+                        if ( parseInt(value.y) != parseInt(chart{VAL_ID}.series[0].data[id].y) ){
+                            chart{VAL_ID}.series[0].data[id].update(value.y);
+                        }
+                        //seriesData{VAL_ID}.push({y: value.y, color: colors[value.color]});
+                        count += value.y;
+                        ++id;
+                    });
+                    count{VAL_ID} = count;
+                    //chart{VAL_ID}.series[0].setData(seriesData{VAL_ID}, true);
+
+                });
+            }
+
+            inverval{VAL_ID} = 3000;
+            setInterval(function(){
+                updateData{VAL_ID}();
+            }, inverval{VAL_ID});
+
+        });
+
+    });
+</script>
+
+<script src="Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/lib/highcharts/highcharts.js"></script>
+<script src="Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/lib/highcharts/modules/exporting.js"></script>
+<script src="Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/lib/app.js"></script>
+<div class="chart-type">
+    Darstellungstyp:
+    <select id="chartType" onChange="changeChartType(this, '{VAL_ID}');">
+        <option value="line">Liniendiagramm</option>
+        <option value="column">Histogramm</option>
+        <option value="scatter">Punktdiagramm</option>
+        <option value="bar" selected="selected">Balkendiagramm</option>
+    </select>
+</div>
+<div id="container{VAL_ID}" style="min-width: 400px; height: 400px; margin: 0 auto"></div>

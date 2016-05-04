@@ -1,0 +1,447 @@
+<script>
+
+function next(elem) {
+    do {
+    	elem = elem.nextSibling;
+    } while (elem && elem.nodeType != 1);
+    return elem;		
+}
+
+function previous(elem) {
+    do {
+    	elem = elem.previousSibling;
+    } while (elem && elem.nodeType != 1);
+    return elem;		
+}
+
+function removeThis(field) {
+	$(field).siblings(".deleted_hidden").val("true");
+	$(field).parent().slideUp();
+	return false;
+}
+
+   
+/**
+Event Listener für "Nach unten" und "Nach oben" Buttons
+*/
+function moveChoiceDown(field) {
+    // Fuer Button "Nach unten"
+    // Eigene ID und naechste ID ermitteln
+    ownElement = field.parentNode;
+    ownChildRowElements = ownElement.getElementsByClassName("rowID");
+    if(ownChildRowElements.length == 0) return false;
+    ownID = ownChildRowElements[0].getAttribute("value");
+    nextElement = next(field.parentNode);
+    if(!nextElement) return false;
+    nextChildRowElements = nextElement.getElementsByClassName("rowID");
+    if(nextChildRowElements.length == 0) return false;
+    nextID = nextChildRowElements[0].getAttribute("value");
+    /* nextID = nextElement.getAttribute("rowID"); */
+    
+    //Eigene ID und nächste ID vertauschen
+    ownChildRowElements[0].setAttribute("value", nextID);
+    nextChildRowElements[0].setAttribute("value", ownID);
+    
+    //Reihenfolge vertauschen
+    ownElement.parentNode.insertBefore(nextElement, ownElement);
+    return false;
+  }
+	    
+function moveChoiceUp(field) {
+    // Fuer Button "Nach unten"
+    // Eigene ID und naechste ID ermitteln
+    ownElement = field.parentNode;
+    ownChildRowElements = ownElement.getElementsByClassName("rowID");
+    if(ownChildRowElements.length == 0) return false;
+    ownID = ownChildRowElements[0].getAttribute("value");
+    nextElement = previous(field.parentNode);
+    if(!nextElement) return false;
+    nextChildRowElements = nextElement.getElementsByClassName("rowID");
+    if(nextChildRowElements.length == 0) return false;
+    nextID = nextChildRowElements[0].getAttribute("value");
+    /* nextID = nextElement.getAttribute("rowID"); */
+    
+    //Eigene ID und nächste ID vertauschen
+    ownChildRowElements[0].setAttribute("value", nextID);
+    nextChildRowElements[0].setAttribute("value", ownID);
+    
+    //Reihenfolge vertauschen
+    ownElement.parentNode.insertBefore(ownElement, nextElement);
+    return false;
+  }
+	       
+/* 	    function moveChoiceUp(field){
+	        // Für Button "Nach oben"
+	        // Eigene ID und vorherige ID ermitteln
+ 	        ownElement = field.parentNode;
+			ownID= ownElement.getAttribute("rowID");
+			previousElement= previous(field.parentNode);
+			if(!previousElement) return;
+			previousID= previousElement.getAttribute("rowID");
+			//alert(ownID+ " " + previousID);
+			
+			//Eigene ID und vorherige ID vertauschen
+			ownElement.setAttribute("rowID", previousID);
+			previousElement.setAttribute("rowID", ownID);
+			//alert(ownID+ " " + previousID);
+			ownElement.parentNode.insertBefore(ownElement, previousElement);
+			
+} */
+	   
+
+	$(document).ready(function() {
+		// use this to reset several forms at once
+		$("#add_choice_multiple").click(function() {
+			var $newElem = $('#fieldset_multiple_choice_999').clone().show();
+			$("#formular_multiple").append($newElem);
+			var a = $("#formular_multiple fieldset").index($newElem) + 1;
+							
+			$newElem.attr("id", "fieldset_multiple_choice_" + a);
+			$newElem.html($newElem.html().replace(/999/g, a));
+			
+			var b = $("#formular_multiple fieldset")[a-2];
+			ownChildRowElements = b.getElementsByClassName("rowID");
+		    if(ownChildRowElements.length == 0) 
+				lastID=0;
+		    else
+		    	lastID = ownChildRowElements[0].getAttribute("value");
+		    newRowIdElement = $newElem.getElementsByClassName("rowID");
+		    if(newRowIdElement.length == 0) return false;
+		    newRowIdElement[0].setAttribute("value", lastID+1);
+			//class="rowID"
+			
+			return false;
+		});
+	});
+
+	$(document).ready(function() {
+		// use this to reset several forms at once
+		$("#add_choice_single").click(function() {
+			var $newElem = $('#fieldset_single_choice_999').clone().show();
+			$("#formular_single").append($newElem);
+			var a = $("#formular_single fieldset").index($newElem) + 1;
+			$newElem.attr("id", "fieldset_single_choice_" + a);
+			$newElem.html($newElem.html().replace(/999/g, a));
+			
+			
+			var b = $("#formular_single fieldset")[a-2];
+			ownChildRowElements = b.getElementsByClassName("rowID");
+		    if(ownChildRowElements.length == 0) 
+				lastID=0;
+		    else
+		    	lastID = ownChildRowElements[0].getAttribute("value");
+		    newRowIdElement = $newElem.getElementsByClassName("rowID");
+		    if(newRowIdElement.length == 0) return false;
+		    newRowIdElement[0].setAttribute("value", lastID+1);
+			//class="rowID"
+			
+						
+			return false;
+		});
+	});
+
+	$(document).ready(function() {
+		$("#type").change(function() {
+			var src = $(this).val();
+			if (src == '1') {
+				$("#multiple_choice").show();
+				$("#single_choice").hide();
+				$("#numeric_choice").hide();
+			}
+			if (src == '2') {
+				$("#single_choice").show();
+				$("#multiple_choice").hide();
+				$("#numeric_choice").hide();
+			}
+			if (src == '3') {
+				$("#multiple_choice").hide();
+				$("#single_choice").hide();
+				$("#numeric_choice").show();
+			}
+			return false;
+		});
+
+	});
+</script>
+
+<style>
+.choice {
+	border:0px;
+	padding: 0px;
+	margin: 0px 0px 6px 0;
+}
+
+#text {
+	width: 400px;
+}
+
+
+.ilFormValue label {
+	font-size: 8pt;
+}
+
+#formular fieldset,
+#formular_single fieldset,
+#formular_multiple fieldset {
+	padding: 3px;
+	border: 1px solid #efefef;
+	background-color: #ddd;
+}
+
+.textfield_choice {
+	width: 387px;
+}
+
+#numeric_choice label {
+	display:inline-block;
+	width: 150px;
+	font-size: 10pt;
+	padding:5px;
+}
+
+#numeric_choice input {
+	width: 220px;
+	margin-top:5px;
+}
+
+a.add_button, a.add_button:hover {
+-moz-border-radius:4px;
+-webkit-border-radius:4px;
+border-radius:4px;
+background:#04c904; background: -moz-linear-gradient(top, #04c904 0%, #3d8f0e 100%);background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#04c904), color-stop(100%,#3d8f0e));;
+filter:progid:DXImageTransform.Microsoft.gradient( startColorstr='#04c904', endColorstr='#3d8f0e',GradientType=0 );
+border:1px solid #656565;
+box-shadow:0 1px 3px rgba(0,0,0,0.6);
+-moz-box-shadow:0 1px 3px rgba(0,0,0,0.6);
+-webkit-box-shadow:0 1px 3px rgba(0,0,0,0.6);
+text-shadow:0 -1px 1px rgba(0,0,0,0.3);
+color:#FFFFFF;
+padding:0px;
+font-weight:bold;
+font-family:'Helvetica Neue', Helvetica, Arial, sans-serif;
+font-size:13px;
+cursor:pointer;
+width:90px;
+height:16px;
+text-align:center;
+display:inline-block;
+font-size:11px;
+text-decoration: none;
+}
+
+a.delete_button, a.delete_button:hover {
+-moz-border-radius:4px;
+-webkit-border-radius:4px;
+border-radius:4px;
+background:#e61919; background: -moz-linear-gradient(top, #e61919 0%, #ad1a26 100%);background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#e61919), color-stop(100%,#ad1a26));;
+filter:progid:DXImageTransform.Microsoft.gradient( startColorstr='#e61919', endColorstr='#ad1a26',GradientType=0 );
+border:1px solid #656565;
+box-shadow:0 1px 3px rgba(0,0,0,0.6);
+-moz-box-shadow:0 1px 3px rgba(0,0,0,0.6);
+-webkit-box-shadow:0 1px 3px rgba(0,0,0,0.6);
+text-shadow:0 -1px 1px rgba(0,0,0,0.3);
+color:#FFFFFF;
+padding:0px;
+font-weight:bold;
+font-family:'Helvetica Neue', Helvetica, Arial, sans-serif;
+font-size:11px;
+cursor:pointer;
+width:60px;
+height:16px;
+text-align:center;
+display:inline-block;
+text-decoration: none;
+float:right;
+margin: 5px;
+}
+
+
+a.upBTN, a.upBTN:hover, a.downBTN, a.downBTN:hover {
+-moz-border-radius:4px;
+-webkit-border-radius:4px;
+border-radius:200px;
+background:#1980E6; background: -moz-linear-gradient(top, #1980E6 0%, #1259A1 100%);background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#1259A1), color-stop(100%,#1259A1));;
+filter:progid:DXImageTransform.Microsoft.gradient( startColorstr='#1980E6', endColorstr='#1259A1',GradientType=0 );
+border:1px solid #656565;
+
+box-shadow:0 1px 3px rgba(0,0,0,0.6);
+-moz-box-shadow:0 1px 3px rgba(0,0,0,0.6);
+-webkit-box-shadow:0 1px 3px rgba(0,0,0,0.6);
+text-shadow:0 -1px 1px rgba(0,0,0,0.3);
+color:#FFFFFF;
+padding:0px;
+font-weight:bold;
+font-family:'Helvetica Neue', Helvetica, Arial, sans-serif;
+font-size:13px;
+cursor:pointer;
+width:30px;
+height:16px;
+text-align:center;
+display:inline-block;
+text-decoration: none;
+
+margin: 5px;
+}
+
+
+</style>
+
+<form id="form_"
+	action="{ACTION_URL}"
+	method="post">
+	<!-- Please note the usage of datatable attribute which is non-standard
+	but ensures that JAWS treats this table as a layout table -->
+	<table class="ilForm" width="" datatable="0" style="text-align: left;">
+		<tbody>
+			<tr class="ilFormHeader">
+				<td class="ilFormHeader" colspan="2">
+					<div style="float: right; margin-left: 20px;">
+						<input class="submit" type="SUBMIT" name="{COMMAND}"
+							value="{SUBMIT_BUTTON}">
+						<input type="hidden" name="question_id" value="{QUESTION_ID}">
+					</div>
+					<h3 class="ilFormHeader">
+						<a name="il_form_top"></a>{NEW_QUESTION}
+					</h3>
+					<div class="ilFormInfo" style="margin-left: 0px;"></div>
+				</td>
+			</tr>
+			<tr>
+				<td class="ilFormOption" id="il_prop_cont_text"><label
+					for="text">{QUESTION} <span class="asterisk">*</span></label></td>
+				<td class="ilFormValue">
+				<textarea name="text" id="text"
+						class="noRTEditor" wrap="virtual" rows="8">{QUESTION_TEXT}</textarea></td>
+			</tr>
+			<tr {HIDE_QUESTION_TYPE}>
+				<td class="ilFormOption" id="il_prop_cont_type"><label
+					for="type">{QUESTION_TYPE} <span class="asterisk">*</span></label></td>
+				<td class="ilFormValue"><select id="type" name="type" {DISABLE_OPTION_FORM}>
+						<option value="1" {SELECTED_MULTIPLE} >Multiple Choice</option>
+						<option value="2" {SELECTED_SINGLE} >Single Choice</option>
+						<option value="3" {SELECTED_NUMERIC} >Numeric</option>
+				</select></td>
+			</tr>
+			<tr>
+				<td class="ilFormOption" id="il_prop_cont_type">{CHOICES} <span class="asterisk">*</span></td>
+				<td class="ilFormValue">
+
+					<!--  Multiple Choice BEGIN -->
+					<div id="multiple_choice" {HIDE_MULTIPLE_CHOICE_BLOCK}>
+						<div id="formular_multiple">
+						<!-- BEGIN multiple_choice_block -->
+						<fieldset id="fieldset_multiple_choice_{MUL_COU}" class="choice" style="display: {MUL_SHOW};">
+							<input type="hidden" name="rowID[{MUL_COU}]" value="{ROW_ID}" class="rowID">
+							<textarea name="choice_multiple_text[{MUL_COU}]" class="textfield_choice" rows="3">{MUL_TEXT}</textarea>
+							<input type="hidden" name="choice_multiple_id[{MUL_COU}]" value="{MUL_ID}">
+							<input type="hidden" name="choice_multiple_deleted[{MUL_COU}]" value="{MUL_DEL}" class="deleted_hidden"> <br />
+							<input type="radio" name="choice_multiple_type[{MUL_COU}]" value="1" id="correct[{MUL_COU}]" {MUL_TYPE_C}> <label for="correct[{MUL_COU}]">correct</label>
+							<input type="radio" name="choice_multiple_type[{MUL_COU}]" value="2" id="neutral[{MUL_COU}]" {MUL_TYPE_N}> <label for="neutral[{MUL_COU}]">neutral</label>
+							<input type="radio" name="choice_multiple_type[{MUL_COU}]" value="0" id="incorrect[{MUL_COU}]" {MUL_TYPE_I}> <label for="incorrect[{MUL_COU}]">incorrect</label>
+							<a href="#" class="downBTN" onclick="moveChoiceDown(this); return false;">&#9660;</a>
+    						<a href="#" class="upBTN" onclick="moveChoiceUp(this); return false;">&#9650;</a>
+								<a href="#" class="delete_choice delete_button" id="delete_choice[{MUL_COU}]"  onclick="removeThis(this);">Delete</a>
+
+						</fieldset>
+						<!-- END multiple_choice_block -->
+						</div>
+						<div style="display:block; text-align:right;">
+							<a href="#" id="add_choice_multiple" class="add_button">Add Antwort</a>
+						</div>
+						<fieldset id="fieldset_multiple_choice_999" class="choice" style="display: none;">
+							<input type="hidden" name="rowID[999]" value="" class="rowID">
+							<textarea name="choice_multiple_text[999]" class="textfield_choice" rows="3">{MUL_TEXT}</textarea>
+							<input type="hidden" name="choice_multiple_id[999]" value="">
+							<input type="hidden" name="choice_multiple_deleted[999]" value="0" class="deleted_hidden"> <br />
+							<input type="radio" name="choice_multiple_type[999]" value="1" id="correct[999]"> <label for="correct[999]">correct</label>
+							<input type="radio" name="choice_multiple_type[999]" value="2" id="neutral[999]" checked> <label for="neutral[999]">neutral</label>
+							<input type="radio" name="choice_multiple_type[999]" value="0" id="incorrect[999]"> <label for="incorrect[999]">incorrect</label>
+							<a href="#" class="downBTN" onclick="moveChoiceDown(this); return false;">&#9660;</a>
+    						<a href="#" class="upBTN" onclick="moveChoiceUp(this); return false;">&#9650;</a>
+							<a href="#" class="delete_choice delete_button" id="delete_choice[999]" onclick="removeThis(this);">Delete</a>
+													</fieldset>
+					</div>
+
+					<!--  Multiple Choice END -->
+
+					<!--  Single Choice BEGIN -->
+					<div id="single_choice" {HIDE_SINGLE_CHOICE_BLOCK}>
+						<div id="formular_single">
+						<!-- BEGIN single_choice_block -->
+						<fieldset id="fieldset_single_choice_{MUL_COU}" class="choice" style="display: {MUL_SHOW};">
+							<input type="hidden" name="rowID[{MUL_COU}]" value="{ROW_ID}" class="rowID">
+							<textarea name="choice_single_text[{MUL_COU}]" class="textfield_choice" rows="3">{MUL_TEXT}</textarea>
+							<input type="hidden" name="choice_single_id[{MUL_COU}]" value="{MUL_ID}">
+							<input type="hidden" name="choice_single_deleted[{MUL_COU}]" value="{MUL_DEL}" class="deleted_hidden"> <br />
+							<input type="radio" name="choice_single_type[{MUL_COU}]" value="1" id="correct[{MUL_COU}]" {MUL_TYPE_C}> <label for="correct[{MUL_COU}]">correct</label>
+							<input type="radio" name="choice_single_type[{MUL_COU}]" value="2" id="neutral[{MUL_COU}]" {MUL_TYPE_N}> <label for="neutral[{MUL_COU}]">neutral</label>
+							<input type="radio" name="choice_single_type[{MUL_COU}]" value="0" id="incorrect[{MUL_COU}]" {MUL_TYPE_I}> <label for="incorrect[{MUL_COU}]">incorrect</label>
+							<!-- TODO sortierung -->
+							<a href="#" class="downBTN" onclick="moveChoiceDown(this); return false;">&#9660;</a>
+    						<a href="#" class="upBTN" onclick="moveChoiceUp(this); return false;">&#9650;</a>
+							<a href="#" class="delete_choice delete_button" id="delete_choice_{MUL_COU}"  onclick="removeThis(this);">Delete</a>
+						</fieldset>
+						<!-- END single_choice_block -->
+						</div>
+						<div style="display:block; text-align:right;">
+							<a href="#" id="add_choice_single" class="add_button">Add Choice</a>
+						</div>
+						<fieldset id="fieldset_single_choice_999" class="choice" style="display: none;">
+							<input type="hidden" name="rowID[999]" value="" class="rowID">
+							<textarea name="choice_single_text[999]" class="textfield_choice" rows="3">{MUL_TEXT}</textarea>
+							<input type="hidden" name="choice_single_id[999]" value="">
+							<input type="hidden" name="choice_single_deleted[999]" value="0" class="deleted_hidden"> <br />
+							<input type="radio" name="choice_single_type[999]" value="1" id="correct[999]"> <label for="correct[999]">correct</label>
+							<input type="radio" name="choice_single_type[999]" value="2" id="neutral[999]" checked> <label for="neutral[999]">neutral</label>
+							<input type="radio" name="choice_single_type[999]" value="0" id="incorrect[999]"> <label for="incorrect[999]">incorrect</label>
+							<a href="#" class="downBTN" onclick="moveChoiceDown(this); return false;">&#9660;</a>
+    						<a href="#" class="upBTN" onclick="moveChoiceUp(this); return false;">&#9650;</a>
+							<a href="#" class="delete_choice delete_button" id="delete_choice[999]" onclick="removeThis(this);">Delete</a>
+						</fieldset>
+					</div>
+					<!--  Single Choice END -->
+
+
+					<!--  Numeric Choice BEGIN -->
+					<div id="numeric_choice" {HIDE_NUMERIC_BLOCK}>
+						<div id="formular">
+							<fieldset id="fieldset_multiple_choice_1" class="choice" >
+								<input type="hidden" name="choice_numeric_id" value="{CHOICE_ID}">
+
+								<label for="choice_numeric_minimum">{MINIMUM}<span class="asterisk">*</span></label>
+									<input type="Text" name="choice_numeric_minimum"
+														id="choice_numeric_minimum" value="{MINIMUM_VAL}"/><br />
+								<label for="choice_numeric_maximum">{MAXIMUM}<span class="asterisk">*</span></label>
+								<input type="Text" name="choice_numeric_maximum"
+														id="choice_numeric_maximum" value="{MAXIMUM_VAL}"/><br />
+								<label for="choice_numeric_step">{STEP}<span class="asterisk">*</span></label>
+								<input type="Text" name="choice_numeric_step"
+														id="choice_numeric_step" value="{STEP_VAL}"/><br />
+								<label for="">{CORRECT_VALUE}</label>
+								<input type="Text" name="choice_numeric_correct_value"
+														id="choice_numeric_correct_value" value="{CORRECT_VALUE_VAL}"/><br />
+								<label for="choice_numeric_tol_range">{TOLERANCE_RANGE}</label>
+								<input type="Text" name="choice_numeric_tol_range"
+														id="choice_numeric_tol_range" value="{TOLERANCE_RANGE_VAL}"/><br />
+							</fieldset>
+						</div>
+					</div>
+					<!--  Numeric Choice END -->
+
+				</td>
+			</tr>
+			<tr>
+				<td class="ilFormFooter" colspan="2">
+					<div style="float: left;">
+						<span class="asterisk">*</span><span class="small">
+							Erforderliche Angabe</span>
+					</div>
+					<div align="right">
+						<input class="submit" type="SUBMIT" name="{COMMAND}"
+							value="{SUBMIT_BUTTON}">
+					</div>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</form>

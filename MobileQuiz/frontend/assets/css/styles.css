@@ -1,0 +1,20 @@
+/* This is because if not, the pictures are taken as thumbnails. */
+.ui-li-thumb {
+	max-width: 500px;
+	max-height: 500px;
+	position: relative;
+	float: none;
+}
+
+/* Same reason */
+.ui-li-static.ui-li-has-thumb {
+	padding-left: 15px;
+}
+
+
+iframe { 
+	width:;
+	height:;
+}
+
+

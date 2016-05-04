@@ -1,0 +1,282 @@
+<style>
+#display_url a {
+	font-size: 3em;
+	color: #000;
+}
+#display_url1 a {
+	font-size: 2em;
+	color: #000;
+}
+
+#btn_qr_fullscreen {
+	
+	font-size: 3em;
+	color: #000;
+	vertical-align: top;
+	
+}
+
+
+
+#backgroundPopup{
+	display:none;
+	position:fixed;
+	_position:absolute; /* hack for internet explorer 6*/
+	height:100%;
+	width:100%;
+	top:0;
+	left:0;
+	background:#000000;
+	border:1px solid #cecece;
+	z-index:1;
+}
+#qr_code_big{
+	display:none;
+	position:fixed;
+	_position:absolute; /* hack for internet explorer 6*/
+	height:530px;
+	width:550px;
+	background:#FFFFFF;
+	border:2px solid #cecece;
+	z-index:2;
+	padding:12px;
+	font-size:13px;
+}
+
+:-webkit-full-screen img {
+  width: auto;
+  height: 100%;
+}
+:-moz-full-screen img {
+  width: auto;
+  height: 100%;
+}
+
+a.increaseFont,a.decreaseFont {
+	border: 1px solid #000;
+	margin-top: 10px;
+	padding: 5px;
+	display: inline-block;
+	color: #000;
+	text-decoration: none;
+}
+
+a.increaseFont:hover,a.decreaseFont:hover {
+	border: 1px solid #fff;
+	color: #fff;
+	background-color: #000;
+	text-decoration: none;
+}
+
+.start_button {
+	font-family: Arial;
+	color: #ffffff ! important;
+	text-decoration: none ! important;
+	font-size: 18px;
+	padding: 10px;
+	text-decoration: none;
+	-webkit-border-radius: 9px;
+	-moz-border-radius: 9px;
+	-webkit-box-shadow: 0px 1px 3px #666666;
+	-moz-box-shadow: 0px 1px 3px #666666;
+	text-shadow: 1px 1px 3px #666666;
+	border: solid #003366 0px;
+	background: -webkit-gradient(linear, 0 0, 0 100%, from(#178feb),
+		to(#295a8a) );
+	background: -moz-linear-gradient(top, #178feb, #295a8a);
+	-ms-filter: progid:DXImageTransform.Microsoft.gradient(startColorStr=#178feb,
+		endColorStr=#295a8a );
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorStr=#178feb,
+		endColorStr=#295a8a );
+	display: inline-block; /* IE is so silly */
+}
+
+.start_button:hover {
+	background: #325e80;
+}
+
+.stop_button {
+	font-family: Arial;
+	color: #ffffff ! important;
+	text-decoration: none ! important;
+	font-size: 18px;
+	padding: 10px;
+	text-decoration: none;
+	-webkit-border-radius: 9px;
+	-moz-border-radius: 9px;
+	-webkit-box-shadow: 0px 1px 3px #666666;
+	-moz-box-shadow: 0px 1px 3px #666666;
+	text-shadow: 1px 1px 3px #666666;
+	border: solid #003366 0px;
+	background: -webkit-gradient(linear, 0 0, 0 100%, from(#eb1717),
+		to(#7a1d1d) );
+	background: -moz-linear-gradient(top, #eb1717, #7a1d1d);
+	-ms-filter: progid:DXImageTransform.Microsoft.gradient(startColorStr=#eb1717,
+		endColorStr=#7a1d1d );
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorStr=#eb1717,
+		endColorStr=#7a1d1d );
+	display: inline-block; /* IE is so silly */
+}
+
+.stop_button:hover {
+	background: #7d0f0f;
+}
+</style>
+<script type="text/javascript" language="javascript">
+	/**
+	 * Source: http://www.shopdev.co.uk/blog/text-resizing-with-jquery/
+	 **/
+	 
+	//0 means hidden; 1 means visible;
+	 var popupStatus = 0;
+	
+	 function loadPopup(elementId){
+		//loads popup only if it is disabled
+		if(popupStatus==0){
+			 $("#backgroundPopup").css({
+			 	"opacity": "0.7"
+			 });
+			 $("#backgroundPopup").fadeIn("slow");
+			 $(elementId).fadeIn("slow");
+			 popupStatus = 1;
+		 }
+	}
+	 
+	function disablePopup(elementId){
+		//disables popup only if it is enabled
+		if(popupStatus==1){
+			$("#backgroundPopup").fadeOut("slow");
+			$(elementId).fadeOut("slow");
+			popupStatus = 0;
+		}
+	}
+	
+	//centering popup
+	function centerPopup(elementId){
+		//request data for centering
+		var windowWidth = document.documentElement.clientWidth;
+		var windowHeight = document.documentElement.clientHeight;
+		var popupHeight = $(elementId).height();
+		var popupWidth = $(elementId).width();
+		//centering
+		$(elementId).css({
+			"position": "absolute",
+			"top": windowHeight/2-popupHeight/2,
+			"left": windowWidth/2-popupWidth/2
+		});
+		//only need force for IE6
+	
+		$("#backgroundPopup").css({
+			"height": windowHeight
+		});
+		
+ 
+	}
+	 
+
+	$(document).ready(function() {
+
+		// Reset Font Size
+		var originalFontSize = $('#display_url').css('font-size');
+		$(".resetFont").click(function() {
+			$('html').css('font-size', originalFontSize);
+		});
+		// Increase Font Size
+		$(".increaseFont").click(function() {
+			var currentFontSize = $('#display_url').css('font-size');
+			var currentFontSizeNum = parseFloat(currentFontSize, 10);
+			var newFontSize = currentFontSizeNum * 1.2;
+			$('#display_url').css('font-size', newFontSize);
+			return false;
+		});
+		// Decrease Font Size
+		$(".decreaseFont").click(function() {
+			var currentFontSize = $('#display_url').css('font-size');
+			var currentFontSizeNum = parseFloat(currentFontSize, 10);
+			var newFontSize = currentFontSizeNum * 0.8;
+			$('#display_url').css('font-size', newFontSize);
+			return false;
+		});
+		
+		
+		// display QR Code in fullscreen
+
+	$("#btn_qr_fullscreen").click(function() {
+		
+		//centering with css
+		centerPopup("#qr_code_big");
+		//load popup
+		loadPopup("#qr_code_big");
+	
+
+			/* var element = document.getElementById("qr_code");
+
+			if (element.requestFullScreen) {
+				element.requestFullScreen();
+			} else if (element.mozRequestFullScreen) {
+				element.mozRequestFullScreen();
+			} else if (element.webkitRequestFullScreen) {
+				element.webkitRequestFullScreen();
+			}
+
+			return false;
+		 */
+	});
+		
+	//Click the x event!
+	/* $("#popupContactClose").click(function(){
+		disablePopup();
+	}); */
+		//Click out event!
+	$("#backgroundPopup").click(function(){
+		disablePopup("#qr_code_big");
+		
+	});
+		//Press Escape event!
+		$(document).keypress(function(e){
+			if(e.keyCode==27 && popupStatus==1){
+				disablePopup("#qr_code_big");
+			}
+		});
+	});
+</script>
+
+<!-- loupe_icon.png -->
+<!-- <img src="loupe_icon.png" alt="LOUPE" />&#9760; -->
+
+<center>
+	{STOP_LINK}
+	
+	
+	<div  id="qr_code"> 
+		<img  src='{IMAGE_URL}' alt='QR-Code' /> 
+		<div id="display_url">
+			<a href="{QUIZ_URL}">{QUIZ_URL}</a> <br />
+		</div>
+		
+	</div> 
+	<div  id="qr_code_big"> 
+		<img  src='{IMAGE_URL}'width="100%" height="90%" alt='QR-Code' /> 
+		<div id="display_url1">
+			<a href="{QUIZ_URL}">{QUIZ_URL}</a> <br />
+		</div>
+	</div> 
+	<div id="backgroundPopup"></div>
+
+	
+		
+	<br> <br />
+	<div  id="loupe">
+	<a href="#" id="btn_qr_fullscreen" class="cool_button" >
+		<img src="./Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/templates/images/loupe_icon.png"  width="25" height="25"/>
+		
+		</a></div>
+	
+	
+		
+	
+			<a href="#"	class="increaseFont">+</a> 
+		<a href="#" class="decreaseFont">&#8211;</a>
+
+
+</center>

@@ -35,6 +35,11 @@ class ilMobileQuizPlugin extends ilRepositoryObjectPlugin{
 	function getPluginName(){
 		return "MobileQuiz";
 	}	
-}
+        
+        function uninstallCustom(){
+            //TODO hier was machen
+            return null;
+        }
+    }
 
 ?>

@@ -21,20 +21,27 @@
 +-----------------------------------------------------------------------------+
 */
 
-/**
- * Configuration for URL Shorter
- */
-// auth parameters
+/*************************************
+ *  Configuration for URL Shorter    *
+ *************************************/
+
+// Activate ULR-Shortener
+define("SHORTENER", true);
+
+// Authentication Parameters
 define("SHORTENER_USERNAME", "wordpressplugin");
 define("SHORTENER_PASSWORD", "1gnqxzh2");
+
 // the query parameters
-define("SHORTENER_FORMAT", "simple"); // output format: 'json', 'xml' or 'simple'
+// output format: 'json', 'xml' or 'simple'
+define("SHORTENER_FORMAT", "simple"); 
 // the URL of the API file
 define("SHORTENER_URL", "http://tiny.uni-mannheim.de/yourls-api.php");
 
-/**
- * Constants for the quiz
- */
+
+/****************************************************************
+ *  Quiz Constanz - DO NOT TOUCH - unless you know what you do  *
+ ****************************************************************/
 define("QUESTION_TYPE_MULTI", "1"); // Multi Choice
 define("QUESTION_TYPE_SINGLE", "2"); // Single Choice
 define("QUESTION_TYPE_NUM", "3"); // Numeric

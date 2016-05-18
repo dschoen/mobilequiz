@@ -27,20 +27,22 @@
 */
 
 try {
-	$db = new PDO(
-		"mysql:host=$db_host;dbname=$db_name;charset=UTF-8",
-		$db_user,
-		$db_pass
+    $db = new PDO(
+	"mysql:host=$db_host;dbname=$db_name;charset=utf8",
+	$db_user,
+	$db_pass
 	);
 	
     $db->query("SET NAMES 'utf8'");
+    
     // one of 3 PDO error modes: throw exception instead of being silent or warning
-	$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-}
-catch(PDOException $e) {
-	error_log($e->getMessage());
-	die("A database error was encountered.".$e->getMessage());
-	
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+} catch(PDOException $e) {
+    error_log("MobileQuiz frontend could not connect to database:");
+    error_log($e->getMessage());
+    
+    die("MobileQuiz encountered a database error:".$e->getMessage());
 }
 
 

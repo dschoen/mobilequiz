@@ -25,9 +25,10 @@ error_reporting(E_ALL ^ E_NOTICE);
 
 /*=========== Database Configuraiton ==========*/
 
+// Developement Configuration
 $db_host = 'localhost';
 $db_user = 'root';
-$db_pass = '';
+$db_pass = 'root';
 $db_name = 'ilias';
 
 /*=========== Website Configuration ===========*/

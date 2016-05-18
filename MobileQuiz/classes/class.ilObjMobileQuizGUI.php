@@ -34,8 +34,8 @@ include_once("./Customizing/global/plugins/Services/Repository/RepositoryObject/
  * User interface classes process GET and POST parameter and call
  * application classes to fulfill certain tasks.
  *
- * @author Stephan Schulz <stschulz@mail.uni-mannheim.de>
- * @author Daniel Schoen
+ * @author Stephan Schulz
+ * @author Daniel Schoen <schoen@uni-mannheim.de>
  *
  * $Id$
  *
@@ -71,7 +71,8 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
      */
     function performCommand($cmd){
         switch ($cmd){
-            case "editProperties":		// list all commands that need write permission here
+            // list all commands that need write permission here
+            case "editProperties":		
             case "editQuiz":
             case "getPropertiesValues":
             case "updateProperties":
@@ -121,8 +122,11 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
                 $this->$cmd();
                 break;
 
-            case "showCurrentRound":			// list all commands that need read permission here
-
+            case "showCurrentRound":			
+                // list all commands that need read permission here
+                
+                //no commands so far
+                
                 $this->checkPermission("read");
                 $this->$cmd();
                 break;

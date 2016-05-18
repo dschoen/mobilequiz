@@ -118,7 +118,7 @@ question_delete#:#delete
 question_edit#:#�ndern
 question_table_head#:#Questions
 round_start#:#Start a new round
-round_stop#:#Finish current round
+round_stop#:#Stop current round
 round#:#Round
 open_quiz#:#Go to quiz
 msg_obj_create#:#Successful

@@ -348,6 +348,11 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
                 include_once('class.ilObjMobileQuizUrlShorter.php');
                 $url_shorter = new ilObjMobileQuizUrlShorter();
                 $shorted_url = $url_shorter->shortURL($quiz_url);
+               //If shortner does not function properly.
+              if($shorted_url == NULL)
+              {
+                  $shorted_url = $quiz_url;
+              }
 
                 $ilDB->manipulate("UPDATE rep_robj_xuiz_rounds SET tiny_url = '".$shorted_url."' WHERE ".
                                 " round_id = ".$ilDB->quote($round_id, "integer")

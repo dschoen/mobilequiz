@@ -25,8 +25,8 @@
  *  Configuration for URL Shorter    *
  *************************************/
 
-// Activate ULR-Shortener
-define("SHORTENER", true);
+// Activate URL-Shortener
+define("SHORTENER", false);
 
 // Authentication Parameters
 define("SHORTENER_USERNAME", "wordpressplugin");

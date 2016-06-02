@@ -345,12 +345,15 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
                 // TODO: Workaround for shorten
 
                 // short url
-                include_once('class.ilObjMobileQuizUrlShorter.php');
-                $url_shorter = new ilObjMobileQuizUrlShorter();
-                $shorted_url = $url_shorter->shortURL($quiz_url);
-               //If shortner does not function properly. (Making the URL optional.)
-              if($shorted_url == NULL)
-              {
+                if (SHORTENER) {
+                    include_once('class.ilObjMobileQuizUrlShorter.php');
+                    $url_shorter = new ilObjMobileQuizUrlShorter();
+                    $shorted_url = $url_shorter->shortURL($quiz_url);
+               
+                }
+                //If shortner is false or does not function properly then make the URL optional.
+                if($shorted_url == NULL)
+                    {
                   //short url
                   $shorted_url = $quiz_url;
               }

@@ -35,6 +35,4 @@ $ilias_max_version = "5.1.5";
 // optional, but useful: Add one or more responsible persons and a contact email
 $responsible        = "Daniel Schoen";
 $responsible_mail   = "mobilequiz@uni-mannheim.de";
-
-// commet test
 ?>

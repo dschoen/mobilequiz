@@ -351,6 +351,7 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
                //If shortner does not function properly. (Making the URL optional.)
               if($shorted_url == NULL)
               {
+                  //short url
                   $shorted_url = $quiz_url;
               }
 

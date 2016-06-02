@@ -1,7 +1,7 @@
 	</div>
 
 	<div data-role="footer" id="pageFooter">
-		<h4><?php echo $GLOBALS['defaultFooter']?></h4>
+		<div><?php echo $GLOBALS['defaultFooter']?></div>
 	</div>
 </div>
 

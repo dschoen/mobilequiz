@@ -1,32 +1,14 @@
 <?php
-/*
-+-----------------------------------------------------------------------------+
-| MobileQuiz open source                                                      |
-+-----------------------------------------------------------------------------+
-| Copyright 2011 Stephan Schulz                                               |
-|                                                                             |
-| MobileQuiz is free software: you can redistribute it and/or modify          |
-| it under the terms of the GNU General Public License as published by        |
-| the Free Software Foundation, either version 3 of the License, or           |
-| (at your option) any later version.                                         |
-|                                                                             |
-|                                                                             |
-| MobileQuiz is distributed in the hope that it will be useful,               |
-| but WITHOUT ANY WARRANTY; without even the implied warranty of              |
-| MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                |
-| GNU General Public License for more details.                                |
-|                                                                             |
-| You should have received a copy of the GNU General Public License           |
-| along with MobileQuiz.  If not, see <http://www.gnu.org/licenses/>.         |
-+-----------------------------------------------------------------------------+
-*/
 
 /*************************************
  *  Configuration for URL Shorter    *
  *************************************/
 
 // Activate URL-Shortener
-define("SHORTENER", false);
+define("SHORTENER", true);
+
+// Show URL, shortened or not
+define("SHORTENER_SHOW_URL", true);
 
 // Authentication Parameters
 define("SHORTENER_USERNAME", "wordpressplugin");
@@ -40,7 +22,7 @@ define("SHORTENER_URL", "http://tiny.uni-mannheim.de/yourls-api.php");
 
 
 /****************************************************************
- *  Quiz Constanz - DO NOT TOUCH - unless you know what you do  *
+ *  Quiz Constants - DO NOT TOUCH - unless you know what you do  *
  ****************************************************************/
 define("QUESTION_TYPE_MULTI", "1");     // Multi Choice
 define("QUESTION_TYPE_SINGLE", "2");    // Single Choice

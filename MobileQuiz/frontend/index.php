@@ -3,7 +3,7 @@
 +-----------------------------------------------------------------------------+
 | MobileQuiz open source                                                      |
 +-----------------------------------------------------------------------------+
-| Copyright 2011 Stephan Schulz                                               |
+| Copyright 2011 Daniel Schön                                             |
 |                                                                             |
 | MobileQuiz is free software: you can redistribute it and/or modify          |
 | it under the terms of the GNU General Public License as published by        |
@@ -29,8 +29,6 @@
 require_once "includes/main.php";
 
 try {
-	// to see how mobile clients react under poor network circumstances:
-	//usleep(1000000);
 
 	if($_GET['quiz_id'] && $_GET['round_id']){
 		$c = new QuizController();

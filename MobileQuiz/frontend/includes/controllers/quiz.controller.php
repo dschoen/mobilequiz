@@ -24,8 +24,6 @@
 /**
  * This controller handles the quiz.
  *
- * @author Stephan Schulz <stschulz@mail.uni-mannheim.de>
- *
  */
 class QuizController{
 

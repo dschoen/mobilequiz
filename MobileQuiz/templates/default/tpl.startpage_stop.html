@@ -243,8 +243,19 @@ a.increaseFont:hover,a.decreaseFont:hover {
 <center>
 	{STOP_LINK}
 	
-	
+	<div  id="loupe">
+            
+                <a href="#" title="Increases the view" backgroundcolor="#FF0000" class="increaseFont">+</a>
+                &nbsp;
+                <a href="#" title ="Decreases the view" class="decreaseFont" title="">&#8211;</a> 
+                &nbsp;
+                <a href="#" title="For full view" id="btn_qr_fullscreen" class="cool_button" >
+		<img src="./Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/templates/images/loupe_icon.png"  width="25" height="25"/>
+                
+		</a>
+        </div>
 	<div  id="qr_code"> 
+            
 		<img  src='{IMAGE_URL}' alt='QR-Code' /> 
 		<div id="display_url">
 			<a href="{QUIZ_URL}">{QUIZ_URL}</a> <br />
@@ -263,17 +274,12 @@ a.increaseFont:hover,a.decreaseFont:hover {
 	
 		
 	<br> <br />
-	<div  id="loupe">
-	<a href="#" id="btn_qr_fullscreen" class="cool_button" >
-		<img src="./Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/templates/images/loupe_icon.png"  width="25" height="25"/>
-		
-		</a></div>
+	
 	
 	
 		
 	
-		<a href="#" class="increaseFont">+</a> 
-		<a href="#" class="decreaseFont">&#8211;</a>
+		
 
 
 </center>

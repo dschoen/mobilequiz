@@ -22,7 +22,7 @@ function removeThis(field) {
 
    
 /**
-Event Listener für "Nach unten" und "Nach oben" Buttons
+Event Listener for "Nach unten" und "Nach oben" Buttons
 */
 function moveChoiceDown(field) {
     // Fuer Button "Nach unten"
@@ -38,7 +38,7 @@ function moveChoiceDown(field) {
     nextID = nextChildRowElements[0].getAttribute("value");
     /* nextID = nextElement.getAttribute("rowID"); */
     
-    //Eigene ID und nächste ID vertauschen
+    //Eigene ID und nï¿½chste ID vertauschen
     ownChildRowElements[0].setAttribute("value", nextID);
     nextChildRowElements[0].setAttribute("value", ownID);
     
@@ -61,7 +61,7 @@ function moveChoiceUp(field) {
     nextID = nextChildRowElements[0].getAttribute("value");
     /* nextID = nextElement.getAttribute("rowID"); */
     
-    //Eigene ID und nächste ID vertauschen
+    //Eigene ID und nï¿½chste ID vertauschen
     ownChildRowElements[0].setAttribute("value", nextID);
     nextChildRowElements[0].setAttribute("value", ownID);
     
@@ -71,7 +71,7 @@ function moveChoiceUp(field) {
   }
 	       
 /* 	    function moveChoiceUp(field){
-	        // Für Button "Nach oben"
+	        // Fï¿½r Button "Nach oben"
 	        // Eigene ID und vorherige ID ermitteln
  	        ownElement = field.parentNode;
 			ownID= ownElement.getAttribute("rowID");

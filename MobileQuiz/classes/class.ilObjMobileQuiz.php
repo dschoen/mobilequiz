@@ -23,11 +23,6 @@
 
 include_once("./Services/Repository/classes/class.ilObjectPlugin.php");
 include_once("./Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/lib/phpqrcode/phpqrcode.php");
-include_once("./Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/lib/pChart/class/pData.class.php");
-include_once("./Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/lib/pChart/class/pDraw.class.php");
-include_once("./Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/lib/pChart/class/pImage.class.php");
-include_once("./Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/lib/pChart/class/pScatter.class.php");
-
 
 /**
  * Application class for MobileQuiz repository object.

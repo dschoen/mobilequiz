@@ -1416,7 +1416,7 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
                 $question['delete_question_href'] = "<a href=".$action_delete.">";
                 $question["delete_question_txt"] = $this->txt("question_delete");
                 
-                //switchupfunktion f�r pfeil
+                //switchupfunktion for arrow
                 $this->ctrl->setParameter($this,'question_id',$question['question_id']);
                 $action_Up = $this->ctrl->getLinkTarget($this,'switchUp');
                 
@@ -1424,7 +1424,7 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
                 $question['arrow_up_href'] = "<a href=".$action_Up.">";
                 $question["arrow_up_txt"] = "&#9650;";
                 
-                //switchDownfunktion f�r pfeil
+                //switchDownfunktion for arrow
                 $this->ctrl->setParameter($this,'question_id',$question['question_id']);
                 $action_Down = $this->ctrl->getLinkTarget($this,'switchDown');
                 

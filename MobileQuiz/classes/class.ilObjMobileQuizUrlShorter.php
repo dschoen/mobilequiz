@@ -1,5 +1,5 @@
 <?php
-include_once("./Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/configuration.php");
+include_once("./Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/configuration.local.php");
 
 class ilObjMobileQuizUrlShorter {
 	public function shortURL($url) {

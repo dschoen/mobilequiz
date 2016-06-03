@@ -1,9 +1,9 @@
 <?php
 /*
 +-----------------------------------------------------------------------------+
-| MobileQuiz open source                                                      |
+| MobileQuiz ILIAS plug-in for audience feedback with mobile devices          |
 +-----------------------------------------------------------------------------+
-| Copyright 2011 Daniel Schön                                             |
+| Copyright 2016 Daniel Schoen                                                |
 |                                                                             |
 | MobileQuiz is free software: you can redistribute it and/or modify          |
 | it under the terms of the GNU General Public License as published by        |
@@ -22,11 +22,25 @@
 */
 
 /*
-	This is the index file of the MobileQuiz frontend.
-	It will route requests to the appropriate controllers
+ * This is the index file of the MobileQuiz frontend.
+ * It will route requests to the appropriate controllers
 */
 
-require_once "includes/main.php";
+// load local configurations from Plugin environment
+// Comment this if you outsource the Frontend out from the Plugin
+require_once(__DIR__."/../configuration.local.php");
+require_once(__DIR__."/../configuration.php");
+
+require_once "includes/config.php";
+require_once "includes/connect.php";
+require_once "includes/helpers.php";
+require_once "includes/models/question.model.php";
+require_once "includes/models/choice.model.php";
+require_once "includes/models/quiz.model.php";
+require_once "includes/models/answer.model.php";
+require_once "includes/models/round.model.php";
+require_once "includes/controllers/home.controller.php";
+require_once "includes/controllers/quiz.controller.php";
 
 try {
 

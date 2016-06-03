@@ -21,19 +21,29 @@
 +-----------------------------------------------------------------------------+
 */
 
-error_reporting(E_ALL ^ E_NOTICE);
+/*
+ * Uncomment this for Productive usage
+ */
+error_reporting(E_ALL ^ E_NOTICE);;
+
+/* 
+ * All Configuration is moved to the main plugin configuration file. 
+ * If you liketo outsource the frontend part, you can reactivate these lines
+ */
+
 
 /*=========== Database Configuraiton ==========*/
 
 // Developement Configuration
-$db_host = 'localhost';
-$db_user = 'root';
-$db_pass = 'root';
-$db_name = 'ilias';
+
+// $db_host = 'localhost';
+// $db_user = 'root';
+// $db_pass = 'root';
+// $db_name = 'ilias';
 
 /*=========== Website Configuration ===========*/
 
-$defaultTitle = 'MobileQuiz';
-$defaultFooter = date('Y').' MobileQuiz for ILIAS';
+// $defaultTitle = 'MobileQuiz';
+// $defaultFooter = date('Y').' MobileQuiz for ILIAS';
 
 ?>

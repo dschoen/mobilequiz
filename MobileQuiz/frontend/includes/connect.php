@@ -1,9 +1,9 @@
 <?php
 /*
 +-----------------------------------------------------------------------------+
-| MobileQuiz open source                                                      |
+| MobileQuiz ILIAS plug-in for audience feedback with mobile devices          |
 +-----------------------------------------------------------------------------+
-| Copyright 2011 Stephan Schulz                                               |
+| Copyright 2016 Daniel Schoen                                                |
 |                                                                             |
 | MobileQuiz is free software: you can redistribute it and/or modify          |
 | it under the terms of the GNU General Public License as published by        |
@@ -28,9 +28,9 @@
 
 try {
     $db = new PDO(
-	"mysql:host=$db_host;dbname=$db_name;charset=utf8",
-	$db_user,
-	$db_pass
+	"mysql:host=".FRONTEND_DB_HOST.";dbname=".FRONTEND_DB_NAME.";charset=utf8",
+	FRONTEND_DB_USER,
+	FRONTEND_DB_PASS
 	);
 	
     $db->query("SET NAMES 'utf8'");
@@ -44,6 +44,5 @@ try {
     
     die("MobileQuiz encountered a database error:".$e->getMessage());
 }
-
 
 ?>

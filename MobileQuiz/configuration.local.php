@@ -1,9 +1,9 @@
 <?php
 /*
 +-----------------------------------------------------------------------------+
-| MobileQuiz open source                                                      |
+| MobileQuiz ILIAS plug-in for audience feedback with mobile devices          |
 +-----------------------------------------------------------------------------+
-| Copyright 2011 Daniel Schön                                           |
+| Copyright 2016 Daniel Schoen                                                |
 |                                                                             |
 | MobileQuiz is free software: you can redistribute it and/or modify          |
 | it under the terms of the GNU General Public License as published by        |
@@ -21,29 +21,36 @@
 +-----------------------------------------------------------------------------+
 */
 
-/*
-	This is the main include file.
-	It is only used in index.php.
-*/
+/*************************************
+ *  Configuration for URL Shorter    *
+ *************************************/
 
-require_once "includes/config.php";
-require_once "includes/connect.php";
-require_once "includes/helpers.php";
-require_once "includes/models/question.model.php";
-require_once "includes/models/choice.model.php";
-require_once "includes/models/quiz.model.php";
-require_once "includes/models/answer.model.php";
-require_once "includes/models/round.model.php";
-require_once "includes/controllers/home.controller.php";
-require_once "includes/controllers/quiz.controller.php";
+// Activate URL-Shortener
+define("SHORTENER", true);
+
+// Show URL, shortened or not
+define("SHORTENER_SHOW_URL", true);
+
+// Authentication Parameters
+define("SHORTENER_USERNAME", "xxx");
+define("SHORTENER_PASSWORD", "xxx");
+
+// the query parameters
+// output format: 'json', 'xml' or 'simple'
+define("SHORTENER_FORMAT", "simple"); 
+// the URL of the API file
+define("SHORTENER_URL", "http://tiny.uni-mannheim.de/yourls-api.php");
 
 
-// This will allow the browser to cache the pages. Not good for testing though!
-/*
-header('Cache-Control: max-age=3600, public');
-header('Pragma: cache');
-header("Last-Modified: ".gmdate("D, d M Y H:i:s",time())." GMT");
-header("Expires: ".gmdate("D, d M Y H:i:s",time()+3600)." GMT");
-*/
+// +--------------------------------------------------------------------------+
+// |   Configuration of the Students Frontend part                            |
+// +--------------------------------------------------------------------------+
+
+// Developement Configuration
+
+define("FRONTEND_DB_HOST", 'localhost');
+define("FRONTEND_DB_USER", 'root');
+define("FRONTEND_DB_PASS", 'root');
+define("FRONTEND_DB_NAME", 'ilias');
 
 ?>

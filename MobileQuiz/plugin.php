@@ -1,9 +1,9 @@
 <?php
 /*
 +-----------------------------------------------------------------------------+
-| MobileQuiz open source                                                      |
+| MobileQuiz ILIAS plug-in for audience feedback with mobile devices          |
 +-----------------------------------------------------------------------------+
-| Copyright 2011 Stephan Schulz                                               |
+| Copyright 2016 Daniel Schoen                                                |
 |                                                                             |
 | MobileQuiz is free software: you can redistribute it and/or modify          |
 | it under the terms of the GNU General Public License as published by        |

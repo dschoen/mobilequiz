@@ -48,3 +48,9 @@
         
         padding: 2px 2px 2px 2px;
 }
+
+/* Make Choice Questions as broad as the screen*/
+.ui-field-contain
+.ui-controlgroup-controls{
+    width: 100%;
+}

@@ -1,9 +1,9 @@
 <?php
 /*
 +-----------------------------------------------------------------------------+
-| MobileQuiz open source                                                      |
+| MobileQuiz ILIAS plug-in for audience feedback with mobile devices          |
 +-----------------------------------------------------------------------------+
-| Copyright 2011 Stephan Schulz                                               |
+| Copyright 2016 Daniel Schoen                                                |
 |                                                                             |
 | MobileQuiz is free software: you can redistribute it and/or modify          |
 | it under the terms of the GNU General Public License as published by        |
@@ -50,7 +50,7 @@ class QuizController{
 
         // $questions are arrays with objects
         render('quiz',array(
-            'title'			=> 'Quiz: '.$quiz[0]->name,
+            'title'		=> 'Quiz: '.$quiz[0]->name,
             'questions'		=> $questions
         ));
     }
@@ -60,9 +60,9 @@ class QuizController{
      */
     public function submitAnswers(){
         global $db;
-        $sql = $db->prepare("SELECT type FROM rep_robj_xuiz_rounds WHERE round_id = '".mysql_escape_string($_POST['round_id'])."'" );
-                   $sql->execute();
-                   $row = $sql->fetchAll(PDO::FETCH_CLASS, "Round");
+        $sql = $db->prepare("SELECT type FROM rep_robj_xuiz_rounds WHERE round_id = :id" );
+        $sql->execute(array(":id" => $_POST['round_id']));
+        $row = $sql->fetchAll(PDO::FETCH_CLASS, "Round");
 
         // check if there is a cookie for this round already, then break
         if(isset($_COOKIE["round".$_POST['round_id']]) && $row[0]->type != "passive"){
@@ -135,10 +135,10 @@ class QuizController{
             }
 
             global $db;
-            $sql = $db->prepare("SELECT type FROM rep_robj_xuiz_rounds WHERE round_id = '".mysql_escape_string($_POST['round_id'])."'" );
-            $sql->execute();
+            $sql = $db->prepare("SELECT type FROM rep_robj_xuiz_rounds WHERE round_id = :id" );
+            $sql->execute(array(":id" => $_POST['round_id']));
             $row = $sql->fetchAll(PDO::FETCH_CLASS, "Round");
-
+            
             $questions = Question::find(array('quiz_id'=>$_POST['quiz_id']));
             render('success',array(
                 'title'			=> 'Quiz submitted',

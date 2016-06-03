@@ -1,9 +1,9 @@
 <?php
 /*
- +-----------------------------------------------------------------------------+
-| MobileQuiz open source                                                      |
 +-----------------------------------------------------------------------------+
-| Copyright 2011 Stephan Schulz                                               |
+| MobileQuiz ILIAS plug-in for audience feedback with mobile devices          |
++-----------------------------------------------------------------------------+
+| Copyright 2016 Daniel Schoen                                                |
 |                                                                             |
 | MobileQuiz is free software: you can redistribute it and/or modify          |
 | it under the terms of the GNU General Public License as published by        |
@@ -27,8 +27,6 @@ include_once("./Customizing/global/plugins/Services/Repository/RepositoryObject/
 include_once("./Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/lib/pChart/class/pDraw.class.php");
 include_once("./Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/lib/pChart/class/pImage.class.php");
 include_once("./Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/lib/pChart/class/pScatter.class.php");
-// include_once("./Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/lib/urlshorter/urlShorter.php");
-
 
 
 /**

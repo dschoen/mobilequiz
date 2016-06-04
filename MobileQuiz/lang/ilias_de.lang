@@ -25,7 +25,7 @@ cat_create_xuiz#:#MobileQuiz erstellen
 tabmenu_questions#:#Fragen
 tabmenu_properties#:#Eigenschaften
 tabmenu_showCurrentRound#:#Aktuelle Quizrunde
-tabmenu_show_result#:#Auswertung
+tabmenu_show_result#:#Runden & Auswertung
 tabmenu_edit_quiz#:#Fragen & Antworten
 tabmenu_info#:#Weitere Informationen
 
@@ -46,6 +46,8 @@ question_table_type#:#Fragetyp
 question_table_choices#:#Antwortmöglichkeiten
 question_table_edit#:#Editieren
 question_table_delete#:#Löschen
+question_table_up#:#Hoch
+question_table_down#:#Runter
 
 <!-- Choice table -->	
 choice_table_text#:#Antwort
@@ -84,7 +86,7 @@ results_out_of#:#mal
 results_table_head#:#Runde zur Auswertung auswählen:
 results_show_results#:#Auswertung ansehen
 results_round#:#Runde
-results_round_on#:#bis
+results_round_on#:#endete am
 results_round_at#:#um
 results_no_of_answers#:#Anzahl der Antworten
 results_end_date#:#Datum
@@ -101,9 +103,9 @@ current#:#Aktuell
 results_show_qr#:#QR-Code anzeigen
 
 <!-- Info -->
-info_text#:#Bitte geben Sie ein Feedback zu dem Quiz ab.
-info_mailto#:#<a href="mailto:mobilequiz@uni-mannheim.de?subject=Feedback">Feedback</a>
-info_instructions#:#Hier gehts zur Dokumentation<a href="http://www.uni-mannheim.de/rum/Portal/Dokumentationen/Lernplattform%20ILIAS/MobileQuiz/">Dokumentation</a>.
+info_text#:#Das MobileQuiz ist eine Freie Software die im Rahmen einer Studienarbeit entstanden ist und im Laufe der Jahre immer weitergeführt wurde. An der Entwlcklung waren unter anderm beteiligt: Stephan Schulz, Daniel Schön, Maximilan Wich, Nesli Taski, Dominik Campanella und Niranjan Basnet.
+info_mailto#:# Bei Fragen Fehlern und Anregungen können Sie sich an mobilequiz@uni-mannheim.de wenden.
+info_instructions#:#Eine kurze Dokumentation finden sie auf den Seiten der Universität Mannheim: <a href="http://www.uni-mannheim.de/rum/Portal/Dokumentationen/Lernplattform%20ILIAS/MobileQuiz/">Dokumentation</a>.
 
 <!-- Constants -->
 votes#:#Stimmen

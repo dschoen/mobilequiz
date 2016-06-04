@@ -16,26 +16,31 @@
         </select>
     </td>
     <td>
-        <a href="javascript:;" onclick="jQuery('#round{VAL_ROUND_ID}').toggle(300)">{VAL_SHOW_QR}</a> -
+        <a href="javascript:;" onclick="jQuery('#round{VAL_ROUND_ID}').toggle(300)">{VAL_SHOW_QR}</a>
+        |
         {VAL_DELETE_ROUND_HREF}
         {VAL_DELETE_ROUND_TXT}
-</a>
     </td>
 </tr>
 
+<!-- QR Code, it is there but hidden and openes when clicked on "Show QR-Code"  -->
 <tr class="{CSS_ROW}" id="round{VAL_ROUND_ID}" style="display: none;">
     <td colspan="5">
         <style>
-        #display_url a {
-        	font-size: 3em;
-        	color: #000;
-        }
+            #display_url {
+                text-align: center;
+            }
+            #display_url a {
+                font-size: 3em;
+                color: #000;
+            }
         </style>
-        <img
-        		src='{VAL_IMAGE_URL}'
-        		alt='QR-Code' /> <br> <br />
-        	<div id="display_url">
-        		<a href="{VAL_QUIZ_URL}">{VAL_QUIZ_URL}</a> <br />
-        	</div>
+        <div id="display_url">
+            <img
+                src='{VAL_IMAGE_URL}'
+                alt='QR-Code' /> 
+            <br />
+            <a href="{VAL_QUIZ_URL}">{VAL_QUIZ_URL}</a> <br />
+        </div>
     </td>
 </tr>

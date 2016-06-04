@@ -25,7 +25,7 @@ cat_create_xuiz#:#Create TraQ
 tabmenu_questions#:#Questions
 tabmenu_properties#:#Properties
 tabmenu_showCurrentRound#:#Current quiz round
-tabmenu_show_result#:#Show result
+tabmenu_show_result#:#Rounds & Result
 tabmenu_edit_quiz#:#Questions & Answers
 tabmenu_info#:#Further Information
 
@@ -46,6 +46,8 @@ question_table_type#:#Type
 question_table_choices#:#Choices
 question_table_edit#:#Edit
 question_table_delete#:#Delete
+question_table_up#:#Up
+question_table_down#:#Down
 
 <!-- Choice table -->	
 choice_table_text#:#Answer
@@ -84,7 +86,7 @@ results_out_of#:#times
 results_table_head#:#Chose round to show results:
 results_show_results#:#See result
 results_round#:#Round
-results_round_on#:#to
+results_round_on#:# ended
 results_round_at#:#at
 results_no_of_answers#:#Number of answers
 results_end_date#:#Date
@@ -101,8 +103,8 @@ current#:#Current
 results_show_qr#:#Show QR-Code
 
 <!-- Info -->
-info_text#:#Please give us a feedback for the MobileQuiz
-info_mailto#:#<a href="mailto:mobilequiz@uni-mannheim.de?subject=Feedback">Feedback</a>
+info_text#:#MobileQuiz is a free software developed by students and employes of the University of Mannheim.
+info_mailto#:#You can give us feedback and report bugs via mobilequiz@uni-mannheim.de.
 info_instructions#:#A german documentation can be found <a href="http://www.uni-mannheim.de/rum/Portal/Dokumentationen/Lernplattform%20ILIAS/MobileQuiz/">here</a>.
 
 <!-- Constants -->
@@ -115,7 +117,7 @@ offline#:#Offline
 yes#:#Yes
 no#:#No
 question_delete#:#delete
-question_edit#:#�ndern
+question_edit#:#edit
 question_table_head#:#Questions
 round_start#:#Start a new round
 round_stop#:#Stop current round

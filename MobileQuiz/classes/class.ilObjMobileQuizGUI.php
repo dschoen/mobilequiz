@@ -181,9 +181,9 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
 
     }
 
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////Properies/////////////////////////////////////////////////////////////
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //--------------------------------------------------------------------------
+    //                            Properties
+    //--------------------------------------------------------------------------
 
     /**
      * Edit Properties
@@ -248,17 +248,13 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
         $this->form->setFormAction($ilCtrl->getFormAction($this));
     }
 
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    //////////////////////////////////////// end Properies////////////////////////////////////////////////////////////
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////Info/////////////////////////////////////////////////////////////
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //-------------------------------------------------------------------------
+    //                            Info
+    //-------------------------------------------------------------------------
 
     /**
-     * Export
+     * Open Tab with information about the application.
      */
     function info(){
         global $tpl, $ilTabs;
@@ -280,10 +276,7 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
         $tpl->setContent($html);
     }
 
-
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    //////////////////////////////////////// end Info////////////////////////////////////////////////////////////
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //--------------------------------------------------------------------------
 
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -601,9 +594,9 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////  RESULTS - SHOW /////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////
+    //--------------------------------------------------------------------------
+    //                         RESULTS - SHOW
+    //--------------------------------------------------------------------------
 
     /**
      * Show results
@@ -619,6 +612,8 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
         $tpl->setContent($this->initResultsTable());
     }
 
+    //--------------------------------------------------------------------------
+    
     /**
      * Init Results Table
      */
@@ -716,8 +711,12 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
         return $tbl->getHTML();
     }
 
+    //--------------------------------------------------------------------------
+    
     /**
-     * Show round results. This calculates the results shown on the results page.
+     * Show round results. 
+     * This calculates the results shown on the results page and refers to the 
+     * diagrams.
      */
     public function showRoundResults(){
         global $ilAccess, $ilUser, $tpl, $ilTabs;
@@ -730,6 +729,8 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
         $answer_count = count($this->object->getDistinctAnswers($round_id));
         $questions = $this->object->getQuestions($this->object->getId());
 
+        
+        // For every question render the answers and add them
         if(!count($questions) == 0) {
             foreach ($questions as $question){
                 switch($question["type"]) {
@@ -749,6 +750,8 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
         $tpl->setContent($html);
     }
 
+    //--------------------------------------------------------------------------
+    
     /**
      * Get result data for multiple choice
      * This method us for a multiple choice question.
@@ -802,192 +805,8 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
         return $return;
     }
 
-
-
-    /**
-     * Show round results for multiple choice
-     * This method displays the results of a multiple choice question.
-     * It is used by showRoundResults().
-     * @param unknown_type $question
-     */
-    public function showRoundResultsForMultipleChoice($question, $answers, $answer_count, $round_id) {
-        $tbl_mc = new ilTable2GUI($this);
-        $tbl_mc->setId('question'.$question['question_id']);
-        $tbl_mc->setRowTemplate('tpl.result_row.html', 'Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz');
-
-        $datas = $this->getResultDataForMultipleChoice($question, $answers, $answer_count, $round_id);
-        // Very poor workaround for the needed API; but ILIAS doesn't have a good architecture for this thing
-        // TODO: Find a better way for the API
-        if ( $_GET['api'] == "result" && $question['question_id'] == $_GET['question_id'] ) {
-            include_once("./Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/frontend/api.chartData.php");
-        }
-
-
-        // Define Javacript for Highcharts Plugin
-        $highChartJS = array();
-        foreach( $datas as $data ) {
-            if ( $data["label"] != "" ) {
-                $highChartJS["data"] .= "{y: ".$data["data"]["y"].", color: colors[".$data["data"]["color"]."]},";
-                $highChartJS["label"] .= "'".nl2br(trim(addslashes($data["label"])))."',";
-                $highChartJS["labelColor"] .= " if ('".trim(addslashes($data["label"]))."' === this.value) {
-                                        return '<span style=\"color:".$data["colorName"]."\">' + this.value + '</span>';
-                                    } ";
-            }
-        }
-
-
-        // Chart erstellen
-        $tbl_mc->setData(
-            array(0 =>
-            array(
-                "round_id" => $round_id,
-                "id" => $question['question_id'],
-                "data" => substr($highChartJS["data"], 0, -1),
-                "label" => nl2br(trim(substr($highChartJS["label"], 0, -1))),
-                "label_color" => substr($highChartJS["labelColor"], 0, -1),
-                "title" => ilObjMobileQuizHelper::cutText(preg_replace('/^\s+|\n|\r|\s+$/m', '',strip_tags($question['text']))),
-                "count" => $answer_count,
-                "lang_votes" => $this->txt("votes"),
-                "lang_summary" => $this->txt("results_summary")
-            )
-            )
-        );
-
-        $correct_answers = $this->getCorrectAnswersCount($question['question_id'], $round_id);
-
-        // calculating percentage
-        $count1 = empty($answer_count)? 0 : ($correct_answers / $answer_count);
-        $count2 = $count1 * 100;
-        $percent = number_format($count2, 0);
-
-
-        // depending on whether the answer can be classified as correct or incorrect, the number of all right answers is shown. Otherwise this information is not provided.
-        if (($choice['correct_value'] != 2)){
-            return $tbl_mc->getHTML().$this->txt("results_round_correct").": ".$correct_answers." ".$this->txt("results_round_out_of")." ".$answer_count." (".$percent."%)<br></br><br></br>";
-        } else {
-            return $tbl_mc->getHTML()."<br></br><br></br>";
-        }
-
-    }
-
-    /**
-     * Show round results for numeric
-     * This method displays the results of a numeric question.
-     * It is used by showRoundResults().
-     * @param $question, $answers, $answer_count, $round_id
-     */
-// 	public function showRoundResultsForNumeric($question, $answers, $answer_count, $round_id) {
-
-// 		$tbl_mc = new ilTable2GUI($this);
-// 		$tbl_mc->setId('question'.$question['question_id']);
-// 		$tbl_mc->setRowTemplate('tpl.result_row.html', 'Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz');
-// 		$tbl_mc->setTitle($question['text']);
-// 		$tbl_mc->setLimit($_GET[$tbl_mc->getId()."_trows"], 20);
-
-
-// 		//Get the values of the numeric question
-// 		$answers	= $this->object->getAnswers($round_id);
-// 		$choices	= $this->object->getChoices($question['question_id']);
-
-// 		$numeric_values		= (explode(';',$choices[0]['text']));
-// 		$min				= $numeric_values[0];
-// 		$max				= $numeric_values[1];
-// 		$step				= $numeric_values[2];
-// 		$correct_number		= $numeric_values[3];
-// 		$tolerance_range	= $numeric_values[4];
-
-// 		//TODO diese Berechnungen sicher gegen negative eingaben machen
-// 		// calculate number of buckets
-// 		$numberOfBuckets = ($max-$min)/$step;
-// 		$bucketSize = $step;
-
-// 		// maximal number of buckets are displayed and bucketsize is adjusted
-// 		if ($numberOfBuckets > ilObjMobileQuizConstants::NUMERIC_MAX_NUMBER_OF_BUCKETS) {
-// 			$numberOfBuckets = ilObjMobileQuizConstants::NUMERIC_MAX_NUMBER_OF_BUCKETS;
-// 			$bucketSize = ($max-$min)/$numberOfBuckets;
-// 		}
-
-// 		// go through answers and put them into buckets
-// 		$data = Array();
-// 		// summarizing and sorting of the different answers => output: $data
-
-// 		if(!count($choices) == 0) {
-// 			foreach ($answers as $answer){
-// 					$bucket = ceil(($answer['value'] - $min) / $bucketSize);
-// 					$data[((string)$bucket)]++;
-// 				}
-// 			}
-
-// 		// a column for every bucket
-//  		for ($i = $min; $i <= $max; $i + $bucketSize) {
-// 			$tbl_mc->addColumn($i, 'text', '');
-// 		}
-
-// 		$result = Array();
-// // 		foreach ($data as $key => $value) {
-// // 			$row = Array();
-// // 			$row['text'] = $key;
-
-// // 			// calculating percentage
-// // 			$count1 = $value / $answer_count;
-// // 			$count2 = $count1 * 100;
-// // 			$percent = number_format($count2, 0);
-
-// // 			// display correct choices green, not correct red and neutral blue
-// // 			// if the last symbol is a semicolon, then the numeric question is neutral
-// // 			// this means there aren't correct or not correct answers.
-// // 			// empty() cannot be used, because zero can be a possible value.
-// // 			if (substr($choices[0]['text'], -2) == ';;'){
-// // 				// neutral
-// // 				$row['color'] = "#e8effe"; // blue
-// // 				$row['correctness'] = "neutral";
-// // 				$row['background'] = "neutral";
-// // 			} else if ($key == $correct_number ||
-// // 					(isset($tolerance_range) &&
-// // 							(($correct_number-$tolerance_range) <= $key) &&
-// // 							(($correct_number+$tolerance_range) >= $key))) {
-// // 				// correct
-// // 				// considering the correct number and the olerance range
-// // 				$row['color'] = "#ACE97C"; //green
-// // 				$row['correctness'] = "green";
-// // 				$row['background'] = "green";
-// // 			} else {
-// // 				// not correct
-// // 				$row['color'] = "#f16c6c"; //red
-// // 				$row['correctness'] = "red";
-// // 				$row['background'] = "red";
-// // 			}
-// // 			$row['percentdesign'] = str_replace(",",".",0.9*$percent);
-// // 			$row['percent'] = $percent;
-// // 			$row['count'] = $value." ".$this->txt("results_out_of");
-
-// // 			if($key != $correct_number) {
-// // 				$result[] = $row;
-// // 			} else {
-// // 				// correct answer short
-// // 				array_unshift($result, $row);
-// // 			}
-// // 		}
-
-// 		$result = $data;
-// 		$tbl_mc->setData($result);
-
-// // 		// depending on whether the answer can be classified as correct or incorrect, the number of all right answers is shown. Otherwise this information is not provided.
-// // 		if (($choices[0]['correct_value'] != 2)){
-// // 			// correct / not correct question
-// // 			$correct_answers = $this->getCorrectNumericAnswersCount($question['question_id'], $round_id);
-// // 			// calculating percentage
-// // 			$count1 = empty($answer_count)? 0 : ($count / $answer_count);
-// // 			$count2 = $count1 * 100;
-// // 			$percent = number_format($count2, 0);
-// // 			return $tbl_mc->getHTML().$this->txt("results_round_correct").": ".$correct_answers." ".$this->txt("results_round_out_of")." ".$answer_count." (".$percent."%)<br></br><br></br>";
-// // 		} else {
-// 			// neutral question
-// 			return $tbl_mc->getHTML()."<br></br><br></br>";
-// // 		}
-// 	}
-
-
+    //--------------------------------------------------------------------------
+    
     /**
      * Ger Result Data
      * This method displays the results of a numeric question.
@@ -1068,16 +887,93 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
         return $return;
     }
 
+    //--------------------------------------------------------------------------
+    
+    /**
+     * Show round results for multiple choice
+     * This method displays the results of a multiple choice question.
+     * It is used by showRoundResults().
+     * 
+     * @param unknown_type $question
+     */
+    public function showRoundResultsForMultipleChoice($question, $answers, $answer_count, $round_id) {
+        
+        $chart_tpl = new ilTemplate("tpl.result_row.html", '', '',
+            "Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz");
+
+        // Collect Data
+        $datas = $this->getResultDataForMultipleChoice($question, $answers, $answer_count, $round_id);
+        
+        // Structure the data for Chart displaying
+        $chart_data_string;
+        $chart_label_string;
+        $chart_color_string;
+        $chart_color_border_string;
+        foreach( $datas as $data ) {
+                $chart_data_string .= " ".$data['data']['y'].",";
+                $chart_label_string .= ' "'.ilObjMobileQuizHelper::polishText($data['label']).'",';
+                
+                switch ($data['colorName']){
+                    case 'blue':
+                        $chart_color_string .= " 'rgba(54, 162, 235, 0.2)',";
+                        $chart_color_border_string .= " 'rgba(54, 162, 235, 1)',";
+                        break;
+                    case 'green':
+                        $chart_color_string .= " 'rgba(75, 192, 192, 0.2)',";
+                        $chart_color_border_string .= " 'rgba(75, 192, 192, 1)',";
+                        break;
+                    case 'red':
+                        $chart_color_string .= " 'rgba(255, 99, 132, 0.2)',";
+                        $chart_color_border_string .= " 'rgba(255, 99, 132, 1)',";
+                        break;
+                }
+        }
+
+        $chart_tpl->setVariable("title", ilObjMobileQuizHelper::polishText($question['text']));
+        $chart_tpl->setVariable("question_id", $question['question_id']);
+        $chart_tpl->setVariable("data", $chart_data_string);
+        $chart_tpl->setVariable("labels", $chart_label_string);
+        $chart_tpl->setVariable("colors", $chart_color_string);
+        $chart_tpl->setVariable("colors_border", $chart_color_border_string);
+        
+        
+        // Get number of correct answers
+        $correct_answers = $this->getCorrectAnswersCount($question['question_id'], $round_id);
+
+        // calculating percentage
+        $count1 = empty($answer_count)? 0 : ($correct_answers / $answer_count);
+        $count2 = $count1 * 100;
+        $percent = number_format($count2, 0);
+           
+        // depending on whether the answer can be classified as correct or incorrect, the number of all right answers is shown. Otherwise this information is not provided.
+        if (($choice['correct_value'] != 2)){
+            $correct_answer_text = $this->txt("results_round_correct").": ".$correct_answers." ".$this->txt("results_round_out_of")." ".$answer_count." (".$percent."%)";
+        } else {
+            $correct_answer_text = "";
+        }
+        $chart_tpl->setVariable("correct_answer_text", $correct_answer_text);
+        
+        $html = $chart_tpl->get();
+
+        return $html;
+    }
+    
+    //--------------------------------------------------------------------------
+    
     /**
      * Show round results for single choice
      * This method displays the results of a single choice question.
      * It is used by showRoundResults().
+     * It does the same as Multiple Choice.
+     * 
      * @param unknown_type $question
      */
     public function showRoundResultsForSingleChoice($question, $answers, $answer_count, $round_id) {
         return $this->showRoundResultsForMultipleChoice($question, $answers, $answer_count, $round_id);
     }
 
+    //--------------------------------------------------------------------------
+    
     /**
      * Show round results for numeric
      * This method displays the results of a numeric question.
@@ -1147,6 +1043,8 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
         }
     }
 
+    //--------------------------------------------------------------------------
+    
     /**
      * Get correct answers count
      *
@@ -1351,6 +1249,8 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
 
     }
 
+    //--------------------------------------------------------------------------
+    
     /**
      * Display the questions in a table
      */
@@ -1377,13 +1277,12 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
         $tbl->addColumn($this->txt("question_table_text"), 'text', '60%');
         $tbl->addColumn($this->txt("question_table_type"), 'type', '10%');
         $tbl->addColumn($this->txt("question_table_choices"), 'choices', '8%');
-        $tbl->addColumn($this->txt("question_table_edit"), 'edit', '9%');
-        $tbl->addColumn($this->txt("question_table_delete"), 'delete', '9%');
-        $tbl->addColumn("","upArrow", '2%');
-        $tbl->addColumn("","downArrow", '2%');
+        $tbl->addColumn($this->txt("question_table_edit"), 'edit', '8%');
+        $tbl->addColumn($this->txt("question_table_delete"), 'delete', '8%');
+        $tbl->addColumn($this->txt("question_table_up"),"upArrow", '3%');
+        $tbl->addColumn($this->txt("question_table_down"),"downArrow", '3%');
         
-        //schreibe 2 Spalten
-        // jede spalte ein pfeil ( wie delete)
+        // write two columns with arrows
 
         // Get the questions from the database
         $questions = $this->object->getQuestions();

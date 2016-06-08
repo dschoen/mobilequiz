@@ -915,15 +915,15 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
                 
                 switch ($data['colorName']){
                     case 'blue':
-                        $chart_color_string .= " 'rgba(54, 162, 235, 0.2)',";
+                        $chart_color_string .= " 'rgba(54, 162, 235, 0.4)',";
                         $chart_color_border_string .= " 'rgba(54, 162, 235, 1)',";
                         break;
                     case 'green':
-                        $chart_color_string .= " 'rgba(75, 192, 192, 0.2)',";
+                        $chart_color_string .= " 'rgba(75, 192, 192, 0.4)',";
                         $chart_color_border_string .= " 'rgba(75, 192, 192, 1)',";
                         break;
                     case 'red':
-                        $chart_color_string .= " 'rgba(255, 99, 132, 0.2)',";
+                        $chart_color_string .= " 'rgba(255, 99, 132, 0.4)',";
                         $chart_color_border_string .= " 'rgba(255, 99, 132, 1)',";
                         break;
                 }

@@ -1,14 +1,35 @@
 <style>
     .chart-div{
-        width:1000px;
         border:1px solid #bbbbbb;
         background: #e9e9e9;
         margin-bottom: 20px;
         padding: 0px 5px 5px 5px;
     }
+    .chart-content{
+        
+    }
+    .chart-labels{
+        float:left;
+        width: 30%;
+        height:350px;
+        border: 1px solid #00FF00; 
+    }
+    .chart-label{
+        width:100%;
+        
+        text-align: right;
+        
+        vertical-align: middle;
+        
+        border: 1px solid #FFFF00; 
+    }
+    .chart-plot{
+        float:left;
+        width: 70%;
+        border: 1px solid #FF0000; 
+    }
     .chart-canvas{
-        width: 100%;
-        height: 300px !important;
+        height: 350px !important;
     }
 </style>
 
@@ -18,8 +39,15 @@
     </div>
     
     <!-- Canvas which is used to draw the chart-->
-    <canvas id="canvas-{question_id}" class="chart-canvas"></canvas>
-
+    <div class="chart-content">
+        <div id="chart-labels-{question_id}" class="chart-labels">
+            <!-- emtpy at the start -->
+        </div>
+        <div class="chart-plot">
+            <canvas id="canvas-{question_id}" class="chart-canvas"></canvas>
+        </div>
+    </div>
+    
     <div>
         {correct_answer_text}
     </div>
@@ -30,38 +58,76 @@
 <!-- JAVASCRIPT for rendering the charts -->
 <script src="./Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/lib/Chart.js"></script>
 <script>
-var ctx = document.getElementById("canvas-{question_id}");
-var myChart = new Chart(ctx, {
-    type: 'horizontalBar',
-    data: {
-        labels: [{labels}],
-        datasets: [{
-            label: '# of Votes',
-            data: [{data}],
-            backgroundColor: [{colors}],
-            borderColor: [{colors_border}],
-            borderWidth: 1
-        }]
-    },
-    options: {
-        scales: {
-            xAxes: [{
-                ticks: {
-                    beginAtZero:true,
-                    min: 0,
-                    stepSize: 1,
-                }
+$( document ).ready(function() {
+    console.log( "Ready to plot." );
+    
+    var plot = document.getElementById("canvas-{question_id}");
+    var myChart = new Chart(plot, {
+        type: 'horizontalBar',
+        data: {
+            labels: [{labels}],
+            datasets: [{
+                label: 'Number of Votes',
+                data: [{data}],
+                backgroundColor: [{colors}],
+                borderColor: [{colors_border}],
+                borderWidth: 1
             }]
         },
-        title: {
-            display: false,
-            text: '{title}',
-            fontSize: 16,
+        options: {
+            scales: {
+                xAxes: [{
+                    ticks: {
+                        beginAtZero:true,
+                        min: 0,
+                        stepSize: 1,
+                        fontSize: 16,
+                    }
+                }],
+                yAxes: [{
+                    categoryPercentage: 1,
+                    barPercentage: 0.5,
+                    display: false
+                }]
+            },
+            title: {
+                display: false,
+                text: '{title}',
+                fontSize: 16,
+            },
+            legend: {
+                display: false,
+            },
         },
-        legend: {
-            display: false,
-        },
-        barPercentage: 0.9,
+        responsive: true,
+        maintainAspectRatio: false,
+        
+    });
+    
+        
+    writeLabels("chart-labels-{question_id}");
+    
+    // -----------------------------------------------------------------------
+    
+    function writeLabels(div){
+        
+        console.log( "div: " + div );
+        console.log( "Labels: " + [{labels}] );
+        
+        
+        var labels = [{labels}];
+        //var labels = ["labels","asd", "a7dasd 7sad"];
+        
+        var chart_labels = div+"labels";
+        
+        for (i = 0; i < labels.length; i++) { 
+            $("#"+div).append('<div class="chart-label '+chart_labels+'">'+labels[i]+'</div>');
+            
+            var height = 350/labels.length;
+            
+            $("."+chart_labels).height(height+"px");
+        }
     }
+    
 });
 </script>

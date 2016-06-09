@@ -1,6 +1,9 @@
 <?php
 class ilObjMobileQuizHelper {
 	
+    
+        
+    
     /**
      * Cut a string at given lenght and adds "..."
      * 
@@ -20,7 +23,24 @@ class ilObjMobileQuizHelper {
      * @param String $text
      */
     public function polishText($text) {
-        $text = str_replace(array("\r","\n"), "<br />", $text);
+                
+        include_once './Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/lib/markdown/Markdown.inc.php';
+        
+        // remove critical charackters
+        $text = htmlspecialchars($text);
+        
+        // Create html line breaks
+        //$text = str_replace(array("\r","\n"), "<br />", $text);
+        $text = nl2br($text);
+        
+        
+        
+        
+        // Render Markdown
+        $text = Markdown::defaultTransform($text);
+        
+        // remove all line breaks
+        $text = str_replace(array("\r","\n"), "", $text);
         
         return $text;                
     }

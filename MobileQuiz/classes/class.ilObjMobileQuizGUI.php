@@ -1,9 +1,9 @@
 <?php
 /*
- +-----------------------------------------------------------------------------+
-| MobileQuiz open source                                                      |
 +-----------------------------------------------------------------------------+
-| Copyright 2011 Stephan Schulz                                               |
+| MobileQuiz ILIAS plug-in for audience feedback with mobile devices          |
++-----------------------------------------------------------------------------+
+| Copyright 2016 Daniel Schoen                                                |
 |                                                                             |
 | MobileQuiz is free software: you can redistribute it and/or modify          |
 | it under the terms of the GNU General Public License as published by        |
@@ -137,7 +137,7 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
      * After object has been created -> jump to this command
      */
     function getAfterCreationCmd(){
-        return "editProperties";
+        return "editQuiz";
     }
 
     /**
@@ -753,143 +753,6 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
     //--------------------------------------------------------------------------
     
     /**
-     * Get result data for multiple choice
-     * This method us for a multiple choice question.
-     * It is used by showRoundResultsForMultipleChoice().
-     * @param unknown_type $question
-     */
-    public function getResultDataForMultipleChoice($question, $answers, $answer_count, $round_id) {
-        // Get the questions' choices from the database
-        $choices = $this->object->getChoices($question['question_id']);
-        $highChartJS = array("labels" => "", "data" => ""); // JS-Daten für Highchart Plugin
-
-        if(!count($choices) == 0) {
-            $return = array();
-            foreach($choices as $choice){
-                $count = 0;
-                foreach ($answers as $answer){
-                    if (($answer['choice_id'] == $choice['choice_id'])&&($answer['value'] != 0)){
-                        $count++;
-                    }
-                }
-
-                // calculating percentage
-                $count1 = empty($answer_count)? 0 : ($count / $answer_count);
-                $count2 = $count1 * 100;
-                $percent = number_format($count2, 0);
-
-                // display correct choices green and others red
-                // TODO: adjust for other question types
-                $GLOBALS['ilLog']->write(__METHO__.': MobileQuiz, correct_value: '.$choice['correct_value']);
-                $GLOBALS['ilLog']->write(__METHO__.': MobileQuiz, type: '.$question['type']);
-
-                if ($choice['correct_value'] == 2){ // neutral
-                    $choice['color'] = "0"; // blue
-                    $choice['colorName'] = "blue"; // blue
-                } else if ($choice['correct_value'] == 0){
-                    $choice['color'] = "1"; // red
-                    $choice['colorName'] = "red"; // red
-                } else {
-                    $choice['color'] = "2"; // green
-                    $choice['colorName'] = "green"; // red
-                }
-                //$choice['percentdesign'] = str_replace(",",".",0.9*$percent);
-                //$choice['percent'] = $percent;
-                $return[] = array(
-                    "data" => array("y" => $count, "color" => $choice["color"]),
-                    "label" => $choice["text"],
-                    "colorName" => $choice["colorName"]
-                );
-            }
-        }
-        return $return;
-    }
-
-    //--------------------------------------------------------------------------
-    
-    /**
-     * Ger Result Data
-     * This method displays the results of a numeric question.
-     * It is used by showRoundResultsForNumeric().
-     * @param $question, $answers, $answer_count, $round_id
-     */
-    public function getResultDataForNumeric($question, $answers, $answer_count, $round_id) {
-        // Get the questions' choice from the database
-        $answers	= $this->object->getAnswers($round_id);
-        $choices	= $this->object->getChoices($question['question_id']);
-
-        $numeric_values		= (explode(';',$choices[0]['text']));
-        $correct_number		= $numeric_values[3];
-        $tolerance_range	= $numeric_values[4];
-
-        // empty array for the datas
-        $data = Array();
-        // summarizing and sorting of the different answers => output: $data
-        if(!count($choices) == 0) {
-            foreach ($answers as $answer){
-                if ($answer['choice_id'] == $choices[0]['choice_id']){
-                    // collects all answers and counts them
-                    $data[((string)$answer['value'])]++;
-                }
-            }
-            // if nobody chose the right answer, we must add it.
-            if(!array_key_exists((String)$correct_number, $data)) {
-                $data["||+||".(String)$correct_number] = 0;
-            }
-            ksort($data);
-        }
-
-        $return = array();
-        foreach ($data as $key => $value) {
-            $row = Array();
-            $row['text'] = str_replace("||+||", "", $key);
-
-            // calculating percentage
-            if ( $answer_count != 0 ) $count1 = $value / $answer_count;
-            $count2 = $count1 * 100;
-            $percent = number_format($count2, 0);
-
-            // display correct choices green, not correct red and neutral blue
-            // if the last symbol is a semicolon, then the numeric question is neutral
-            // this means there aren't correct or not correct answers.
-            // empty() cannot be used, because zero can be a possible value.
-            if (substr($choices[0]['text'], -2) == ';;'){
-                // neutral
-                $row['color'] = "0"; // blue
-            } else if ($key == $correct_number ||
-                (isset($tolerance_range) &&
-                    (($correct_number-$tolerance_range) <= $key) &&
-                    (($correct_number+$tolerance_range) >= $key))) {
-                // correct
-                // considering the correct number and the olerance range
-                $row['color'] = "2"; //green
-            } else {
-                // not correct
-                $row['color'] = "1"; //red
-            }
-            $row['percentdesign'] = str_replace(",",".",0.9*$percent);
-            $row['percent'] = $percent;
-            $row['count'] = $value." ".$this->txt("results_out_of");
-
-            if($key != $correct_number) {
-                $result[] = $row;
-            } else {
-                // correct answer short
-                array_unshift($result, $row);
-            }
-
-            $return[] = array(
-                "data" => array("y" => $value, "color" => $row["color"]),
-                "label" => addslashes($row["text"])
-            );
-        }
-
-        return $return;
-    }
-
-    //--------------------------------------------------------------------------
-    
-    /**
      * Show round results for multiple choice
      * This method displays the results of a multiple choice question.
      * It is used by showRoundResults().
@@ -960,6 +823,198 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
     
     //--------------------------------------------------------------------------
     
+    public function showRoundResultsForNumeric($question, $answers, $answer_count, $round_id) {
+
+        $chart_tpl = new ilTemplate("tpl.result_numeric.html", '', '',
+            "Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz");
+        
+        // Get Data for Chart
+        $datas = $this->getResultDataForNumeric($question, $answers, $answer_count, $round_id);
+
+        // Get the questions parameters from the database
+        $parameters	= $this->object->getChoices($question['question_id']);
+        $numeric_values     = (explode(';',$parameters[0]['text']));
+        $numeric_min        = $numeric_values[0];
+        $numeric_max        = $numeric_values[1];
+        $numeric_step       = $numeric_values[2];
+        $numeric_correct    = $numeric_values[3];
+        $numeric_tolerance  = $numeric_values[4];
+
+        // Structure the data for Chart displaying
+        $chart_data_string = "";
+        $chart_label_string = "";
+        $chart_color_string;
+        $chart_color_border_string;
+        foreach( $datas as $data ) {
+                
+            // Skip loop if data is empty
+            if (empty($data)) {
+                continue;
+            }
+            
+            $data_value = $data['data'];
+
+            $chart_data_string .= $data_value.", ";
+
+            // No need for polishing as labes are calculated integers
+            $chart_label_string .= '"'.$data['label'].'", ';
+
+            switch ($data['colorName']){
+                case 'blue':
+                    $chart_color_string .= " 'rgba(54, 162, 235, 0.4)',";
+                    $chart_color_border_string .= " 'rgba(54, 162, 235, 1)',";
+                    break;
+                case 'green':
+                    $chart_color_string .= " 'rgba(75, 192, 192, 0.4)',";
+                    $chart_color_border_string .= " 'rgba(75, 192, 192, 1)',";
+                    break;
+                case 'red':
+                    $chart_color_string .= " 'rgba(255, 99, 132, 0.4)',";
+                    $chart_color_border_string .= " 'rgba(255, 99, 132, 1)',";
+                    break;
+            }
+        }
+
+        $chart_tpl->setVariable("title", ilObjMobileQuizHelper::polishText($question['text']));
+        $chart_tpl->setVariable("question_id", $question['question_id']);
+        $chart_tpl->setVariable("data", $chart_data_string);
+        $chart_tpl->setVariable("labels", $chart_label_string);
+        $chart_tpl->setVariable("colors", $chart_color_string);
+        $chart_tpl->setVariable("colors_border", $chart_color_border_string);
+        
+        // Correct answer Text
+        $correct_answer_text = "-";
+        if (!empty($numeric_correct)) {
+        
+            // Get number of correct answers
+            $correct_answers = $this->getCorrectAnswersCount($question['question_id'], $round_id);
+
+            // calculating percentage
+            $count1 = empty($answer_count)? 0 : ($correct_answers / $answer_count);
+            $count2 = $count1 * 100;
+            $percent = number_format($count2, 0);
+
+            // depending on whether the answer can be classified as correct or incorrect, the number of all right answers is shown. Otherwise this information is not provided.
+            if (($choice['correct_value'] != 2)){
+                $correct_answer_text = $this->txt("results_round_correct").": ".$correct_answers." ".$this->txt("results_round_out_of")." ".$answer_count." (".$percent."%)";
+            }
+        }
+        $chart_tpl->setVariable("correct_answer_text", $correct_answer_text);
+        
+        $html = $chart_tpl->get();
+        return $html;
+    }
+    
+    //--------------------------------------------------------------------------
+    
+    /**
+     * Get result data for multiple choice
+     * This method us for a multiple choice question.
+     * It is used by showRoundResultsForMultipleChoice().
+     * @param unknown_type $question
+     */
+    public function getResultDataForMultipleChoice($question, $answers, $answer_count, $round_id) {
+        // Get the questions' choices from the database
+        $choices = $this->object->getChoices($question['question_id']);
+        $highChartJS = array("labels" => "", "data" => ""); // JS-Daten für Highchart Plugin
+
+        if(!count($choices) == 0) {
+            $return = array();
+            foreach($choices as $choice){
+                $count = 0;
+                foreach ($answers as $answer){
+                    if (($answer['choice_id'] == $choice['choice_id'])&&($answer['value'] != 0)){
+                        $count++;
+                    }
+                }
+
+                if ($choice['correct_value'] == 2){ // neutral
+                    $choice['colorName'] = "blue";
+                } else if ($choice['correct_value'] == 0){
+                    $choice['colorName'] = "red";
+                } else {
+                    $choice['colorName'] = "green";
+                }
+                $return[] = array(
+                    "data" => array("y" => $count, "color" => $choice["color"]),
+                    "label" => $choice["text"],
+                    "colorName" => $choice["colorName"]
+                );
+            }
+        }
+        return $return;
+    }
+
+    //--------------------------------------------------------------------------
+    
+    /**
+     * Get Result Data
+     * This method displays the results of a numeric question.
+     * It is used by showRoundResultsForNumeric().
+     * @param $question, $answers, $answer_count, $round_id
+     */
+    public function getResultDataForNumeric($question, $answers, $answer_count, $round_id) {
+        // Get the questions' choice from the database
+        $answers	= $this->object->getAnswers($round_id);
+        $parameters	= $this->object->getChoices($question['question_id']);
+
+        $numeric_values     = (explode(';',$parameters[0]['text']));
+        $numeric_min        = $numeric_values[0];
+        $numeric_max        = $numeric_values[1];
+        $numeric_step       = $numeric_values[2];
+        $numeric_correct    = $numeric_values[3];
+        $numeric_tolerance  = $numeric_values[4];
+
+        // empty array for the datas
+        $data = Array();
+            
+        // create the answer buckets
+        for ($i = (float)$numeric_min; $i <= (float)$numeric_max; $i = $i+(float)$numeric_step) {    
+            $data[(String)$i] = 0; 
+        }
+
+        // summarizing and sorting of the different answers => output: $data
+        if(!count($parameters) == 0) {
+            foreach ($answers as $answer){
+                if ($answer['choice_id'] == $parameters[0]['choice_id']){
+                    // collects all answers and counts them
+                    $data[((string)$answer['value'])]++;
+                }
+            }            
+        }
+        
+        // sort all answers        
+        ksort($data);
+        
+        // create retun array
+        foreach ($data as $key => $value) {
+ 
+            $label = $key;
+
+            // display correct choices green, not correct red and neutral blue
+            if (!is_numeric($numeric_correct)){
+                // neutral
+                $color = "blue"; // blue
+            } else if ($key == $numeric_correct ||
+                (isset($numeric_tolerance) &&
+                    (($numeric_correct-$numeric_tolerance) <= $key) &&
+                    (($numeric_correct+$numeric_tolerance) >= $key))) {
+                $color = "green"; //green
+            } else {
+                $color = "red"; //red
+            }
+
+            $return[] = array(
+                "data"      => $value,
+                "label"     => $label,
+                "colorName" => $color,
+            );
+        }
+        return $return;
+    }
+    
+    //--------------------------------------------------------------------------
+    
     /**
      * Show round results for single choice
      * This method displays the results of a single choice question.
@@ -974,76 +1029,6 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
 
     //--------------------------------------------------------------------------
     
-    /**
-     * Show round results for numeric
-     * This method displays the results of a numeric question.
-     * It is used by showRoundResults().
-     * @param $question, $answers, $answer_count, $round_id
-     */
-    public function showRoundResultsForNumeric($question, $answers, $answer_count, $round_id) {
-
-        $tbl_mc = new ilTable2GUI($this);
-        $tbl_mc->setId('question'.$question['question_id']);
-        $tbl_mc->setRowTemplate('tpl.result_numeric.html', 'Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz');
-        $datas = $this->getResultDataForNumeric($question, $answers, $answer_count, $round_id);
-
-        // Very poor workaround for the needed API; but ILIAS doesn't have a good architecture for this thing
-        // TODO: Find a better way for the API
-        if ( $_GET['api'] == "result" && $question['question_id'] == $_GET['question_id'] ) {
-            include_once("./Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/frontend/api.chartData.php");
-        }
-        // Get the questions' choice from the database
-        $answers	= $this->object->getAnswers($round_id);
-        $choices	= $this->object->getChoices($question['question_id']);
-
-        $numeric_values		= (explode(';',$choices[0]['text']));
-        $correct_number		= $numeric_values[3];
-        $tolerance_range	= $numeric_values[4];
-
-
-        // Define Javacript for Highcharts Plugin
-        $highChartJS = array();
-        foreach( $datas as $data ) {
-            if ( $data["label"] != "" ) {
-                $highChartJS["data"] .= "{y: ".$data["data"]["y"].", color: colors[".$data["data"]["color"]."]},";
-                $highChartJS["label"] .= "'".nl2br(trim(addslashes($data["label"])))."',";
-            }
-        }
-
-        // Chart erstellen
-        $tbl_mc->setData(
-            array(0 =>
-            array(
-                "round_id" => $round_id,
-                "id" => $question['question_id'],
-                "data" => substr($highChartJS["data"], 0, -1),
-                "label" => nl2br(trim(substr($highChartJS["label"], 0, -1))),
-                "title" => ilObjMobileQuizHelper::cutText(preg_replace('/^\s+|\n|\r|\s+$/m', '',strip_tags($question['text']))),
-                "count" => $answer_count,
-                "lang_votes" => $this->txt("votes"),
-                "lang_summary" => $this->txt("results_summary")
-            )
-            )
-        );
-
-        // depending on whether the answer can be classified as correct or incorrect, the number of all right answers is shown. Otherwise this information is not provided.
-        if (($choices[0]['correct_value'] != 2)){
-            // correct / not correct question
-            //$correct_answers = $this->getCorrectNumericAnswersCount($question['question_id'], $round_id);
-            $correct_answers = "a";
-
-            // calculating percentage
-            $count1 = empty($answer_count)? 0 : ($count / $answer_count);
-            $count2 = $count1 * 100;
-            $percent = number_format($count2, 0);
-            //return $tbl_mc->getHTML().$this->txt("results_round_correct").": ".$correct_answers." ".$this->txt("results_round_out_of")." ".$answer_count." (".$percent."%)<br></br><br></br>";
-        } else {
-            // neutral question
-            return $tbl_mc->getHTML()."<br></br><br></br>";
-        }
-    }
-
-    //--------------------------------------------------------------------------
     
     /**
      * Get correct answers count
@@ -1135,9 +1120,6 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
     }
 
 
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    //////////////////////////////////////// end Rounds    ///////////////////////////////////////////////////////////
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
      * Edit Quiz

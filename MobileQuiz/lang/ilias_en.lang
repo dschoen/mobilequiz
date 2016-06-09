@@ -74,16 +74,16 @@ choice_obj_create_failure#:#A problem appears. Choice was not added.
 
 <!-- Show Round Results -->
 results_status#:#Status
-results_status_passive#:#Directfeedback
+results_status_passive#:#Direct Feedback
 results_status_active#:#Active
 results_status_inactive#:#Inactive
 results_status_activate#:#Activate
 results_status_deactivate#:#Deactivate
-results_round_options#:#Options
+results_round_options#:#Actions
 results_choice#:#Choice
 results_chart#:#Times chosen
 results_out_of#:#times
-results_table_head#:#Chose round to show results:
+results_table_head#:#Choose round to show results:
 results_show_results#:#See result
 results_round#:#Round
 results_round_on#:# ended
@@ -91,7 +91,7 @@ results_round_at#:#at
 results_no_of_answers#:#Number of answers
 results_end_date#:#Date
 results_start_date#:#Startdate
-results_round_delete#:#delete
+results_round_delete#:#Delete
 results_round_correct#:#Correct
 results_round_out_of#:#out of
 results_round_status_change_success#:#The status of the round is successful changed.

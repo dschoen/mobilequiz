@@ -75,12 +75,12 @@ choice_obj_create_failure#:#Es trat ein Fehler auf. Die Antwortmöglichkeit wurd
 <!-- Show Round Results -->
 results_choice#:#Antwort
 results_status#:#Status
-results_status_passive#:#Direktfeedback
+results_status_passive#:#Direktes Feedback
 results_status_active#:#Aktiv
 results_status_inactive#:#Inaktiv
 results_status_activate#:#Aktivieren
 results_status_deactivate#:#Deaktivieren
-results_round_options#:#Optionen
+results_round_options#:#Aktionen
 results_chart#:#Wie oft ausgewählt
 results_out_of#:#mal
 results_table_head#:#Runde zur Auswertung auswählen:

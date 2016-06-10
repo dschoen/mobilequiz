@@ -63,53 +63,96 @@
 <!-- JAVASCRIPT for rendering the charts -->
 <script src="./Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/lib/Chart.js"></script>
 <script>
+    
 $( document ).ready(function() {
     
-    var plot = document.getElementById("canvas-{question_id}");
-    var myChart = new Chart(plot, {
-        type: 'horizontalBar',
-        data: {
-            labels: [{labels}],
-            datasets: [{
-                label: 'Number of Votes',
-                data: [{data}],
-                backgroundColor: [{colors}],
-                borderColor: [{colors_border}],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                xAxes: [{
-                    ticks: {
-                        beginAtZero:true,
-                        min: 0,
-                        stepSize: 1,
-                        fontSize: 16,
-                    }
-                }],
-                yAxes: [{
-                    categoryPercentage: 1,
-                    barPercentage: 0.5,
-                    display: false
-                }]
-            },
-            title: {
-                display: false,
-                text: '{title}',
-                fontSize: 16,
-            },
-            legend: {
-                display: false,
-            },
-        },
-        responsive: true,
-        maintainAspectRatio: false,
-        
-    });
+    var url = "{ajax_interface_url}";
+    
+    var data = [{data}];    
+    var myChart = plotTheChart(data);
     
     // write the labels seperate, as the chartist labels are not so good 
     writeLabels("chart-labels-{question_id}");
+    
+    // set timer for ajax request
+    setInterval(function() {
+        
+        // ajax call
+        $.ajax({
+          type: "POST",
+          dataType: "json",
+          url: url,
+          data: {
+                'question_id':"{question_id}",
+                'round_id':"{round_id}",
+                'action':"updateChoice",
+                'secret':"1238dhsh27egkdad8w",
+            },
+          success: function(response){
+              console.log("AJAX Request sucess: "+ response);
+               
+              // update chart
+              myChart.data.datasets[0].data = response;
+              myChart.update();
+              
+            },
+          error: function(){
+              console.log("AJAX Request failed: "+url);
+          },
+        });
+    
+    }, 5000); //5 seconds
+    
+    
+    // -----------------------------------------------------------------------
+    // -----------------------------------------------------------------------
+    
+    function plotTheChart(data){
+        
+        var plot = document.getElementById("canvas-{question_id}");
+        var myChart = new Chart(plot, {
+            type: 'horizontalBar',
+            data: {
+                labels: [{labels}],
+                datasets: [{
+                    label: 'Number of Votes',
+                    data: data,
+                    backgroundColor: [{colors}],
+                    borderColor: [{colors_border}],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    xAxes: [{
+                        ticks: {
+                            beginAtZero:true,
+                            min: 0,
+                            stepSize: 1,
+                            fontSize: 16,
+                        }
+                    }],
+                    yAxes: [{
+                        categoryPercentage: 1,
+                        barPercentage: 0.5,
+                        display: false
+                    }]
+                },
+                title: {
+                    display: false,
+                    text: '{title}',
+                    fontSize: 16,
+                },
+                legend: {
+                    display: false,
+                },
+            },
+            responsive: true,
+            maintainAspectRatio: false,
+        });
+        
+        return myChart;
+    }
     
     // -----------------------------------------------------------------------
     
@@ -140,6 +183,8 @@ $( document ).ready(function() {
             $("#"+"chart-label-text-"+div+"-"+i).css("margin-top", margin_top);
         }
     }
+    
+    
     
 });
 </script>

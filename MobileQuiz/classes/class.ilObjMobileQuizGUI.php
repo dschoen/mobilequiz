@@ -322,20 +322,17 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
         while ($rec = $ilDB->fetchAssoc($set)){
             if ( !empty( $rec["tiny_url"] ) ) return $rec["tiny_url"]; else {
                 // get hostname and check if proxy is used
-				$hostname = (!empty($_SERVER['HTTP_X_FORWARDED_HOST'])) ? $_SERVER['HTTP_X_FORWARDED_HOST'] : $_SERVER['SERVER_NAME'];
+		$hostname = (!empty($_SERVER['HTTP_X_FORWARDED_HOST'])) ? $_SERVER['HTTP_X_FORWARDED_HOST'] : $_SERVER['SERVER_NAME'];
                 $url = (!empty($_SERVER['HTTPS'])) ? "https://".$hostname.$_SERVER['REQUEST_URI'] : "http://".$hostname.$_SERVER['REQUEST_URI'];
 
                 // please change this if you move your frontend installation out of your ILIAS plugin directory:
                 $frontend_url = "Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/frontend/";
-                // TODO: Workaround for shorten
 
                 // crafting quiz url:
                 $tmp = explode('/',$url);
                 $dmy = array_pop($tmp);
                 $server_url = (implode('/',$tmp) . '/');
                 $quiz_url = $server_url.$frontend_url."index.php?quiz_id=".$quiz_id."&round_id=".$round_id;
-                //$quiz_url = $server_url.$frontend_url."quiz_id=".$quiz_id."&round_id=".$round_id;
-                // TODO: Workaround for shorten
 
                 // short url
                 if (SHORTENER) {
@@ -782,8 +779,8 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
                         $chart_color_border_string .= " 'rgba(54, 162, 235, 1)',";
                         break;
                     case 'green':
-                        $chart_color_string .= " 'rgba(75, 192, 192, 0.4)',";
-                        $chart_color_border_string .= " 'rgba(75, 192, 192, 1)',";
+                        $chart_color_string .= " 'rgba(75, 192, 75, 0.4)',";
+                        $chart_color_border_string .= " 'rgba(75, 192, 75, 1)',";
                         break;
                     case 'red':
                         $chart_color_string .= " 'rgba(255, 99, 132, 0.4)',";
@@ -794,10 +791,12 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
 
         $chart_tpl->setVariable("title", ilObjMobileQuizHelper::polishText($question['text']));
         $chart_tpl->setVariable("question_id", $question['question_id']);
+        $chart_tpl->setVariable("round_id", $round_id);
         $chart_tpl->setVariable("data", $chart_data_string);
         $chart_tpl->setVariable("labels", $chart_label_string);
         $chart_tpl->setVariable("colors", $chart_color_string);
         $chart_tpl->setVariable("colors_border", $chart_color_border_string);
+        $chart_tpl->setVariable("ajax_interface_url", ilObjMobileQuizHelper::getPluginUrl()."interface/liveChartUpdate.php");
         
         
         // Get number of correct answers
@@ -865,8 +864,8 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
                     $chart_color_border_string .= " 'rgba(54, 162, 235, 1)',";
                     break;
                 case 'green':
-                    $chart_color_string .= " 'rgba(75, 192, 192, 0.4)',";
-                    $chart_color_border_string .= " 'rgba(75, 192, 192, 1)',";
+                    $chart_color_string .= " 'rgba(75, 192, 75, 0.4)',";
+                    $chart_color_border_string .= " 'rgba(75, 192, 75, 1)',";
                     break;
                 case 'red':
                     $chart_color_string .= " 'rgba(255, 99, 132, 0.4)',";
@@ -877,10 +876,12 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
 
         $chart_tpl->setVariable("title", ilObjMobileQuizHelper::polishText($question['text']));
         $chart_tpl->setVariable("question_id", $question['question_id']);
+        $chart_tpl->setVariable("round_id", $round_id);
         $chart_tpl->setVariable("data", $chart_data_string);
         $chart_tpl->setVariable("labels", $chart_label_string);
         $chart_tpl->setVariable("colors", $chart_color_string);
         $chart_tpl->setVariable("colors_border", $chart_color_border_string);
+        $chart_tpl->setVariable("ajax_interface_url", ilObjMobileQuizHelper::getPluginUrl()."interface/liveChartUpdate.php");
         
         // Correct answer Text
         $correct_answer_text = "-";
@@ -916,7 +917,6 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
     public function getResultDataForMultipleChoice($question, $answers, $answer_count, $round_id) {
         // Get the questions' choices from the database
         $choices = $this->object->getChoices($question['question_id']);
-        $highChartJS = array("labels" => "", "data" => ""); // JS-Daten für Highchart Plugin
 
         if(!count($choices) == 0) {
             $return = array();

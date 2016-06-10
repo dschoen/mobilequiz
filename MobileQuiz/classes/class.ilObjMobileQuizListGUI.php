@@ -69,10 +69,10 @@ class ilObjMobileQuizListGUI extends ilObjectPluginListGUI{
     /**
      * Get item properties
      *
-     * @return	array		array of property arrays:
-     *						"alert" (boolean) => display as an alert property (usually in red)
-     *						"property" (string) => property name
-     *						"value" (string) => property value
+     * @return	array	array of property arrays:
+     *          "alert" (boolean) => display as an alert property (usually in red)
+     *		"property" (string) => property name
+     *		"value" (string) => property value
      */
     function getProperties(){
             global $lng, $ilUser;

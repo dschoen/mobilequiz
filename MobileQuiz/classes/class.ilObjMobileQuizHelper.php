@@ -60,6 +60,34 @@ class ilObjMobileQuizHelper {
         
         return $text;                
     }
+    
+    // -------------------------------------------------------------------------
+    
+    /**
+     * Returns the global URL of the plugin.
+     * Ends with .../MobileQuiz/
+     * 
+     * @return string
+     */
+    public function getPluginUrl(){
+        
+        $protocol = (!empty($_SERVER['HTTPS'])) ? "https://" : "http://";
+        $hostname = (!empty($_SERVER['HTTP_X_FORWARDED_HOST'])) ? $_SERVER['HTTP_X_FORWARDED_HOST'] : $_SERVER['SERVER_NAME'];
+         
+        $path = $_SERVER['REQUEST_URI'];
+        $pos_to_cut = strrpos($path, '/');
+        $path = substr($path,0,$pos_to_cut+1);
+        
+        // crafting quiz url:
+        $tmp = explode('/',$url);
+        $server_url = (implode('/',$tmp) . '/');
+        
+        // please change this if you move your frontend installation out of your ILIAS plugin directory:
+        $plugin_path = "Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/";
+
+         
+        return $protocol.$hostname.$path.$plugin_path;
+    }
 }
 
 ?>

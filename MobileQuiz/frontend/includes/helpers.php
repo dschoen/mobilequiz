@@ -104,4 +104,24 @@ function isRoundActive($round_id){
 	}
 }
 
+// -----------------------------------------------------------------------------
+
+function polishText($text) {
+
+    // remove critical charackters
+    $text = htmlspecialchars($text);
+
+    // Create html line breaks
+    //$text = str_replace(array("\r","\n"), "<br />", $text);
+    $text = nl2br($text);
+
+    // Render Markdown
+    $text = Markdown::defaultTransform($text);
+
+    // remove all line breaks
+    $text = str_replace(array("\r","\n"), "", $text);
+
+    return $text;                
+}
+
 ?>

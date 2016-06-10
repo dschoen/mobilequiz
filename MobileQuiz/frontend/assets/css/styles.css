@@ -1,3 +1,16 @@
+/* center the content on big screens */
+.ui-content{
+    max-width: 1000px;
+    
+    position: relative;
+    top:0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    margin: auto;
+}
+
 /* This is because if not, the pictures are taken as thumbnails. */
 .ui-li-thumb {
 	max-width: 500px;
@@ -53,4 +66,19 @@
 .ui-field-contain
 .ui-controlgroup-controls{
     width: 100%;
+}
+
+.question img {
+    max-height: 300px;
+    max-width: 400px;
+}
+
+.ui-listview li p {
+    font-size: 1.0em;
+    font-weight: normal;
+    margin: 0 0;
+}
+
+label.ui-btn {
+    font-weight: normal;
 }

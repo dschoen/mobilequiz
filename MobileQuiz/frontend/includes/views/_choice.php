@@ -15,17 +15,17 @@ if ( !empty( $result ) ) {
         $color = "green";
     }
     if ( $correct_value == "1" && $result[$choice->choice_id] == "0" ) {
-    	// Richtig aber nicht gewählt
+    	// Richtig aber nicht gewÃ¤hlt
         $symbole = "correct";
         $color = "";
     }
     if ( $correct_value == "0" && $result[$choice->choice_id] == "1" ) {
-    	// Falsch und gewählt
+    	// Falsch und gewÃ¤hlt
         $symbole = "incorrect";
         $color = "red";
     }
     if ( $correct_value == "0" && $result[$choice->choice_id] == "0" ) {
-    	// Falsch und nicht gewählt
+    	// Falsch und nicht gewÃ¤hlt
         $symbole = "incorrect";
         $color = "";
     }
@@ -50,7 +50,8 @@ switch($type_of_question) {
             ?>
             <input type="checkbox" name="checkbox-choice-<?php echo $choice->question_id.$choice->choice_id ?>" id="checkbox-choice-<?php echo $choice->question_id.$choice->choice_id ?>" value="<?php echo $choice->choice_id ?>" />
             <label for="checkbox-choice-<?php echo $choice->question_id.$choice->choice_id ?>">
-                <?php echo $choice->text; ?></label>
+                <?php echo polishText($choice->text); ?>
+            </label>
         <?php
         }
         break;
@@ -69,7 +70,9 @@ switch($type_of_question) {
         } else {
             ?>
             <input type="radio" name="radio-choice-<?php echo $choice->question_id ?>" id="radio-choice-<?php echo $choice->question_id.$choice->choice_id ?>" value="<?php echo $choice->choice_id ?>" />
-            <label for="radio-choice-<?php echo $choice->question_id.$choice->choice_id ?>"><?php echo $choice->text; ?></label>
+            <label for="radio-choice-<?php echo $choice->question_id.$choice->choice_id ?>">
+                <?php echo polishText($choice->text); ?>
+            </label>
         <?php
         }
         ?>

@@ -197,6 +197,8 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
         $tpl->setContent($this->form->getHTML());
     }
 
+    //--------------------------------------------------------------------------
+    
     /**
      * Get Properties Values
      */
@@ -206,6 +208,8 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
         $this->form->setValuesByArray($values);
     }
 
+    //--------------------------------------------------------------------------
+    
     /**
      * Update Properties
      */
@@ -224,6 +228,8 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
         $tpl->setContent($this->form->getHtml());
     }
 
+    //--------------------------------------------------------------------------
+    
     /**
      * Init Properties Form;
      */
@@ -1174,6 +1180,7 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
         $tpl->setContent($html);
     }
 
+    //--------------------------------------------------------------------------
 
     public function initAddQuestionAndAnswersFormAfterError () {
         global $tpl, $ilCtrl;
@@ -1203,6 +1210,8 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
         $tpl->setContent($html);
     }
 
+    //--------------------------------------------------------------------------
+    
     /**
      * Create Question and Answers. This is called after the firm was filled out. From here
      * the function in the Model is called to insert the question to the database
@@ -1247,7 +1256,6 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
         $formaction = $this->ctrl->getLinkTarget($this,'addQuestionAndAnswers');
         $formaction = $this->ctrl->appendRequestTokenParameterString($formaction);
         $tbl->setFormAction($formaction);
-        //$tbl->addMultiCommand('insertQuestions', $this->lng->txt('insert'));
         $tbl->addCommandButton('addQuestionAndAnswers', $this->lng->txt('add'));
 
         $tbl->setRowTemplate('tpl.question_row.html', 'Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz');
@@ -1313,7 +1321,9 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
                 $question['arrow_down_href'] = "<a href=".$action_Down.">";
                 $question["arrow_down_txt"] = "&#9660;";
                 
-            
+                // no idea where this is originally set, but here can the text
+                // be polised before handing to the template
+                $question['text'] = ilObjMobileQuizHelper::polishText($question['text']);
 
                 // question type
                 switch($question['type']) {
@@ -1339,6 +1349,8 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
         return $tbl->getHTML();
     }
 
+    //--------------------------------------------------------------------------
+    
     /**
      * Deleting the question and its choices from the database
      */
@@ -1359,32 +1371,34 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
         }
     }
     
+    //--------------------------------------------------------------------------
+    
     public function switchUp(){
     	global $ilCtrl;
     	$question_id = $_GET['question_id'];
     	$this->object->switchUp($question_id);
     	$ilCtrl->redirect($this, "editQuiz");
-    	// get id
-    	// rufe switchfunktion auf
-    	//redirect auf sich selber
-    	//im switch case oben noch switch up und down
     }
+    
+    //--------------------------------------------------------------------------
     
     public function switchDown(){
     	global $ilCtrl;
-    	//http://localhost/ilias/ilias.php?ref_id=48&question_id=1&cmd=switchDown&cmdClass=ilobjmobilequizgui&cmdNode=2y:lp&baseClass=ilObjPluginDispatchGUI&rtoken=0f57d896685c36d2c12204bd51a5cfad
     	$question_id = $_GET['question_id'];
     	$this->object->switchDown($question_id);
     	$ilCtrl->redirect($this, "editQuiz");
-    	//$ilCtrl->($this, "")
     }
 
+    //--------------------------------------------------------------------------
+    
     public function editQuestionAndAnswers () {
         global $tpl, $ilTabs;
         $ilTabs->activateTab("editQuiz");
         $this->initQuestionAndAnswersEditForm();
     }
 
+    //--------------------------------------------------------------------------
+    
     /**
      * Creates the form for editing question and choices
      */
@@ -1420,6 +1434,8 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
         $this->ctrl->clearParameters($this);
     }
 
+    //--------------------------------------------------------------------------
+    
     /**
      * Write the changes in the database
      */

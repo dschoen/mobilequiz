@@ -35,7 +35,7 @@ properties_title#:#Title
 properties_description#:#Description
 
 <!-- Add Question -->						
-question_add_head#:#Ask Question
+question_add_head#:#Edit Questions
 question_add_text#:#Question
 question_add_type#:#Type
 question_obj_create#:#Question has been sent successfully

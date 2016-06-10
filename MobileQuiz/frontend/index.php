@@ -42,6 +42,8 @@ require_once "includes/models/round.model.php";
 require_once "includes/controllers/home.controller.php";
 require_once "includes/controllers/quiz.controller.php";
 
+require_once "assets/markdown/Markdown.inc.php";
+
 try {
 
 	if($_GET['quiz_id'] && $_GET['round_id']){

@@ -35,7 +35,7 @@ properties_title#:#Name
 properties_description#:#Beschreibung
 
 <!-- Add Question -->						
-question_add_head#:#Neue Frage
+question_add_head#:#Fragen bearbeiten
 question_add_text#:#Frage
 question_add_type#:#Fragetyp
 question_obj_create#:#Frage wurde erfolgreich hinzugefügt

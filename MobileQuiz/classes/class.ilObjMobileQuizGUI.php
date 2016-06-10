@@ -797,6 +797,8 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
         $chart_tpl->setVariable("colors", $chart_color_string);
         $chart_tpl->setVariable("colors_border", $chart_color_border_string);
         $chart_tpl->setVariable("ajax_interface_url", ilObjMobileQuizHelper::getPluginUrl()."interface/liveChartUpdate.php");
+        $chart_tpl->setVariable("secret", AJAX_INTERFACE_SECRET);
+        $chart_tpl->setVariable("ajax_update_time", AJAX_CHART_UPDATE_TIME);
         
         
         // Get number of correct answers
@@ -882,23 +884,23 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
         $chart_tpl->setVariable("colors", $chart_color_string);
         $chart_tpl->setVariable("colors_border", $chart_color_border_string);
         $chart_tpl->setVariable("ajax_interface_url", ilObjMobileQuizHelper::getPluginUrl()."interface/liveChartUpdate.php");
+        $chart_tpl->setVariable("secret", AJAX_INTERFACE_SECRET);
+        $chart_tpl->setVariable("ajax_update_time", AJAX_CHART_UPDATE_TIME);
         
         // Correct answer Text
         $correct_answer_text = "-";
         if (!empty($numeric_correct)) {
         
             // Get number of correct answers
-            $correct_answers = $this->getCorrectAnswersCount($question['question_id'], $round_id);
+            $correct_answers = $this->getCorrectNumericAnswersCount($question['question_id'], $round_id);
 
             // calculating percentage
             $count1 = empty($answer_count)? 0 : ($correct_answers / $answer_count);
             $count2 = $count1 * 100;
             $percent = number_format($count2, 0);
 
-            // depending on whether the answer can be classified as correct or incorrect, the number of all right answers is shown. Otherwise this information is not provided.
-            if (($choice['correct_value'] != 2)){
-                $correct_answer_text = $this->txt("results_round_correct").": ".$correct_answers." ".$this->txt("results_round_out_of")." ".$answer_count." (".$percent."%)";
-            }
+            $correct_answer_text = $this->txt("results_round_correct").": ".$correct_answers." ".$this->txt("results_round_out_of")." ".$answer_count." (".$percent."%)";
+
         }
         $chart_tpl->setVariable("correct_answer_text", $correct_answer_text);
         
@@ -1007,7 +1009,7 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
             $return[] = array(
                 "data"      => $value,
                 "label"     => $label,
-                "colorName" => $color,
+                "colorName" => $color,                
             );
         }
         return $return;
@@ -1028,7 +1030,6 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
     }
 
     //--------------------------------------------------------------------------
-    
     
     /**
      * Get correct answers count
@@ -1077,6 +1078,7 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
         return $correct_answers_count;
     }
 
+    // -------------------------------------------------------------------------
 
     /**
      * Get correct numeric answers count
@@ -1113,13 +1115,11 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
                     $correct_answers_count++;
                 }
             }
-
         }
-
         return $correct_answers_count;
     }
 
-
+    // -------------------------------------------------------------------------
 
     /**
      * Edit Quiz

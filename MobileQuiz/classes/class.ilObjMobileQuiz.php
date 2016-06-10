@@ -86,7 +86,8 @@ class ilObjMobileQuiz extends ilObjectPlugin
     }
 
     /**
-     * Delete this quiz object. This will also delete everything in the databse
+     * Delete this quiz object. 
+     * This will also delete everything in the database,
      * that is related to this quiz: questions, choices, rounds and answers
      */
     function doDelete(){

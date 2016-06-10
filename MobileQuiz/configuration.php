@@ -22,6 +22,23 @@
 */
 
 // +--------------------------------------------------------------------------+
+// |   Parameters for the AJAX interface                                      |
+// +--------------------------------------------------------------------------+
+
+// shared secret for ajax interface
+define("AJAX_INTERFACE_SECRET", "1238dhsh27egkdad8w");
+
+// time steps between the charts are dynamically updated
+define("AJAX_CHART_UPDATE_TIME", "5000");
+
+// +--------------------------------------------------------------------------+
+// |   Configuration of the Students Frontend part                            |
+// +--------------------------------------------------------------------------+
+
+define("FRONTEND_DEFAULT_TITLE", "MobileQuiz");
+define("FRONTEND_DEFAULT_FOOTER", date("Y")." MobileQuiz Plug-In for ILIAS");
+
+// +--------------------------------------------------------------------------+
 // |   Quiz Constants - DO NOT TOUCH - unless you know what you do            |
 // +--------------------------------------------------------------------------+
 
@@ -36,11 +53,5 @@ define("NUMERIC_MAX_NUMBER_OF_BUCKETS", "20"); // max number of Buckets displaye
 define("ALLOWED_TAGS", "<br><br/><b><i><img><iframe>"); // Valid Tags for the question layout, which can be used by people.
 
 
-// +--------------------------------------------------------------------------+
-// |   Configuration of the Students Frontend part                            |
-// +--------------------------------------------------------------------------+
-
-define("FRONTEND_DEFAULT_TITLE", "MobileQuiz");
-define("FRONTEND_DEFAULT_FOOTER", date("Y")." MobileQuiz Plug-In for ILIAS");
 
 ?>

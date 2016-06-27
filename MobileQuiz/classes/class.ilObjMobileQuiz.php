@@ -609,26 +609,26 @@ class ilObjMobileQuiz extends ilObjectPlugin
     /**
      * Get all rounds of a quiz
      *
-     * @param	int		quiz_id
-     * @return	round 	rounds
+     * @param	int quiz_id
+     * @return	round rounds
      */
     public function getRounds() {
         global $ilDB;
 
         $set = $ilDB->query("
-				  SELECT *
-		          FROM rep_robj_xuiz_rounds
-		          WHERE quiz_id = ".$ilDB->quote($this->getId(), "integer")." ORDER BY round_id DESC");
+                    SELECT *
+		    FROM rep_robj_xuiz_rounds
+		    WHERE quiz_id = ".$ilDB->quote($this->getId(), "integer")." ORDER BY round_id DESC");
 
         $rounds = array();
         $round = array();
 
         while ($rec = $ilDB->fetchAssoc($set)){
-            $round["round_id"] = $rec["round_id"];
-            $round["quiz_id"] = $rec["quiz_id"];
-            $round["start_date"] = $rec["start_date"];
-            $round["end_date"] = $rec["end_date"];
-            $round["type"] = $rec["type"];
+            $round["round_id"]      = $rec["round_id"];
+            $round["quiz_id"]       = $rec["quiz_id"];
+            $round["start_date"]    = $rec["start_date"];
+            $round["end_date"]      = $rec["end_date"];
+            $round["type"]          = $rec["type"];
 
             $rounds[] = $round;
         }
@@ -647,20 +647,54 @@ class ilObjMobileQuiz extends ilObjectPlugin
         global $ilDB;
 
         $set = $ilDB->query("
-			          SELECT *
-			          FROM rep_robj_xuiz_answers
-			          WHERE round_id = ".$ilDB->quote($round_id, "integer")
+		SELECT *
+		FROM rep_robj_xuiz_answers
+		WHERE round_id = ".$ilDB->quote($round_id, "integer")
         );
 
         $answer = array();
         $answers = array();
 
         while ($rec = $ilDB->fetchAssoc($set)){
-            $answer["answer_id"] = $rec["answer_id"];
-            $answer["round_id"] = $rec["round_id"];
-            $answer["choice_id"] = $rec["choice_id"];
-            $answer["value"] = $rec["value"];
-            $answer["user_string"] = $rec["user_string"];
+            $answer["answer_id"]    = $rec["answer_id"];
+            $answer["round_id"]     = $rec["round_id"];
+            $answer["choice_id"]    = $rec["choice_id"];
+            $answer["value"]        = $rec["value"];
+            $answer["user_string"]  = $rec["user_string"];
+
+            $answers[] = $answer;
+        }
+        return $answers;
+    }
+    
+        // -------------------------------------------------------------------------
+    
+    /**
+     * Get all answers to a given round and choice
+     *
+     * @param	int round_id
+     * @param	int choice_id
+     * @return	answers 	answers
+     */
+    public function getAnswersToChoice($round_id, $choice_id) {
+        global $ilDB;
+
+        $set = $ilDB->query("
+		Select *
+		FROM rep_robj_xuiz_answers
+		WHERE round_id = ".$ilDB->quote($round_id, "integer")
+                ." AND choice_id = ".$ilDB->quote($choice_id, "integer")                
+        );
+
+        $answer = array();
+        $answers = array();
+
+        while ($rec = $ilDB->fetchAssoc($set)){
+            $answer["answer_id"]    = $rec["answer_id"];
+            $answer["round_id"]     = $rec["round_id"];
+            $answer["choice_id"]    = $rec["choice_id"];
+            $answer["value"]        = $rec["value"];
+            $answer["user_string"]  = $rec["user_string"];
 
             $answers[] = $answer;
         }
@@ -679,9 +713,9 @@ class ilObjMobileQuiz extends ilObjectPlugin
         global $ilDB;
 
         $set = $ilDB->query("
-				          SELECT DISTINCT user_string
-				          FROM rep_robj_xuiz_answers
-				          WHERE round_id = ".$ilDB->quote($round_id, "integer")
+                SELECT DISTINCT user_string
+                FROM rep_robj_xuiz_answers
+                WHERE round_id = ".$ilDB->quote($round_id, "integer")
         );
 
         $answer = array();
@@ -708,11 +742,11 @@ class ilObjMobileQuiz extends ilObjectPlugin
         global $ilDB;
 
         $set = $ilDB->query("
-				          SELECT *
-				          FROM rep_robj_xuiz_choices AS c, rep_robj_xuiz_answers AS a
-				          WHERE c.question_id = ".$ilDB->quote($question_id, "integer")."
-				          AND c.choice_id = a.choice_id
-				          AND a.user_string = ".$ilDB->quote($user_string, "text")
+                SELECT *
+                FROM rep_robj_xuiz_choices AS c, rep_robj_xuiz_answers AS a
+                WHERE c.question_id = ".$ilDB->quote($question_id, "integer")."
+                AND c.choice_id = a.choice_id
+                AND a.user_string = ".$ilDB->quote($user_string, "text")
         );
         $answer = array();
         $answers = array();
@@ -723,42 +757,7 @@ class ilObjMobileQuiz extends ilObjectPlugin
             $answers[] = $answer;
         }
         return $answers;
-    }
-
-    // -------------------------------------------------------------------------
-    
-    public function createChartForNumeric($filename, $data) {
-        /* Create and populate the pData object */
-        $MyData = new pData();
-        $MyData->addPoints(array(60,30,10),"Answers");
-        $MyData->setAxisName(0,"Antworten (%)");
-        $MyData->addPoints(array("I do agree  ","I disagree  ","No opinion  "),"Options");
-        $MyData->setAbscissa("Options");
-
-        /* Create the pChart object */
-        $myPicture = new pImage(700,420,$MyData);
-
-        /* Define the default font */
-        $myPicture->setFontProperties(array("FontName"=>"./Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/lib/pChart/fonts/verdana.ttf","FontSize"=>12));
-
-        /* Set the graph area */
-        $myPicture->setGraphArea(70,60,480,200);
-        $myPicture->drawGradientArea(70,60,480,200,DIRECTION_HORIZONTAL,array("StartR"=>200,"StartG"=>200,"StartB"=>200,"EndR"=>240,"EndG"=>240,"EndB"=>240,"Alpha"=>30));
-
-        /* Draw the chart scale */
-        $scaleSettings = array("DrawXLines"=>FALSE,"Mode"=>SCALE_MODE_START0,"GridR"=>0,"GridG"=>0,"GridB"=>0,"GridAlpha"=>10,"Pos"=>SCALE_POS_TOPBOTTOM);
-        $myPicture->drawScale($scaleSettings);
-
-        /* Turn on shadow computing */
-        $myPicture->setShadow(TRUE,array("X"=>1,"Y"=>1,"R"=>0,"G"=>0,"B"=>0,"Alpha"=>10));
-
-        /* Draw the chart */
-        $myPicture->drawBarChart(array("Rounded"=>TRUE,"Surrounding"=>30));
-
-        /* Render the picture (choose the best way) */
-        $myPicture->Render($filename);
-
-    }
+    }    
 
     // -------------------------------------------------------------------------
     

@@ -322,9 +322,9 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
 
         $ilDB->setLimit(1);
         $set = $ilDB->query("
-                   			  SELECT tiny_url
-                   	          FROM rep_robj_xuiz_rounds
-                   	          WHERE round_id = ".$ilDB->quote($round_id, "integer")." ORDER BY round_id DESC");
+                SELECT tiny_url
+                FROM rep_robj_xuiz_rounds
+                WHERE round_id = ".$ilDB->quote($round_id, "integer")." ORDER BY round_id DESC");
 
         while ($rec = $ilDB->fetchAssoc($set)){
             if ( !empty( $rec["tiny_url"] ) ) return $rec["tiny_url"]; else {
@@ -461,9 +461,9 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
     }
 
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////  RESULTS - EXPORT ///////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////
+    //--------------------------------------------------------------------------
+    //                         RESULTS - Export
+    //--------------------------------------------------------------------------
 
     /**
      * Is called when the "Export Result" Button is pressed.
@@ -475,20 +475,26 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
         $this->ctrl->redirect($this, 'showResult');
     }
 
+    //--------------------------------------------------------------------------
+    
+    /*
+     * Exports the data
+     * Function is called by public function exportResultData
+     */
     function exportResults() {
-        $format_bold = "";
-        $format_percent = "";
-        $format_datetime = "";
-        $format_title = "";
-        // 	$surveyname = ilUtil::getASCIIFilename(preg_replace("/\s/", "_", $this->object->getTitle()));
-        $surveyname = "mobilequiz";
+        $format_bold        = "";
+        $format_percent     = "";
+        $format_datetime    = "";
+        $format_title       = "";
+        $surveyname = "mobilequiz_data_export";
 
         include_once "./Services/Excel/classes/class.ilExcelWriterAdapter.php";
-        $excelfile = ilUtil::ilTempnam();
-        $adapter = new ilExcelWriterAdapter($excelfile, FALSE);
-        $workbook = $adapter->getWorkbook();
+        $excelfile  = ilUtil::ilTempnam();
+        $adapter    = new ilExcelWriterAdapter($excelfile, FALSE);
+        $workbook   = $adapter->getWorkbook();
         $workbook->setVersion(8); // Use Excel97/2000 Format
-        // Creating a worksheet
+        //
+        // Create a worksheet
         $format_bold =& $workbook->addFormat();
         $format_bold->setBold();
         $format_percent =& $workbook->addFormat();
@@ -502,7 +508,7 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
         $format_title->setFgColor('silver');
         $format_title->setAlign('center');
 
-        // Creating a worksheet
+        // Create a worksheet
         include_once ("./Services/Excel/classes/class.ilExcelUtils.php");
 
         // Get rounds from the Database
@@ -511,11 +517,12 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
         if(!count($rounds) == 0) {
             foreach($rounds as $round){
 
+                // Add a seperate worksheet for every Round
                 $mainworksheet =& $workbook->addWorksheet("Runde ".$round['round_id']);
                 $column = 0;
-                $row = 0;
+                $row    = 0;
 
-                // write header
+                // Write first line with titles
                 $mainworksheet->writeString(0, $column, ilExcelUtils::_convert_text("Frage", "excel", $format_bold));
                 $column++;
                 $mainworksheet->writeString(0, $column, ilExcelUtils::_convert_text("Fragentyp", "excel", $format_bold));
@@ -526,14 +533,14 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
                 $column++;
                 $mainworksheet->writeString(0, $column, ilExcelUtils::_convert_text("Anzahl", "excel", $format_bold));
 
-                $round_id = $round['round_id'];
-                $answers = $this->object->getAnswers($round_id);
-                $questions = $this->object->getQuestions($this->object->getId());
+                $round_id   = $round['round_id'];                
+                $questions  = $this->object->getQuestions($this->object->getId());
 
                 if(!count($questions) == 0) {
                     foreach ($questions as $question){
 
                         $choices = $this->object->getChoices($question['question_id']);
+                        $answers = $this->object->getAnswers($round_id);
 
                         switch ($question['type']) {
                             case QUESTION_TYPE_SINGLE :
@@ -565,7 +572,26 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
                             case QUESTION_TYPE_NUM:
                                 if(!count($choices) == 0) {
                                     foreach($choices as $choice){ // Theres always only one Choice with numeric questions
+                                        
+                                        // get Answers to this choice
+                                        $answers = $this->object->getAnswersToChoice($round_id, $choice['choice_id']);                                        
+                                        
+                                        // Summarize the answers
+                                        $values = array();
                                         foreach ($answers as $answer){
+                                            $value = $answer['value'];
+                                            if (key_exists($value, $values)){
+                                                $values[$value] += 1;
+                                            } else {
+                                                $values[$value] = 1;
+                                            }                                            
+                                        }
+                                           
+                                        // Sort values from low to high
+                                        ksort($values);
+                                        
+                                        // Write values in Sheet
+                                        foreach ($values as $value => $count){
                                             // write into sheet
                                             $column = 0;
                                             $row++;
@@ -573,9 +599,11 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
                                             $column++;
                                             $mainworksheet->writeString($row, $column, ilExcelUtils::_convert_text($question['type'], "excel", $format_bold));
                                             $column++;
-                                            $mainworksheet->writeNumber($row, $column, ilExcelUtils::_convert_text($answer['value'], "excel", 0));
+                                            $mainworksheet->writeNumber($row, $column, ilExcelUtils::_convert_text($value, "excel", 0));
                                             $column++;
-                                            $mainworksheet->writeNumber($row, $column, ilExcelUtils::_convert_text($choice['correct_value'], "excel", 0));
+                                            $mainworksheet->writeNumber($row, $column, ilExcelUtils::_convert_text(' ', "excel", 0));
+                                            $column++;
+                                            $mainworksheet->writeNumber($row, $column, ilExcelUtils::_convert_text($count, "excel", 0));
                                         }
                                     }
                                 }
@@ -587,16 +615,11 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
                 }
             }
         }
-        // Let's send the file
+        // Send file to client
         $workbook->close();
         ilUtil::deliverFile($excelfile, "$surveyname.xls", "application/vnd.ms-excel");
         exit();
     }
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////  END - RESULTS - EXPORT /////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////
-
 
     //--------------------------------------------------------------------------
     //                         RESULTS - SHOW
@@ -729,9 +752,9 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
         $ilTabs->activateTab("showResults");
         $round_id = $_GET["round_id"];;
         $html;
-        $answers = $this->object->getAnswers($round_id);
-        $answer_count = count($this->object->getDistinctAnswers($round_id));
-        $questions = $this->object->getQuestions($this->object->getId());
+        $answers        = $this->object->getAnswers($round_id);
+        $answer_count   = count($this->object->getDistinctAnswers($round_id));
+        $questions      = $this->object->getQuestions($this->object->getId());
 
         
         // For every question render the answers and add them

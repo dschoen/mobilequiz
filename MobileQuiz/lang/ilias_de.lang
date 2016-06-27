@@ -49,14 +49,18 @@ question_table_delete#:#Löschen
 question_table_up#:#Hoch
 question_table_down#:#Runter
 
-<!-- Choice table -->	
+<!-- Choice table Edit formular -------------------------------------------- -->	
 choice_table_text#:#Antwort
 choice_table_value#:#Wert
 choice_table_edit#:#Editieren
 choice_table_delete#:#Löschen
 choice_table_head#:#Antwortmöglichkeiten
 
-<!-- Add Choice -->
+choice_delete#:#Löschen
+choice_delete_info#:#Diese Antwort löschen.
+choice_up_info#:#Nach oben verschieben.
+choice_down_info#:#Nach unten verschieben.
+
 choice_add_head#:#Neue Antwortmöglichkeit erstellen
 choice_add_text#:#Antwort
 choice_add_texts#:#Antworten
@@ -72,7 +76,7 @@ choice_type_numeric#:#Numerisch
 choice_obj_create_success#:#Antwortmöglichkeit wurde erfolgreich hinzugefügt.
 choice_obj_create_failure#:#Es trat ein Fehler auf. Die Antwortmöglichkeit wurde nicht hinzugefügt.
 
-<!-- Show Round Results -->
+<!-- Show Round Results ---------------------------------------------------- -->
 results_choice#:#Antwort
 results_status#:#Status
 results_status_passive#:#Direktes Feedback

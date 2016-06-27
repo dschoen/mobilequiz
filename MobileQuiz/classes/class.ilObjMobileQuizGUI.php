@@ -27,6 +27,7 @@ include_once("./Services/jQuery/classes/class.iljQueryUtil.php");
 //include_once("./classes/class.ilCtrl.php");
 include_once("./Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/classes/class.ilObjMobileQuizHelper.php");
 include_once("./Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/configuration.php");
+include_once("./Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/configuration.local.php");
 
 /**
  * User Interface class for MobileQuiz repository object.
@@ -285,9 +286,9 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
     //--------------------------------------------------------------------------
 
 
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    //////////////////////////////////////// Rounds    ///////////////////////////////////////////////////////////////
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //-------------------------------------------------------------------------
+    //                            Rounds
+    //-------------------------------------------------------------------------
 
     /**
      * End current round
@@ -561,7 +562,7 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
                                     }
                                 }
                                 break;
-                            case ilObjMobileQuizConstants::QUESTION_TYPE_NUM:
+                            case QUESTION_TYPE_NUM:
                                 if(!count($choices) == 0) {
                                     foreach($choices as $choice){ // Theres always only one Choice with numeric questions
                                         foreach ($answers as $answer){
@@ -805,6 +806,7 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
         $chart_tpl->setVariable("ajax_interface_url", ilObjMobileQuizHelper::getPluginUrl()."interface/liveChartUpdate.php");
         $chart_tpl->setVariable("secret", AJAX_INTERFACE_SECRET);
         $chart_tpl->setVariable("ajax_update_time", AJAX_CHART_UPDATE_TIME);
+        $chart_tpl->setVariable("latex", LATEX_TRANSFORMATION);
         
         
         // Get number of correct answers
@@ -892,6 +894,7 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
         $chart_tpl->setVariable("ajax_interface_url", ilObjMobileQuizHelper::getPluginUrl()."interface/liveChartUpdate.php");
         $chart_tpl->setVariable("secret", AJAX_INTERFACE_SECRET);
         $chart_tpl->setVariable("ajax_update_time", AJAX_CHART_UPDATE_TIME);
+        $chart_tpl->setVariable("latex", LATEX_TRANSFORMATION);
         
         // Correct answer Text
         $correct_answer_text = "-";
@@ -1243,7 +1246,7 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
     //--------------------------------------------------------------------------
     
     /**
-     * Display the questions in a table
+     * Renders the view of all questions in the Table List
      */
     public function initQuestionAndAnswersTable () {
         global $ilAccess, $ilUser, $ilDB;
@@ -1321,7 +1324,7 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
                 $question['arrow_down_href'] = "<a href=".$action_Down.">";
                 $question["arrow_down_txt"] = "&#9660;";
                 
-                // no idea where this is originally set, but here can the text
+                // No idea where this is originally set, but here can the text
                 // be polised before handing to the template
                 $question['text'] = ilObjMobileQuizHelper::polishText($question['text']);
 
@@ -1337,8 +1340,12 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
                         $question['type'] = "Numeric";
                         break;
                 }
+                
+                // This is quite ugly, but this way the information can be given
+                // to the template for using LaTeX transformation.
+                $question["latex"] = LATEX_TRANSFORMATION;
+                
                 $this->ctrl->setParameter($this,'type',$question['type']);
-
                 $this->ctrl->clearParameters($this);
 
                 $result[] = $question;
@@ -1422,7 +1429,15 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
         $my_tpl->setVariable("VAR_1", "value1");
         $my_tpl->setVariable("COMMAND", "cmd[changeQuestionAndAnswers]");
         $my_tpl->setVariable("HIDE_QUESTION_TYPE", 'style="display:none;"');
-
+        
+        $my_tpl->setVariable("DELETE",          $this->txt("choice_delete"));
+        $my_tpl->setVariable("DELETE_INFO",     $this->txt("choice_delete_info"));
+        $my_tpl->setVariable("MOVE_UP",         $this->txt("choice_up"));
+        $my_tpl->setVariable("MOVE_UP_INFO",    $this->txt("choice_up_info"));
+        $my_tpl->setVariable("MOVE_DOWN",       $this->txt("choice_down"));
+        $my_tpl->setVariable("MOVE_DOWN_INFO",  $this->txt("choice_down_info"));
+        
+        
         // refill fields
         include_once('class.ilObjMobileQuizWizard.php');
         $wiz = new ilObjMobileQuizWizard();

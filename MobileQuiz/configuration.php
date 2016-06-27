@@ -42,14 +42,15 @@ define("FRONTEND_DEFAULT_FOOTER", date("Y")." MobileQuiz Plug-In for ILIAS");
 // |   Quiz Constants - DO NOT TOUCH - unless you know what you do            |
 // +--------------------------------------------------------------------------+
 
-define("QUESTION_TYPE_MULTI",   "1");     // Multi Choice
-define("QUESTION_TYPE_SINGLE",  "2");    // Single Choice
-define("QUESTION_TYPE_NUM",     "3");       // Numeric
-define("CHOICE_TYPE_INCORRECT", "0");   // Wrong Choice
-define("CHOICE_TYPE_CORRECT",   "1");     // Correct Choice
-define("CHOICE_TYPE_NEUTRAL",   "2");     // Neutral Choice
+define("QUESTION_TYPE_MULTI",   "1");   // Multi Choice
+define("QUESTION_TYPE_SINGLE",  "2");   // Single Choice
+define("QUESTION_TYPE_NUM",     "3");   // Numeric
+define("CHOICE_TYPE_INCORRECT", "0");   //Wrong Choice
+define("CHOICE_TYPE_CORRECT",   "1");   // Correct Choice
+define("CHOICE_TYPE_NEUTRAL",   "2");   // Neutral Choice
 define("NUMERIC_MAX_NUMBER_OF_BUCKETS", "20"); // max number of Buckets displayed in Numeric Questions
 
+// deprecated
 define("ALLOWED_TAGS", "<br><br/><b><i><img><iframe>"); // Valid Tags for the question layout, which can be used by people.
 
 

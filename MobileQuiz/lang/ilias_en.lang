@@ -49,14 +49,17 @@ question_table_delete#:#Delete
 question_table_up#:#Up
 question_table_down#:#Down
 
-<!-- Choice table -->	
+<!-- Choice table Edit formular -------------------------------------------- -->	
 choice_table_text#:#Answer
 choice_table_value#:#Value
 choice_table_edit#:#Edit
-choice_table_delete#:#Delete
 choice_table_head#:#Choices
 
-<!-- Add Choice -->	
+choice_delete#:#Delete
+choice_delete_info#:#Delete this choice
+choice_up_info#:#Move one position upwards
+choice_down_info#:#Move one position downwards
+	
 choice_add_head#:#Create new choice
 choice_add_text#:#Choice
 choice_add_texts#:#Choices
@@ -72,7 +75,7 @@ choice_type_numeric#:#numeric
 choice_obj_create_success#:#Choice was successfully added.
 choice_obj_create_failure#:#A problem appears. Choice was not added.
 
-<!-- Show Round Results -->
+<!-- Show Round Results ---------------------------------------------------- -->
 results_status#:#Status
 results_status_passive#:#Direct Feedback
 results_status_active#:#Active
@@ -90,11 +93,11 @@ results_round_on#:# ended
 results_round_at#:#at
 results_no_of_answers#:#Number of answers
 results_end_date#:#Date
-results_start_date#:#Startdate
+results_start_date#:#Start date
 results_round_delete#:#Delete
 results_round_correct#:#Correct
 results_round_out_of#:#out of
-results_round_status_change_success#:#The status of the round is successful changed.
+results_round_status_change_success#:#The status of the round is successfully changed.
 round_start_info#:#There is no active round at the moment.
 results_export#:#Export results
 results_summary#:#Altogether
@@ -125,4 +128,4 @@ round#:#Round
 open_quiz#:#Go to quiz
 msg_obj_create#:#Successful
 successful#:#Successful
-successful_delete#:#successful deleted
+successful_delete#:#Successfully deleted

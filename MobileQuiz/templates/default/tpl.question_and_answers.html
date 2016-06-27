@@ -200,14 +200,45 @@
         var question = new SimpleMDE({ 
                     element: $("#text")[0],
                     placeholder: "Type here...",
-                    toolbar: ["bold", "italic", "code", "|", 
+                    toolbar: ["bold", "italic", "code", "|",
+                        {
+                        name: "latex",
+                        action: latexAction,
+                        className: "fa fa-bolt",
+                        title: "LaTeX",
+                        },
+                        {
+                        name: "latexInline",
+                        action: latexInlineAction,
+                        className: "fa fa-bolt",
+                        title: "Inline LaTeX",
+                        }, "|",
                         "link", "image", "|",
                         "preview"],
                     spellChecker: false,
                     status: false,
-                
         });
         
+        function latexAction(){
+            cm = question.codemirror;
+            var output = '';
+            var selectedText = cm.getSelection();
+            var text = selectedText || 'LaTeX';
+
+            output = '$$' + text + '$$';
+            cm.replaceSelection(output);
+        }
+        
+        function latexInlineAction(){
+            cm = question.codemirror;
+            var output = '';
+            var selectedText = cm.getSelection();
+            var text = selectedText || 'LaTeX';
+
+            output = '$$$' + text + '$$$';
+            cm.replaceSelection(output);
+        }
+                
         // render every choice field
         $(".textfield_choice").each(function() {
             
@@ -223,6 +254,16 @@
         });
         
     });
+    
+    function latexAction(){
+        cm = question.codemirror;
+        var output = '';
+        var selectedText = cm.getSelection();
+        var text = selectedText || 'placeholder';
+
+        output = '$$' + text + '$$';
+        cm.replaceSelection(output);
+    }
 
 </script>
 
@@ -377,6 +418,8 @@
 
 </style>
 
+<!-- HTML page structure ------------------------------------------------------>
+
 <form id="form_"
 	action="{ACTION_URL}"
 	method="post">
@@ -438,9 +481,9 @@
                                                             <input type="radio" name="choice_multiple_type[{MUL_COU}]" value="0" id="incorrect[{MUL_COU}]" {MUL_TYPE_I}> 
                                                                 <label for="incorrect[{MUL_COU}]" class="choice_actions_label">incorrect</label>
 
-                                                            <a href="#" class="delete_choice delete_button" id="delete_choice[{MUL_COU}]"  onclick="removeThis(this);">Delete</a>
-                                                            <a href="#" class="downBTN" onclick="moveChoiceDown(this); return false;">&#9660;</a>
-                                                            <a href="#" class="upBTN" onclick="moveChoiceUp(this); return false;">&#9650;</a>
+                                                            <a href="#" id="delete_choice[{MUL_COU}]" class="delete_choice delete_button" onclick="removeThis(this);" title="{DELETE_INFO}">Delete</a>
+                                                            <a href="#" class="downBTN" onclick="moveChoiceDown(this);  return false;" title="{MOVE_DOWN_INFO}">&#9660;</a>
+                                                            <a href="#" class="upBTN"   onclick="moveChoiceUp(this);    return false;" title="{MOVE_UP_INFO}">&#9650;</a>		
                                                         <div>
 						</fieldset>
 						<!-- END multiple_choice_block -->
@@ -463,9 +506,9 @@
                                                             <input type="radio" name="choice_multiple_type[999]" value="0" id="incorrect[999]"> 
                                                                 <label for="incorrect[999]" class="choice_actions_label">incorrect</label>
 
-                                                            <a href="#" class="delete_choice delete_button" id="delete_choice[999]" onclick="removeThis(this);">Delete</a>
-                                                            <a href="#" class="downBTN" onclick="moveChoiceDown(this); return false;">&#9660;</a>
-                                                            <a href="#" class="upBTN" onclick="moveChoiceUp(this); return false;">&#9650;</a>		
+                                                            <a href="#" id="delete_choice[999]" class="delete_choice delete_button" onclick="removeThis(this);" title="{DELETE_INFO}">Delete</a>
+                                                            <a href="#" class="downBTN" onclick="moveChoiceDown(this);  return false;" title="{MOVE_DOWN_INFO}">&#9660;</a>
+                                                            <a href="#" class="upBTN"   onclick="moveChoiceUp(this);    return false;" title="{MOVE_UP_INFO}">&#9650;</a>		
                                                         <div>
 						</fieldset>
                                                 <!-- End Template -->
@@ -484,12 +527,12 @@
                                                             <label for="correct[{MUL_COU}]" class="choice_actions_label">correct</label>
 							<input type="radio" name="choice_single_type[{MUL_COU}]" value="2" id="neutral[{MUL_COU}]" {MUL_TYPE_N}>
                                                             <label for="neutral[{MUL_COU}]" class="choice_actions_label">neutral</label>
-							<input type="radio" name="choice_single_type[{MUL_COU}]" value="0" id="incorrect[{MUL_COU}]" {MUL_TYPE_I}
-                                                                > <label for="incorrect[{MUL_COU}]" class="choice_actions_label">incorrect</label>
+							<input type="radio" name="choice_single_type[{MUL_COU}]" value="0" id="incorrect[{MUL_COU}]" {MUL_TYPE_I}> 
+                                                            <label for="incorrect[{MUL_COU}]" class="choice_actions_label">incorrect</label>
 							
-							<a href="#" class="delete_choice delete_button" id="delete_choice_{MUL_COU}"  onclick="removeThis(this);">Delete</a>
-                                                        <a href="#" class="downBTN" onclick="moveChoiceDown(this); return false;">&#9660;</a>
-                                                        <a href="#" class="upBTN" onclick="moveChoiceUp(this); return false;">&#9650;</a>							
+							<a href="#" id="delete_choice_{MUL_COU}" class="delete_choice delete_button" onclick="removeThis(this);" title="{DELETE_INFO}">Delete</a>
+                                                        <a href="#" class="downBTN" onclick="moveChoiceDown(this);  return false;" title="{MOVE_DOWN_INFO}">&#9660;</a>
+                                                        <a href="#" class="upBTN"   onclick="moveChoiceUp(this);    return false;" title="{MOVE_UP_INFO}">&#9650;</a>							
 						</fieldset>
 						<!-- END single_choice_block -->
                                             </div>
@@ -510,9 +553,9 @@
                                                     <input type="radio" name="choice_single_type[999]" value="0" id="incorrect[999]">
                                                         <label for="incorrect[999]" class="choice_actions_label">incorrect</label>
 
-                                                    <a href="#" class="delete_choice delete_button" id="delete_choice[999]" onclick="removeThis(this);">Delete</a>
-                                                    <a href="#" class="downBTN" onclick="moveChoiceDown(this); return false;">&#9660;</a>
-                                                    <a href="#" class="upBTN" onclick="moveChoiceUp(this); return false;">&#9650;</a>							
+                                                    <a href="#" id="delete_choice[999]" class="delete_choice delete_button"  onclick="removeThis(this);" title="{DELETE_INFO}">Delete</a>
+                                                    <a href="#" class="downBTN" onclick="moveChoiceDown(this);  return false;" title="{MOVE_DOWN_INFO}">&#9660;</a>
+                                                    <a href="#" class="upBTN"   onclick="moveChoiceUp(this);    return false;" title="{MOVE_UP_INFO}">&#9650;</a>							
                                             </fieldset>
                                             <!-- End Template -->
 					</div>

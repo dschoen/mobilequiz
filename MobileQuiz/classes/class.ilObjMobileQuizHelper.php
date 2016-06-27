@@ -34,6 +34,8 @@ class ilObjMobileQuizHelper {
         return (strlen($text) > $length) ? substr($text,0,$length).'...' : $text;
     }
     
+    // -------------------------------------------------------------------------
+    
     /**
      * Gets a String and transforms it to a web ready version.
      * 
@@ -49,13 +51,12 @@ class ilObjMobileQuizHelper {
         $text = htmlspecialchars($text);
         
         // Create html line breaks
-        //$text = str_replace(array("\r","\n"), "<br />", $text);
         $text = nl2br($text);
 
         // Render Markdown
         $text = Markdown::defaultTransform($text);
         
-        // remove all line breaks
+        // remove all original line breaks
         $text = str_replace(array("\r","\n"), "", $text);
         
         return $text;                
@@ -85,7 +86,6 @@ class ilObjMobileQuizHelper {
         // please change this if you move your frontend installation out of your ILIAS plugin directory:
         $plugin_path = "Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/";
 
-         
         return $protocol.$hostname.$path.$plugin_path;
     }
 }

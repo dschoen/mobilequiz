@@ -35,7 +35,7 @@ class QuizController{
         // check if the quiz round is still active, if not break
         if(!isRoundActive($_GET['round_id'])){
             render('abuse',array(
-                'title'			=> 'Quiz is inactive'
+                'title'     => 'Quiz is inactive'
             ));
         }
 
@@ -51,10 +51,12 @@ class QuizController{
         // $questions are arrays with objects
         render('quiz',array(
             'title'		=> 'Quiz: '.$quiz[0]->name,
-            'questions'		=> $questions
+            'questions'		=> $questions,
         ));
     }
 
+    // -------------------------------------------------------------------------
+    
     /**
      * This will insert the answers into the database, if the form was sent with a POST request.
      */
@@ -141,10 +143,10 @@ class QuizController{
             
             $questions = Question::find(array('quiz_id'=>$_POST['quiz_id']));
             render('success',array(
-                'title'			=> 'Quiz submitted',
-                'type' =>  $row[0]->type,
+                'title'     => 'Quiz submitted',
+                'type'      =>  $row[0]->type,
                 'questions' => $questions,
-                'result' => $answers
+                'result'    => $answers
             ));
         }
 

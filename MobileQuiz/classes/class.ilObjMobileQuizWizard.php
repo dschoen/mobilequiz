@@ -243,20 +243,21 @@ class ilObjMobileQuizWizard {
 		
 		if(!count($choices) == 0) {
 			foreach($choices as $choice){
-				$tpl->setCurrentBlock("single_choice_block");
-				// echo $i."function<br>";
-				$tpl->setVariable("MUL_SHOW", "");
-				$tpl->setVariable("MUL_TEXT", $choice['text']);
-				$tpl->setVariable("MUL_ID", $choice['choice_id']);
-				$tpl->setVariable("MUL_COU", $i);
-				$tpl->setVariable("MUL_DEL", false);
-				$tpl->setVariable("MUL_TYPE_C", ($choice['correct_value'] == 1) ? "checked" : "");
-				$tpl->setVariable("MUL_TYPE_N", ($choice['correct_value'] == 2) ? "checked" : "");
-				$tpl->setVariable("MUL_TYPE_I", ($choice['correct_value'] == 0) ? "checked" : "");
-				$tpl->setVariable("ROW_ID", $choice['choice_order']);
-				$tpl->parseCurrentBlock();
+                            $tpl->setCurrentBlock("single_choice_block");
+                            // echo $i."function<br>";
+                            $tpl->setVariable("MUL_SHOW", "");
+                            $tpl->setVariable("MUL_TEXT", $choice['text']);
+                            $tpl->setVariable("MUL_ID", $choice['choice_id']);
+                            $tpl->setVariable("MUL_COU", $i);
+                            $tpl->setVariable("MUL_DEL", false);
+                            $tpl->setVariable("MUL_TYPE_C", ($choice['correct_value'] == 1) ? "checked" : "");
+                            $tpl->setVariable("MUL_TYPE_N", ($choice['correct_value'] == 2) ? "checked" : "");
+                            $tpl->setVariable("MUL_TYPE_I", ($choice['correct_value'] == 0) ? "checked" : "");
+                            $tpl->setVariable("ROW_ID", $choice['choice_order']);                                
+                                
+                            $tpl->parseCurrentBlock();
 	
-				$i++;
+                            $i++;
 			}
 		}
 	}
@@ -266,9 +267,9 @@ class ilObjMobileQuizWizard {
 		$choices = $model->getChoices($question_id);
 		
 		$numeric_values		= (explode(';',$choices[0]['text']));
-		$minimum 			= $numeric_values[0];
-		$maximum 			= $numeric_values[1];	
-		$step 				= $numeric_values[2];
+		$minimum 		= $numeric_values[0];
+		$maximum 		= $numeric_values[1];	
+		$step 			= $numeric_values[2];
 		$correct_number		= $numeric_values[3];
 		$tolerance_range	= $numeric_values[4];
 

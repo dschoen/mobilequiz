@@ -42,6 +42,8 @@ class ilObjMobileQuiz extends ilObjectPlugin
         parent::__construct($a_ref_id);
     }
 
+    // -------------------------------------------------------------------------
+    
     /**
      * Get type.
      */
@@ -49,6 +51,8 @@ class ilObjMobileQuiz extends ilObjectPlugin
         $this->setType("xuiz");
     }
 
+    // -------------------------------------------------------------------------
+    
     /**
      * Create object
      */
@@ -58,6 +62,8 @@ class ilObjMobileQuiz extends ilObjectPlugin
         $affected_rows = $ilDB->manipulate("INSERT INTO rep_robj_xuiz_quizzes (quiz_id, name) VALUES (".$ilDB->quote($this->getId(), "integer").",".$ilDB->quote($this->getTitle(), "text").")");
     }
 
+    // -------------------------------------------------------------------------
+    
     /**
      * Read data from db
      */
@@ -72,6 +78,8 @@ class ilObjMobileQuiz extends ilObjectPlugin
         }
     }
 
+    // -------------------------------------------------------------------------
+    
     /**
      * Update data
      *
@@ -85,6 +93,8 @@ class ilObjMobileQuiz extends ilObjectPlugin
         );
     }
 
+    // -------------------------------------------------------------------------
+    
     /**
      * Delete this quiz object. 
      * This will also delete everything in the database,
@@ -121,33 +131,35 @@ class ilObjMobileQuiz extends ilObjectPlugin
         );
     }
 
+    // -------------------------------------------------------------------------
+    
     /**
      * Do Cloning. This is still not implemented.
      *
      */
-    public function doCloneObject($infos,$a_copy_id,$from){
+    function doCloneObject($a_target_id, $a_copy_id, $new_obj) {
         global $ilDB;
         // Get IDs
-        $toID = $infos->id."";
-        $fromReference = $from;
+        $toID = $a_target_id->id."";
+        $fromReference = $new_obj;
         $row = $ilDB->fetchAssoc( $ilDB->query("
-			  SELECT options
-	          FROM copy_wizard_options
-	          WHERE source_id = '-5' and copy_id = ".$ilDB->quote($fromReference, "integer") ) );
+                    SELECT options
+                    FROM copy_wizard_options
+                    WHERE source_id = '-5' and copy_id = ".$ilDB->quote($fromReference, "integer") ) );
         $options2 = unserialize($row["options"]);
         $fromIDReference = implode("", $options2);
         $row = $ilDB->fetchAssoc( $ilDB->query("
-      			  SELECT obj_id
-      	          FROM  object_reference
-      	          WHERE ref_id = ".$ilDB->quote($fromIDReference, "integer") ) );
+                    SELECT obj_id
+                    FROM  object_reference
+                    WHERE ref_id = ".$ilDB->quote($fromIDReference, "integer") ) );
         $fromID = $row["obj_id"];
 
 
-        // Fragen
+        // Copy Questions
         $set = $ilDB->query("
-			  SELECT *
-	          FROM rep_robj_xuiz_qs
-	          WHERE quiz_id = ".$ilDB->quote($fromID, "integer"));
+                    SELECT *
+                    FROM rep_robj_xuiz_qs
+                    WHERE quiz_id = ".$ilDB->quote($fromID, "integer"));
         while ($rec = $ilDB->fetchAssoc($set)){
             $question_id = $ilDB->nextID('rep_robj_xuiz_qs');
             $statement = $ilDB->prepare("INSERT INTO rep_robj_xuiz_qs (question_id, quiz_id, type, text) VALUES (?, ?, ?, ?)",
@@ -158,9 +170,9 @@ class ilObjMobileQuiz extends ilObjectPlugin
 
             // Antworten
             $set2 = $ilDB->query("
-        			  SELECT *
-        	          FROM  rep_robj_xuiz_choices
-        	          WHERE question_id = ".$ilDB->quote($rec["question_id"], "integer"));
+                        SELECT *
+        	        FROM  rep_robj_xuiz_choices
+        	        WHERE question_id = ".$ilDB->quote($rec["question_id"], "integer"));
             while ($rec2 = $ilDB->fetchAssoc($set2)){
                 $choice_id = $ilDB->nextID('rep_robj_xuiz_choices');
                 $statement2 = $ilDB->prepare("INSERT INTO rep_robj_xuiz_choices (choice_id, question_id, correct_value, text) VALUES (?, ?, ?, ?)",
@@ -170,9 +182,10 @@ class ilObjMobileQuiz extends ilObjectPlugin
                 $statement2->execute($data2);
             }
         }
-
     }
 
+    // -------------------------------------------------------------------------
+    
     /**
      * Create Question
      *
@@ -196,6 +209,8 @@ class ilObjMobileQuiz extends ilObjectPlugin
         return $question_id;
     }
 
+    // -------------------------------------------------------------------------
+    
     /**
      * Delete a question. This will delete a question
      * and all its choices in the database
@@ -219,6 +234,8 @@ class ilObjMobileQuiz extends ilObjectPlugin
         );
     }
 
+    // -------------------------------------------------------------------------
+    
     /**
      * Update a question
      *
@@ -232,8 +249,10 @@ class ilObjMobileQuiz extends ilObjectPlugin
         $ilDB->manipulate("UPDATE rep_robj_xuiz_qs SET text= ".$ilDB->quote($a_text, "text")." WHERE question_id = ".$ilDB->quote($question_id, "integer"));
     }
 
+    // -------------------------------------------------------------------------
+    
     /**
-     * Get Questions
+     * Get Questions from database
      *
      * @return	array	questions
      */
@@ -241,11 +260,11 @@ class ilObjMobileQuiz extends ilObjectPlugin
         global $ilDB;
 
         $set = $ilDB->query("
-		  SELECT *
-          FROM rep_robj_xuiz_qs
-          WHERE quiz_id = ".$ilDB->quote($this->getId(), "integer")
-        		." ORDER BY question_order asc"
-        		);
+		SELECT *
+                FROM rep_robj_xuiz_qs
+                WHERE quiz_id = ".$ilDB->quote($this->getId(), "integer")
+                ." ORDER BY question_order asc"
+        	);
 
         $question = array();
         $questions = array();
@@ -257,13 +276,13 @@ class ilObjMobileQuiz extends ilObjectPlugin
             $question["text"] = $rec["text"];
             $question["question_order"] = $rec["question_order"];
             
-
             $questions[] = $question;
         }
 
         return $questions;
     }
     
+    // -------------------------------------------------------------------------
     
     public function updateOrder($question_id, $question_order){
     	global $ilDB;
@@ -272,6 +291,8 @@ class ilObjMobileQuiz extends ilObjectPlugin
     			SET question_order=".$ilDB->quote($question_order, "integer")." 
     			WHERE question_id =".$ilDB->quote($question_id, "integer"));
     }
+    
+    // -------------------------------------------------------------------------
     
     /**
      * Get Question
@@ -302,8 +323,7 @@ class ilObjMobileQuiz extends ilObjectPlugin
     	} 
     }
     
-    
-    
+    // -------------------------------------------------------------------------    
     
     /**
      * Get Question
@@ -334,7 +354,7 @@ class ilObjMobileQuiz extends ilObjectPlugin
     	}
     }
     
-
+    // -------------------------------------------------------------------------
 
     /**
      * Get Question
@@ -362,6 +382,8 @@ class ilObjMobileQuiz extends ilObjectPlugin
         }
     }
 
+    // -------------------------------------------------------------------------
+    
     /**
      * Create Choice
      *
@@ -393,6 +415,8 @@ class ilObjMobileQuiz extends ilObjectPlugin
         return true;
     }
 
+    // -------------------------------------------------------------------------
+    
     /**
      * Update a choice
      *
@@ -407,6 +431,8 @@ class ilObjMobileQuiz extends ilObjectPlugin
         $ilDB->manipulate("UPDATE rep_robj_xuiz_choices SET text= ".$ilDB->quote($a_text, "text").", correct_value= ".$ilDB->quote($a_correct_value, "text").", choice_order= ".$ilDB->quote($choice_order, "integer")." WHERE choice_id = ".$ilDB->quote($choice_id, "integer"));
     }
 
+    // -------------------------------------------------------------------------
+    
     /**
      * Delete a choice
      *
@@ -423,6 +449,8 @@ class ilObjMobileQuiz extends ilObjectPlugin
         );
     }
 
+    // -------------------------------------------------------------------------
+    
     /**
      * Get choices matching a question
      *
@@ -453,6 +481,8 @@ class ilObjMobileQuiz extends ilObjectPlugin
         return $choices;
     }
 
+    // -------------------------------------------------------------------------
+    
     /**
      * Get choices count, matching a question
      *
@@ -472,6 +502,8 @@ class ilObjMobileQuiz extends ilObjectPlugin
         return $row["cnt"];
     }
 
+    // -------------------------------------------------------------------------
+    
     /**
      * End current round. This will finish the current round. Therefore an endDate is inserted to the round entry into the db.
      * Also the directory where the QR Code was stored is removed.
@@ -488,6 +520,8 @@ class ilObjMobileQuiz extends ilObjectPlugin
         ilUtil::delDir(ilUtil::getDataDir()."/MobileQuiz_data/".$round_id);
     }
 
+    // -------------------------------------------------------------------------
+    
     /**
      * Begin current round. That will create a new round entry with the current dateTime as start_date.
      * Then temporary directory will be created.
@@ -539,6 +573,8 @@ class ilObjMobileQuiz extends ilObjectPlugin
 
     }
 
+    // -------------------------------------------------------------------------
+    
     /**
      * Get current round of a quiz
      * (we can assume that no concurrent rounds are possible:
@@ -568,6 +604,8 @@ class ilObjMobileQuiz extends ilObjectPlugin
         }
     }
 
+    // -------------------------------------------------------------------------
+    
     /**
      * Get all rounds of a quiz
      *
@@ -597,6 +635,8 @@ class ilObjMobileQuiz extends ilObjectPlugin
         return $rounds;
     }
 
+    // -------------------------------------------------------------------------
+    
     /**
      * Get answers matching a round_id
      *
@@ -627,6 +667,8 @@ class ilObjMobileQuiz extends ilObjectPlugin
         return $answers;
     }
 
+    // -------------------------------------------------------------------------
+    
     /**
      * Get all answers user_strings corresponding to a quiz round.
      *
@@ -652,6 +694,8 @@ class ilObjMobileQuiz extends ilObjectPlugin
         }
         return $answers;
     }
+    
+    // -------------------------------------------------------------------------
 
     /**
      * Get choices together with their answers correlating to a certain question and a certain answer
@@ -681,7 +725,8 @@ class ilObjMobileQuiz extends ilObjectPlugin
         return $answers;
     }
 
-
+    // -------------------------------------------------------------------------
+    
     public function createChartForNumeric($filename, $data) {
         /* Create and populate the pData object */
         $MyData = new pData();
@@ -710,12 +755,13 @@ class ilObjMobileQuiz extends ilObjectPlugin
         /* Draw the chart */
         $myPicture->drawBarChart(array("Rounded"=>TRUE,"Surrounding"=>30));
 
-
         /* Render the picture (choose the best way) */
         $myPicture->Render($filename);
 
     }
 
+    // -------------------------------------------------------------------------
+    
     /**
      * Delete a round
      *
@@ -734,6 +780,8 @@ class ilObjMobileQuiz extends ilObjectPlugin
         );
     }
 
+    // -------------------------------------------------------------------------
+    
     /**
      * Change to status of a round to active, inactive or passive
      *

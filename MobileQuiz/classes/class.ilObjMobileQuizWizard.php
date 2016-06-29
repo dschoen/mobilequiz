@@ -386,8 +386,6 @@ class ilObjMobileQuizWizard {
 		}
 		$model->updateChoice($_POST['choice_numeric_id'],$correct_value, $text, -1);
 	}
-	
-
 }
 
 ?>

@@ -101,6 +101,7 @@ results_round_out_of#:#von
 results_round_status_change_success#:#Der Status der Runde wurde erfolgreich geändert.
 round_start_info#:#Momentan läuft keine Quizrunde.
 results_export#:# Excel Export
+results_export_failure#:# Es gibt noch keine Runden die Exportiert werden könnten.
 results_summary#:#Insgesamt
 current_round#:#Aktive Runde
 current#:#Aktuell

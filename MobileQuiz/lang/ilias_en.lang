@@ -100,6 +100,7 @@ results_round_out_of#:#out of
 results_round_status_change_success#:#The status of the round is successfully changed.
 round_start_info#:#There is no active round at the moment.
 results_export#:#Export results
+results_export_failure#:# No rounds to be exported.
 results_summary#:#Altogether
 current_round#:#Active round
 current#:#Current

@@ -23,8 +23,12 @@ It can be added as an ILIAS Repository Object, so that lecturers can create Ques
 
 ## Installation
 
-
-* ILIAS Administrator has to activate the right to use this Object for lecturers
+* Copy MobileQuiz folder to `../ilias/Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz`
+* open configuration `/MobileQuiz/configuration.local.php` and set database information as this is neccessary for the Studnets view, which is not handled in the ILIAS framework.
+   * Enter login data for the used URL-shortener service or disable the service
+   * Deactivate MathJax LaTex support if not desired
+* Activate Plugin in ILIAS Administrator Plugin View
+* ILIAS administrator has to activate the right to use this object for lecturers
 
 
 ## User Documentation

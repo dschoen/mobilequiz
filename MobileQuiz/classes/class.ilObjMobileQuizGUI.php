@@ -1366,6 +1366,9 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
                 // No idea where this is originally set, but here can the text
                 // be polised before handing to the template
                 $question['text'] = ilObjMobileQuizHelper::polishText($question['text']);
+                
+                // To prevent the problem with curvy brackets.
+                $question['text'] = ilObjMobileQuizHelper::escapeCurvyBrackets($question['text']);
 
                 // question type
                 switch($question['type']) {

@@ -21,9 +21,19 @@
 +-----------------------------------------------------------------------------+
 */
 
-/*************************************
- *  Configuration for URL Shorter    *
- *************************************/
+// +--------------------------------------------------------------------------+
+// |   Database Configuration of the Students Frontend part                   |
+// +--------------------------------------------------------------------------+
+
+define("FRONTEND_DB_HOST", 'localhost');
+define("FRONTEND_DB_USER", 'root');
+define("FRONTEND_DB_PASS", 'root');
+define("FRONTEND_DB_NAME", 'ilias');
+
+
+// +--------------------------------------------------------------------------+
+// |          Configuration for URL Shorter                                   |
+// +--------------------------------------------------------------------------+
 
 // Activate URL-Shortener
 define("SHORTENER", true);
@@ -35,22 +45,20 @@ define("SHORTENER_SHOW_URL", true);
 define("SHORTENER_USERNAME", "xxx");
 define("SHORTENER_PASSWORD", "xxx");
 
-// the query parameters
+// the URL of the API file
+define("SHORTENER_URL", "http://tiny.my-university.de/yourls-api.php");
+
 // output format: 'json', 'xml' or 'simple'
 define("SHORTENER_FORMAT", "simple"); 
-// the URL of the API file
-define("SHORTENER_URL", "http://tiny.uni-mannheim.de/yourls-api.php");
 
 
 // +--------------------------------------------------------------------------+
-// |   Configuration of the Students Frontend part                            |
+// |   LaTeX Support - MathJax                                                |
 // +--------------------------------------------------------------------------+
 
-// Developement Configuration
-
-define("FRONTEND_DB_HOST", 'localhost');
-define("FRONTEND_DB_USER", 'root');
-define("FRONTEND_DB_PASS", 'root');
-define("FRONTEND_DB_NAME", 'ilias');
+// Enabling MathJax LaTeX Support
+// 0 = disable MathJax
+// 1 = enable MathJax
+define("LATEX_TRANSFORMATION", 1);
 
 ?>

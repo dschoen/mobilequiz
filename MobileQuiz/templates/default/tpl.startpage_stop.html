@@ -133,7 +133,7 @@ a.increaseFont:hover,a.decreaseFont:hover {
 		//loads popup only if it is disabled
                 if(popupStatus==0){
 			 $("#backgroundPopup").css({
-			 	"opacity": "0.0"
+			 	"opacity": "0.7"
 		 });
 			 $("#backgroundPopup").fadeIn("slow");
 			 $(elementId).fadeIn("slow");
@@ -160,13 +160,15 @@ a.increaseFont:hover,a.decreaseFont:hover {
 		//centering
 		$(elementId).css({
 			"position": "absolute",
-			"top": windowHeight/2-popupHeight/2,
-			"left": windowWidth/2-popupWidth/2
+			"top": "-250px",
+			"left": windowWidth/2-popupWidth/2,
+                        "z-index":"1042"
 		});
 		//only need force for IE6
 	
 		$("#backgroundPopup").css({
-			"height": windowHeight
+			"height": windowHeight,
+                        "z-index":"1041"
 		});
 		
  
@@ -204,31 +206,15 @@ a.increaseFont:hover,a.decreaseFont:hover {
 	$("#btn_qr_fullscreen").click(function() {
 		
 		//centering with css
-		//centerPopup("#qr_code_big");
+		centerPopup("#qr_code_big");
 		//load popup
                         loadPopup("#qr_code_big");
-	
-               //maxWindow("#qr_code_big");
-			 var element = document.getElementById("qr_code_big");
-
-			if (element.requestFullScreen) {
-				element.requestFullScreen();
-			} else if (element.mozRequestFullScreen) {
-				element.mozRequestFullScreen();
-			} else if (element.webkitRequestFullScreen) {
-				element.webkitRequestFullScreen();
-			}
-
-			return false;
 		 
 	});
 		
-	//Click the x event!
-	/* $("#popupContactClose").click(function(){
-		disablePopup();
-	}); */
+	
 		//Click out event!
-	$("#backgroundPopup").click(function(){
+                $("#backgroundPopup").click(function(){
 		disablePopup("#qr_code_big");
 		
 	});
@@ -244,17 +230,15 @@ a.increaseFont:hover,a.decreaseFont:hover {
 <center>
 	{STOP_LINK}
 	
-	<div  id="loupe">
-            
-                <a href="#" title="For full view" id="btn_qr_fullscreen" class="cool_button" >
-		<img src="./Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/templates/images/loupe_icon.png"  width="25" height="25"/>
-                
-		</a>
-        </div>
 	<div  id="qr_code"> 
             
 		<img  src='{IMAGE_URL}' alt='QR-Code' /> 
 		<div id="display_url">
+                    <a href="#" title="For full view" id="btn_qr_fullscreen" class="cool_button" >
+		<img src="./Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/templates/images/zoom.png"  width="50" height="50"/>
+                
+		</a>
+                    <br>
 			<a href="{QUIZ_URL}">{QUIZ_URL}</a> <br />
 		</div>
 		
@@ -262,32 +246,24 @@ a.increaseFont:hover,a.decreaseFont:hover {
         
 	<div  id="qr_code_big"> 
 		<img  src='{IMAGE_URL}'width="100%" height="85%" alt='QR-Code' /> 
-                <a href="{QUIZ_URL}">{QUIZ_URL}</a>
-                <a href="#" title="Increases the view" backgroundcolor="#FF0000" class="increaseFont">+</a>
-                &nbsp;
-           <a href="#" title ="Decreases the view" class="decreaseFont" title="">&#8211;</a>
 		<div id="display_url1">
-			
+			<a href="{QUIZ_URL}">{QUIZ_URL}</a>      
 		</div>
+                
                 <div id="zoom">
-                <a href="#" title="Increases the view" backgroundcolor="#FF0000" class="increaseFont">+</a>
+                    <a href="#" title="Increases the view" backgroundcolor="#FF0000" class="increaseFont">
+                        <img src="./Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/templates/images/max.png"  width="25" height="25"/>
+                    </a>
                 &nbsp;
-           <a href="#" title ="Decreases the view" class="decreaseFont" title="">&#8211;</a>
+                <a href="#" title ="Decreases the view" class="decreaseFont" title="">
+                    <img src="./Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/templates/images/min.png"  width="25" height="25"/>
+                </a>
                 </div>
+                
 	</div> 
         <div id="backgroundPopup">
             
         </div>
-
-	
-		
 	<br> <br />
 	
-	
-	
-		
-	
-		
-
-
 </center>

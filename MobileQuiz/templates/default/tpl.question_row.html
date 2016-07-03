@@ -8,6 +8,9 @@
 
 <!-- Enable LaTeX Support -------------------------------------------------- -->
 <script type="text/javascript">
+    
+    deEscapeCurvyBrackets();
+    
     if ( {VAL_LATEX} ) {
         (function () {
           var head = document.getElementsByTagName("head")[0], script;
@@ -26,12 +29,27 @@
           head.appendChild(script);
         })();
     }
+    
+    // -------------------------------------------------------------------------
+    
+    function deEscapeCurvyBrackets(){
+        
+         $('.mq_question_table_text').each(function( ) {
+             
+            var new_text = $(this).html();
+             
+            new_text.replace(/#\(#/g,"{");        
+            new_text.replace(/#\)#/g,"}");
+            
+            $(this).html(new_text);             
+         })        
+    }
 </script>
 
 <!-- Begin HTML Page ------------------------------------------------------- -->
 
 <tr class="{CSS_ROW}">
-    <td>
+    <td class="mq_question_table_text">
         {VAL_SHOW_CHOICES_HREF}
         {VAL_TEXT}
     </td>

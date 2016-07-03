@@ -39,8 +39,7 @@ class ilObjMobileQuizHelper {
     /**
      * Gets a String and transforms it to a web ready version.
      * 
-     * @author dschoen
-     * 
+     * @author dschoen 
      * @param String $text
      */
     public function polishText($text) {
@@ -58,6 +57,26 @@ class ilObjMobileQuizHelper {
         
         // remove all original line breaks
         $text = str_replace(array("\r","\n"), "", $text);
+        
+        return $text;                
+    }
+    
+    // -------------------------------------------------------------------------
+    
+    /**
+     * Escpae curvy Brackets with an additional whitespace, so that ILIAS does
+     *  not think its a palceholder
+     * 
+     * @author dschoen
+     * @param String $text
+     */
+    public function escapeCurvyBrackets($text) {
+        
+        // escape "{"
+        $text = str_replace("{", "{&nbsp;", $text);
+        
+        // escape "}"
+        $text = str_replace("}", "&nbsp;}", $text);
         
         return $text;                
     }

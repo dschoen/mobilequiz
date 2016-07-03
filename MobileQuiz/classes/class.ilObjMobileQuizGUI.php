@@ -282,13 +282,11 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
 
         $tpl->setContent($html);
     }
+    
 
     //--------------------------------------------------------------------------
-
-
-    //-------------------------------------------------------------------------
     //                            Rounds
-    //-------------------------------------------------------------------------
+    //--------------------------------------------------------------------------
 
     /**
      * End current round
@@ -302,6 +300,8 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
         $ilCtrl->redirect($this, "showCurrentRound");
     }
 
+    //--------------------------------------------------------------------------
+    
     /**
      * Begin current round
      */
@@ -314,7 +314,8 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
         $ilCtrl->redirect($this, "showCurrentRound");
     }
 
-
+    //--------------------------------------------------------------------------
+    
     // Get the Short URL for a Quiz
     function getShortURL($quiz_id, $round_id) {
 
@@ -365,6 +366,8 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
         }
     }
 
+    //--------------------------------------------------------------------------
+    
     /**
      * Show Current Round. This displays the link to the quiz page and its the QR Code.
      */
@@ -423,6 +426,8 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
         $tpl->setContent($html);
     }
 
+    //--------------------------------------------------------------------------
+    
     /**
      * Delete Round
      */
@@ -441,6 +446,8 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
         }
     }
 
+    //--------------------------------------------------------------------------
+    
     /**
      * Change status of round
      */
@@ -470,9 +477,18 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
      * The function calles the Export Function.
      */
     public function exportResultData() {
-
-        $this->exportResults();
-        $this->ctrl->redirect($this, 'showResult');
+        
+        // get rounds
+        $rounds = $this->object->getRounds();
+        
+        // Check if rounds exist, write a message if not
+        if (count($rounds) > 0) {            
+            $this->exportResults();
+        } else {
+            ilUtil::sendFailure($this->txt("results_export_failure"), true);
+        }
+        
+        $this->ctrl->redirect($this, 'showResults');
     }
 
     //--------------------------------------------------------------------------
@@ -1350,6 +1366,9 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
                 // No idea where this is originally set, but here can the text
                 // be polised before handing to the template
                 $question['text'] = ilObjMobileQuizHelper::polishText($question['text']);
+                
+                // To prevent the problem with curvy brackets.
+                $question['text'] = ilObjMobileQuizHelper::escapeCurvyBrackets($question['text']);
 
                 // question type
                 switch($question['type']) {

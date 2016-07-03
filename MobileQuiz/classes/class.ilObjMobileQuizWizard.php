@@ -183,8 +183,13 @@ class ilObjMobileQuizWizard {
 	
 	public function loadAnswerAndQuestions($question_id, $tpl, $model) {
 		$question = $model->getQuestion($question_id);
+                
+                // escape curvy brackets, so that ILIAS cannot use them as
+                // placeholder
+                $question['text'] = ilObjMobileQuizHelper::escapeCurvyBrackets($question['text']);
+                
 		$tpl->setVariable("QUESTION_ID", $question_id);
-		$tpl->setVariable("QUESTION_TEXT", $question["text"]);
+                $tpl->setVariable("QUESTION_TEXT", $question["text"]);
 		$tpl->setVariable("QUESTION_TYPE_2", $question["type"]);
 		
 		switch($question["type"]) {
@@ -214,7 +219,11 @@ class ilObjMobileQuizWizard {
 		if(!count($choices) == 0) {
 			foreach($choices as $choice){
 				$tpl->setCurrentBlock("multiple_choice_block");
-				// echo $i."function<br>";
+                                
+                                // escape curvy brackets, so that ILIAS cannot use them as                
+                                // placeholder
+                                $choice['text'] = ilObjMobileQuizHelper::escapeCurvyBrackets($choice['text']);
+                                                                
 				$tpl->setVariable("MUL_SHOW", "");
 				$tpl->setVariable("MUL_TEXT", $choice['text']);
 				$tpl->setVariable("MUL_ID", $choice['choice_id']);
@@ -244,7 +253,11 @@ class ilObjMobileQuizWizard {
 		if(!count($choices) == 0) {
 			foreach($choices as $choice){
                             $tpl->setCurrentBlock("single_choice_block");
-                            // echo $i."function<br>";
+                            
+                            // escape curvy brackets, so that ILIAS cannot use them as                
+                            // placeholder
+                            $choice['text'] = ilObjMobileQuizHelper::escapeCurvyBrackets($choice['text']);
+                            
                             $tpl->setVariable("MUL_SHOW", "");
                             $tpl->setVariable("MUL_TEXT", $choice['text']);
                             $tpl->setVariable("MUL_ID", $choice['choice_id']);
@@ -386,8 +399,6 @@ class ilObjMobileQuizWizard {
 		}
 		$model->updateChoice($_POST['choice_numeric_id'],$correct_value, $text, -1);
 	}
-	
-
 }
 
 ?>

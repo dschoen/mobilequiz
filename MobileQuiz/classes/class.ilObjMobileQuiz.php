@@ -506,18 +506,14 @@ class ilObjMobileQuiz extends ilObjectPlugin
     
     /**
      * End current round. This will finish the current round. Therefore an endDate is inserted to the round entry into the db.
-     * Also the directory where the QR Code was stored is removed.
      */
     public function endCurrentRound(){
-        global $ilDB, $ilAccess, $ilUser;
+        global $ilDB;
 
         $now = new ilDateTime(time(),IL_CAL_UNIX);
         $currentRound = $this->getCurrentRound($this->getId());
         $round_id = $currentRound['round_id'];
         $ilDB->manipulate("UPDATE rep_robj_xuiz_rounds SET end_date= ".$ilDB->quote($now->get(IL_CAL_DATETIME), "timestamp")." WHERE round_id = ".$ilDB->quote($round_id, "integer"));
-
-        // remove temporary directory used to store the qr code image
-        ilUtil::delDir(ilUtil::getDataDir()."/MobileQuiz_data/".$round_id);
     }
 
     // -------------------------------------------------------------------------
@@ -528,7 +524,7 @@ class ilObjMobileQuiz extends ilObjectPlugin
      * Then QR Code image will be created and stored to filesystem into the temporary directory.
      */
     public function beginCurrentRound(){
-        global $ilDB, $ilAccess, $ilUser;
+        global $ilDB;
 
         $now = new ilDateTime(time(),IL_CAL_UNIX);
         $round_id = $ilDB->nextID('rep_robj_xuiz_rounds');
@@ -537,40 +533,44 @@ class ilObjMobileQuiz extends ilObjectPlugin
             array("integer", "integer", "timestamp"),
             array($round_id,$this->getId(),$now->get(IL_CAL_DATETIME)));
 
-        // create temporary directory to store the qr code image
-        ilUtil::makeDirParents(ilUtil::getDataDir()."/MobileQuiz_data/".$round_id);
-
         // please change this if you move your frontend installation out of your ILIAS plugin directory:
         $frontend_url = "Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/frontend/";
-        // TODO: Workaround for shorten
-        //$frontend_url = "quiz15/";
 
-        // create qr code image
+        // Get relevant IDs
         $quiz_id = $this->getId();
         $currentRound = $this->getCurrentRound($quiz_id);
         $round_id = $currentRound[round_id];
+        
         // get hostname and check if proxy is used
-		$hostname = (!empty($_SERVER['HTTP_X_FORWARDED_HOST'])) ? $_SERVER['HTTP_X_FORWARDED_HOST'] : $_SERVER['SERVER_NAME'];
+	$hostname = (!empty($_SERVER['HTTP_X_FORWARDED_HOST'])) ? $_SERVER['HTTP_X_FORWARDED_HOST'] : $_SERVER['SERVER_NAME'];
         $url = (!empty($_SERVER['HTTPS'])) ? "https://".$hostname.$_SERVER['REQUEST_URI'] : "http://".$hostname.$_SERVER['REQUEST_URI'];
+        
         // crafting quiz url:
         $tmp = explode('/',$url);
         $dmy = array_pop($tmp);
         $server_url = (implode('/',$tmp) . '/');
-        // TODO: Workaround for shorten
         $quiz_url = $server_url.$frontend_url."index.php?quiz_id=".$quiz_id."&round_id=".$round_id;
-        //$quiz_url = $server_url.$frontend_url."quiz_id=".$quiz_id."&round_id=".$round_id;
-
-        //short url
-        include_once('class.ilObjMobileQuizUrlShorter.php');
-        $url_shorter = new ilObjMobileQuizUrlShorter();
-        $shorted_url = $url_shorter->shortURL($quiz_url);
-
-
-        mkdir(ilUtil::getWebspaceDir()."/MobileQuiz_data/".$round_id, 0700, true);
-        // uncomment the following line for not shorted urls
-        QRcode::png($shorted_url,ilUtil::getWebspaceDir()."/MobileQuiz_data/".$round_id."/qrcode.png", 'L', 15, 2);
-        //QRcode::png($quiz_url,ilUtil::getWebspaceDir()."/MobileQuiz_data/".$round_id."/qrcode.png", 'L', 15, 2);
-
+        
+        // Create forlder for QR-Code
+        mkdir(ilUtil::getWebspaceDir()."/MobileQuiz_data/".$round_id, 0755, true);
+        
+        // if shortener is active use shortened URL
+        if (SHORTENER) {
+            
+            // shorten ULR
+            include_once('class.ilObjMobileQuizUrlShorter.php');
+            $url_shorter = new ilObjMobileQuizUrlShorter();
+            $shorted_url = $url_shorter->shortURL($quiz_url);
+            
+            // write short URL in database
+            $ilDB->manipulate("UPDATE rep_robj_xuiz_rounds SET tiny_url = '".$shorted_url."' WHERE ".
+                                " round_id = ".$ilDB->quote($round_id, "integer")
+                        );
+            
+            QRcode::png($shorted_url,ilUtil::getWebspaceDir()."/MobileQuiz_data/".$round_id."/qrcode.png", 'L', 15, 2);
+        } else {
+            QRcode::png($quiz_url,ilUtil::getWebspaceDir()."/MobileQuiz_data/".$round_id."/qrcode.png", 'L', 15, 2);
+        }
     }
 
     // -------------------------------------------------------------------------
@@ -595,10 +595,12 @@ class ilObjMobileQuiz extends ilObjectPlugin
         $round = array();
 
         while ($rec = $ilDB->fetchAssoc($set)){
-            $round["round_id"] = $rec["round_id"];
-            $round["quiz_id"] = $rec["quiz_id"];
-            $round["start_date"] = $rec["start_date"];
-            $round["end_date"] = $rec["end_date"];
+            $round["round_id"]      = $rec["round_id"];
+            $round["quiz_id"]       = $rec["quiz_id"];
+            $round["start_date"]    = $rec["start_date"];
+            $round["end_date"]      = $rec["end_date"];
+            $round["tiny_url"]      = $rec["tiny_url"];
+            $round["type"]          = $rec["type"];
 
             return $round;
         }

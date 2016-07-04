@@ -316,58 +316,6 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
 
     //--------------------------------------------------------------------------
     
-    // Get the Short URL for a Quiz
-    function getShortURL($quiz_id, $round_id) {
-
-        global $ilDB, $ilUser;
-
-        $ilDB->setLimit(1);
-        $set = $ilDB->query("
-                SELECT tiny_url
-                FROM rep_robj_xuiz_rounds
-                WHERE round_id = ".$ilDB->quote($round_id, "integer")." ORDER BY round_id DESC");
-
-        while ($rec = $ilDB->fetchAssoc($set)){
-            if ( !empty( $rec["tiny_url"] ) ) return $rec["tiny_url"]; else {
-                // get hostname and check if proxy is used
-		$hostname = (!empty($_SERVER['HTTP_X_FORWARDED_HOST'])) ? $_SERVER['HTTP_X_FORWARDED_HOST'] : $_SERVER['SERVER_NAME'];
-                $url = (!empty($_SERVER['HTTPS'])) ? "https://".$hostname.$_SERVER['REQUEST_URI'] : "http://".$hostname.$_SERVER['REQUEST_URI'];
-
-                // please change this if you move your frontend installation out of your ILIAS plugin directory:
-                $frontend_url = "Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/frontend/";
-
-                // crafting quiz url:
-                $tmp = explode('/',$url);
-                $dmy = array_pop($tmp);
-                $server_url = (implode('/',$tmp) . '/');
-                $quiz_url = $server_url.$frontend_url."index.php?quiz_id=".$quiz_id."&round_id=".$round_id;
-
-                // short url
-                if (SHORTENER) {
-                    include_once('class.ilObjMobileQuizUrlShorter.php');
-                    $url_shorter = new ilObjMobileQuizUrlShorter();
-                    $shorted_url = $url_shorter->shortURL($quiz_url);
-               
-                }
-                //If shortner is false or does not function properly then make the URL optional.
-                if($shorted_url == NULL)
-                    {
-                  //short url
-                  $shorted_url = $quiz_url;
-              }
-
-                $ilDB->manipulate("UPDATE rep_robj_xuiz_rounds SET tiny_url = '".$shorted_url."' WHERE ".
-                                " round_id = ".$ilDB->quote($round_id, "integer")
-                        );
-
-                return $shorted_url;
-            }
-
-        }
-    }
-
-    //--------------------------------------------------------------------------
-    
     /**
      * Show Current Round. This displays the link to the quiz page and its the QR Code.
      */
@@ -385,7 +333,7 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
             $action_edit = $this->ctrl->getLinkTarget($this,'endCurrentRound');
             $action_edit = $this->ctrl->appendRequestTokenParameterString($action_edit);
 
-            $shorted_url = $this->getShortURL($quiz_id, $round_id);
+            $shorted_url = $currentRound['tiny_url'];
 
             $my_tpl = new ilTemplate("tpl.startpage_stop.html", true, true,
                 "Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz");
@@ -688,7 +636,7 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
 
         if(!count($rounds) == 0) {
             foreach($rounds as $round){
-                $round["quiz_url"] = $this->getShortURL($round['quiz_id'], $round['round_id']);
+                $round["quiz_url"] = $round["tiny_url"];
                 $round["image_url"] = ilUtil::getWebspaceDir()."/MobileQuiz_data/".$round['round_id']."/qrcode.png";
                 $round["show_qr"] = $this->txt("results_show_qr");
 

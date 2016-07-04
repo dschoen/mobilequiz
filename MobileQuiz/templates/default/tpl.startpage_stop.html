@@ -8,38 +8,39 @@
 	color: #000;
 }
 
-#btn_qr_fullscreen {
-	
+#btn_qr_fullscreen {	
 	font-size: 3em;
 	color: #000;
-	vertical-align: top;
-	
+	vertical-align: top;	
 }
 
 #backgroundPopup{
 	display:none;
+        z-index:1041;
 	position:fixed;
-	_position:absolute; /* hack for internet explorer 6*/
+	_position:absolute; /* hack for internet explorer 6*/        
 	height:100%;
 	width:100%;
 	top:0;
-	left:0;
-	background:#000000;
-	border:1px solid #cecece;
-	z-index:1;
+	left:0;        
+	background:rgba(0,0,0,.7);        
+        text-align: center;        
 }
 
+/* Big QR-Code zoomed on click*/
 #qr_code_big{
-	display:none;
-	position:fixed;
-	_position:absolute; /* hack for internet explorer 6*/
-	height:530px;
-	width:550px;
-	background:#FFFFFF;
-	border:2px solid #cecece;
-	z-index:2;
+        display:inline-block;
+        z-index:1042;
+	position:relative;
+        top: 20px;                
 	padding:12px;
-	font-size:13px;
+	font-size:1.8em;
+	background:rgba(255,255,255,1);
+	border:2px solid #cecece;
+}
+
+#qr_code_image{
+	height:800px;
 }
 
 :-webkit-full-screen img {
@@ -132,48 +133,20 @@ a.increaseFont:hover,a.decreaseFont:hover {
 	 function loadPopup(elementId){
 		//loads popup only if it is disabled
                 if(popupStatus==0){
-			 $("#backgroundPopup").css({
-			 	"opacity": "0.7"
-		 });
-			 $("#backgroundPopup").fadeIn("slow");
-			 $(elementId).fadeIn("slow");
-			 popupStatus = 1;
+                    $("#backgroundPopup").fadeIn("slow");
+                    $(elementId).fadeIn("slow");
+                    popupStatus = 1;
 		 }
 	}
 	
 	function disablePopup(elementId){
 		//disables popup only if it is enabled
 		if(popupStatus==1){
-			$("#backgroundPopup").fadeOut("slow");
-			$(elementId).fadeOut("slow");
-			popupStatus = 0;
+                    $("#backgroundPopup").fadeOut("slow");
+                    $(elementId).fadeOut("slow");
+                    popupStatus = 0;
 		}
-	}
-	
-	//centering popup
-	function centerPopup(elementId){
-		//request data for centering
-		var windowWidth = document.documentElement.clientWidth;
-		var windowHeight = document.documentElement.clientHeight;
-		var popupHeight = $(elementId).height();
-		var popupWidth = $(elementId).width();
-		//centering
-		$(elementId).css({
-			"position": "absolute",
-			"top": "-250px",
-			"left": windowWidth/2-popupWidth/2,
-                        "z-index":"1042"
-		});
-		//only need force for IE6
-	
-		$("#backgroundPopup").css({
-			"height": windowHeight,
-                        "z-index":"1041"
-		});
-		
- 
-	}
-	 
+	}	 
 
 	$(document).ready(function() {
 
@@ -182,42 +155,48 @@ a.increaseFont:hover,a.decreaseFont:hover {
 		$(".resetFont").click(function() {
 			$('html').css('font-size', originalFontSize);
 		});
-		// Increase Font Size
+		// Increase Font Size and QR-Cde
 		$(".increaseFont").click(function() {
-			var currentFontSize = $('#display_url1').css('font-size');
-			var currentFontSizeNum = parseFloat(currentFontSize, 10);
-			var newFontSize = currentFontSizeNum * 1.2;
-			$('#display_url1').css('font-size', newFontSize);
-			return false;
+                    var currentFontSize = $('#display_url1').css('font-size');
+                    var currentFontSizeNum = parseFloat(currentFontSize, 10);
+                    var newFontSize = currentFontSizeNum * 1.2;
+                    $('#display_url1').css('font-size', newFontSize);
+                       
+                    var currentQRSize = $('#qr_code_image').css('height');
+                    var currentQRSizeNum = parseFloat(currentQRSize, 10);
+                    var newQRSize = currentQRSizeNum * 1.2;
+                    $('#qr_code_image').css('height', newQRSize);
+        
+                    return false;                        
 		});
-		// Decrease Font Size
+		// Decrease Font Size and QR-Cde
 		$(".decreaseFont").click(function() {
-			var currentFontSize = $('#display_url1').css('font-size');
-			var currentFontSizeNum = parseFloat(currentFontSize, 10);
-			var newFontSize = currentFontSizeNum * 0.8;
-			$('#display_url1').css('font-size', newFontSize);
-			return false;
+                    var currentFontSize = $('#display_url1').css('font-size');
+                    var currentFontSizeNum = parseFloat(currentFontSize, 10);
+                    var newFontSize = currentFontSizeNum * 0.8;
+                    $('#display_url1').css('font-size', newFontSize);
+
+                    var currentQRSize = $('#qr_code_image').css('height');
+                    var currentQRSizeNum = parseFloat(currentQRSize, 10);
+                    var newQRSize = currentQRSizeNum * 0.8;
+                    $('#qr_code_image').css('height', newQRSize);
+
+                    return false;
 		});
-		
 		
 		// display QR Code in fullscreen
-                
+                $("#btn_qr_fullscreen").click(function() {
 
-	$("#btn_qr_fullscreen").click(function() {
-		
-		//centering with css
-		centerPopup("#qr_code_big");
-		//load popup
-                        loadPopup("#qr_code_big");
-		 
-	});
+                    //load popup
+                    loadPopup("#qr_code_big");		 
+                });
 		
 	
 		//Click out event!
                 $("#backgroundPopup").click(function(){
-		disablePopup("#qr_code_big");
-		
-	});
+                    disablePopup("#qr_code_big");		
+                });
+                
 		//Press Escape event!
 		$(document).keypress(function(e){
 			if(e.keyCode==27 && popupStatus==1){
@@ -230,40 +209,34 @@ a.increaseFont:hover,a.decreaseFont:hover {
 <center>
 	{STOP_LINK}
 	
-	<div  id="qr_code"> 
-            
+	<div  id="qr_code">            
 		<img  src='{IMAGE_URL}' alt='QR-Code' /> 
-		<div id="display_url">
-                    <a href="#" title="For full view" id="btn_qr_fullscreen" class="cool_button" >
-		<img src="./Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/templates/images/zoom.png"  width="50" height="50"/>
-                
-		</a>
-                    <br>
-			<a href="{QUIZ_URL}">{QUIZ_URL}</a> <br />
-		</div>
-		
+            <div id="display_url">
+                <a href="#" title="For full view" id="btn_qr_fullscreen" class="cool_button" >
+                    <img src="./Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/templates/images/zoom.png"  width="50" height="50"/>                
+                </a>
+                <br />
+                <a href="{QUIZ_URL}">{QUIZ_URL}</a> <br />
+            </div>		
 	</div>
         
-	<div  id="qr_code_big"> 
-		<img  src='{IMAGE_URL}'width="100%" height="85%" alt='QR-Code' /> 
-		<div id="display_url1">
-			<a href="{QUIZ_URL}">{QUIZ_URL}</a>      
-		</div>
-                
+	
+        <div id="backgroundPopup">
+            <div  id="qr_code_big"> 
+                <img  id="qr_code_image" src='{IMAGE_URL}' alt='QR-Code' /> 
+                <div id="display_url1">
+                    <a href="{QUIZ_URL}">{QUIZ_URL}</a>      
+                </div>
+
                 <div id="zoom">
-                    <a href="#" title="Increases the view" backgroundcolor="#FF0000" class="increaseFont">
+                    <a href="#" title="Increase QR-code size" class="increaseFont">
                         <img src="./Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/templates/images/max.png"  width="25" height="25"/>
                     </a>
-                &nbsp;
-                <a href="#" title ="Decreases the view" class="decreaseFont" title="">
-                    <img src="./Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/templates/images/min.png"  width="25" height="25"/>
-                </a>
-                </div>
-                
-	</div> 
-        <div id="backgroundPopup">
-            
-        </div>
-	<br> <br />
-	
+                    &nbsp;
+                    <a href="#" title="Decrease QR-code size." class="decreaseFont">
+                        <img src="./Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/templates/images/min.png"  width="25" height="25"/>
+                    </a>
+                </div>                
+            </div>            
+        </div>	
 </center>

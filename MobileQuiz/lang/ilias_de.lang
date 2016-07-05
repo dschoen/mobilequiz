@@ -23,14 +23,14 @@ cat_create_xuiz#:#MobileQuiz erstellen
 
 <!-- Tabs -->
 tabmenu_questions#:#Fragen
-tabmenu_properties#:#Eigenschaften
+tabmenu_properties#:#Einstellungen
 tabmenu_showCurrentRound#:#Aktuelle Quizrunde
 tabmenu_show_result#:#Runden & Auswertung
 tabmenu_edit_quiz#:#Fragen & Antworten
 tabmenu_info#:#Weitere Informationen
 
 <!-- Properties -->						
-edit_properties#:#Eigenschaften ändern
+edit_properties#:#Einstellungen ändern
 properties_title#:#Name
 properties_description#:#Beschreibung
 

@@ -84,6 +84,3 @@ class ilObjMobileQuizListGUI extends ilObjectPluginListGUI{
     }
 }
 ?>
-
-
-

@@ -247,7 +247,7 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
 
         //description of the quiz
         $description = new ilTextAreaInputGUI($this->txt("properties_description"), "description");
-        $description->setRequired(f);
+        $description->setRequired(false);
         $this->form->addItem($description);
 
         $this->form->addCommandButton("updateProperties", $this->txt("save"));

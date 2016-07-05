@@ -109,7 +109,7 @@ results_show_qr#:#Show QR-Code
 <!-- Info -->
 info_text#:#MobileQuiz is a free software developed by students and employes of the University of Mannheim.
 info_mailto#:#You can give us feedback and report bugs via mobilequiz@uni-mannheim.de.
-info_instructions#:#A german documentation can be found <a href="http://www.uni-mannheim.de/rum/Portal/Dokumentationen/Lernplattform%20ILIAS/MobileQuiz/">here</a>.
+info_instructions#:#A documentation can be found <a href="https://github.com/dschoen/mobilequiz/blob/master/README.md">here</a>.
 
 <!-- Constants -->
 votes#:#votes

@@ -7,19 +7,19 @@ obj_xuiz#:#MobileQuiz
 objs_xuiz#:#MobileQuiz
 obj_xuiz_duplicate#:#Copy
 objs_xuiz_duplicate#:#Copy Mobilequiz
-obj_xuiz_select#:#Select TraQ
+obj_xuiz_select#:#Select MobileQuiz
 xuiz_add#:#Add MobileQuiz
-xuiz_new#:#Add New Mobilequiz
-xuiz_read#:#Read access to TraQ
-xuiz_write#:#Edit TraQ
-xuiz_delete#:#Delete TraQ
-xuiz_visible#:#TraQ is visible
+xuiz_new#:#Add New MobileQuiz
+xuiz_read#:#Read access to MobileQuiz
+xuiz_write#:#Edit MobileQuiz
+xuiz_delete#:#Delete MobileQuiz
+xuiz_visible#:#MobileQuiz is visible
 xuiz_edit_permission#:#Change permission settings
-crs_create_xuiz#:#Create TraQ
-grp_create_xuiz#:#Create TraQ
-fold_create_xuiz#:#Create TraQ
-root_create_xuiz#:#Create TraQ
-cat_create_xuiz#:#Create TraQ
+crs_create_xuiz#:#Create MobileQuiz
+grp_create_xuiz#:#Create MobileQuiz
+fold_create_xuiz#:#Create MobileQuiz
+root_create_xuiz#:#Create MobileQuiz
+cat_create_xuiz#:#Create MobileQuiz
 
 <!-- Tabs -->
 tabmenu_questions#:#Questions

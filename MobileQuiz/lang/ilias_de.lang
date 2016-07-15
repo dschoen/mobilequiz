@@ -14,7 +14,7 @@ xuiz_read#:#Leserechte auf MobileQuiz
 xuiz_write#:#MobileQuiz bearbeiten
 xuiz_delete#:#MobileQuiz löschen
 xuiz_visible#:#MobileQuiz ist sichtbar
-xuiz_edit_permission#:#Zugriffsrechte ändern
+xuiz_edit_permission#:#Zugriffsrechte bearbeiten
 crs_create_xuiz#:#MobileQuiz erstellen
 grp_create_xuiz#:#MobileQuiz erstellen
 fold_create_xuiz#:#MobileQuiz erstellen
@@ -30,7 +30,7 @@ tabmenu_edit_quiz#:#Fragen & Antworten
 tabmenu_info#:#Weitere Informationen
 
 <!-- Properties -->						
-edit_properties#:#Einstellungen ändern
+edit_properties#:#Einstellungen bearbeiten
 properties_title#:#Name
 properties_description#:#Beschreibung
 
@@ -44,7 +44,7 @@ question_obj_create#:#Frage wurde erfolgreich hinzugefügt
 question_table_text#:#Frage
 question_table_type#:#Fragetyp
 question_table_choices#:#Antwortmöglichkeiten
-question_table_edit#:#Editieren
+question_table_edit#:#Bearbeiten
 question_table_delete#:#Löschen
 question_table_up#:#Hoch
 question_table_down#:#Runter
@@ -52,7 +52,7 @@ question_table_down#:#Runter
 <!-- Choice table Edit formular -------------------------------------------- -->	
 choice_table_text#:#Antwort
 choice_table_value#:#Wert
-choice_table_edit#:#Editieren
+choice_table_edit#:#Bearbeiten
 choice_table_delete#:#Löschen
 choice_table_head#:#Antwortmöglichkeiten
 
@@ -116,16 +116,16 @@ info_instructions#:#Eine kurze Dokumentation finden sie auf <a href="https://git
 votes#:#Stimmen
 save#:#Speichern
 cancel#:#Abbrechen
-edit#:ändern
+edit#:Bearbeiten
 status#:#Status
 offline#:#Offline
 yes#:#Ja
 no#:#Nein
 question_delete#:#Löschen
-question_edit#:#ändern
+question_edit#:#Bearbeiten
 question_table_head#:#Fragen
-round_start#:#Start neue Runde
-round_stop#:#Beende aktuelle Runde
+round_start#:#Neue Runde starten
+round_stop#:#Aktuelle Runde beenden
 round#:#Runde
 open_quiz#:#Quiz starten
 msg_obj_create#:#Erfolgreich

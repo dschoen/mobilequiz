@@ -85,3 +85,35 @@
 label.ui-btn {
     font-weight: normal;
 }
+
+/* -- Result Page -----------------*/
+.optional-information {
+	
+}
+
+.text-info {
+	margin: 5px;
+	padding: 5px;
+	border: 1px solid #999999;
+	border-radius: 4px;
+	background-color: #FAFAD2;
+	display: none;
+}
+
+.button-optional {
+	margin: 4px;
+	padding: 5px;
+	
+	font-size: 12.5px;
+	font-family: "Open Sans",sans-serif !important;
+	text-decoration: none !important;
+	font-weight: normal !important;
+    color: #3eb249 !important;  
+      
+    background-color: #f6f6f6;
+    border: 1px solid #ddd;
+    border-radius: 2px;;
+    vertical-align: middle;
+    text-align: center;
+    cursor: pointer;   
+}

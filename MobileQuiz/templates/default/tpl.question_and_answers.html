@@ -1,6 +1,7 @@
 <link rel="stylesheet" href="./Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/lib/simplemde/simplemde.min.css">
 <script src="./Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/lib/simplemde/simplemde.min.js"></script>
 
+<!-- JAVASCRIPT ----------------------------------------------------------------- -->
 <script>
 
     function next(elem) {
@@ -121,14 +122,6 @@
                     ownChildRowElements = b.getElementsByClassName("rowID");
                     lastID = ownChildRowElements[0].getAttribute("value");
                 }
-                
-                //TODO if this is not necessary any more delete
-                /*
-                newRowIdElement = $newElem.getElementsByClassName("rowID");
-                if(newRowIdElement.length == 0) return false;
-            
-                newRowIdElement[0].setAttribute("value", lastID+1);
-                */
 
                 // render the new Textarea as Editor
                 renderNewChoiceTextArea();
@@ -155,15 +148,6 @@
                     ownChildRowElements = b.getElementsByClassName("rowID");
                     lastID = ownChildRowElements[0].getAttribute("value");
                 }
-                
-                //TODO if this is not necessary any more delete
-                /*
-                newRowIdElement = $newElem.getElementsByClassName("rowID");
-                
-                if(newRowIdElement.length == 0) return false;
-                
-                newRowIdElement[0].setAttribute("value", lastID+1);
-                */
                
                 // render the new Textarea as Editor
                 renderNewChoiceTextArea();
@@ -197,27 +181,32 @@
     
     // simpleMDE - Editor
     $(document).ready(function() {
-        var question = new SimpleMDE({ 
-                    element: $("#text")[0],
-                    placeholder: "Type here...",
-                    toolbar: ["bold", "italic", "code", "|",
-                        {
-                        name: "latex",
-                        action: latexAction,
-                        className: "fa fa-bolt",
-                        title: "LaTeX",
-                        },
-                        {
-                        name: "latexInline",
-                        action: latexInlineAction,
-                        className: "fa fa-bolt",
-                        title: "Inline LaTeX",
-                        }, "|",
-                        "link", "image", "|",
-                        "preview"],
-                    spellChecker: false,
-                    status: false,
-        });
+    	
+    	// render simpleMDE Editor on ever textfield with this class
+    	$('.textfield-mark-full').each(function() {    	
+	       var textfield = new SimpleMDE({ 
+	                   element: this,
+	                   placeholder: "Type here...",
+	                   toolbar: ["bold", "italic", "code", "|",
+	                       {
+	                       name: "latex",
+	                       action: latexAction,
+	                       className: "fa fa-bolt",
+	                       title: "LaTeX",
+	                       },
+	                       {
+	                       name: "latexInline",
+	                       action: latexInlineAction,
+	                       className: "fa fa-bolt",
+	                       title: "Inline LaTeX",
+	                       }, "|",
+	                       "link", "image", "|",
+	                       "preview"],
+	                   spellChecker: false,
+	                   status: false,
+	       });
+	       textfield.render();
+    	});
         
         function latexAction(){
             cm = question.codemirror;
@@ -266,6 +255,8 @@
     }
 
 </script>
+
+<!-- ------------------------------------------------------------------ -->
 
 <style>    
 
@@ -425,41 +416,47 @@
 	method="post">
 	<!-- Please note the usage of datatable attribute which is non-standard
 	but ensures that JAWS treats this table as a layout table -->
-	<table class="ilForm" width="" datatable="0" style="text-align: left;">
+	<table class="ilForm" datatable="0" style="text-align: left;">
 		<tbody>
+			<!-- Headline and Save Button ------------------------------------------------------------- -->
 			<tr class="ilFormHeader">
-                                <td class="ilFormHeader" colspan="2">
-                                        <div style="float: right; margin-left: 20px;">
-                                                <input class="submit" type="SUBMIT" name="{COMMAND}"
-                                                        value="{SUBMIT_BUTTON}">
-                                                <input type="hidden" name="question_id" value="{QUESTION_ID}">
-                                        </div>
-                                        <h3 class="ilFormHeader ilHeader ilTableHeaderTitle">
-                                                {NEW_QUESTION}
-                                        </h3>
-                                        <div class="ilFormInfo" style="margin-left: 0px;"></div>
-                                </td>
+	            <td class="ilFormHeader" colspan="2">
+	                <div style="float: right; margin-left: 20px;">
+	                        <input class="submit" type="SUBMIT" name="{COMMAND}"
+	                                value="{SUBMIT_BUTTON}">
+	                        <input type="hidden" name="question_id" value="{QUESTION_ID}">
+	                </div>
+	                <h3 class="ilFormHeader ilHeader ilTableHeaderTitle">
+	                        {CHOICES_HEADLINE}
+	                </h3>
+	                <div class="ilFormInfo" style="margin-left: 0px;"></div>
+	            </td>
 			</tr>
-                        <!-- Question Formular -->
+			
+            <!-- Question Formular -------------------------------------------------------------------------- -->
 			<tr>
 				<td class="ilFormOption" id="il_prop_cont_text">
-                                    <label for="text">{QUESTION}<span class="asterisk">*</span></label>
-                                </td>
+                	<label for="text">{QUESTION}<span class="asterisk">*</span></label>
+                </td>
 				<td class="ilFormValue">
-                                    <textarea name="text" id="text" class="textfield_question" rows="3">{QUESTION_TEXT}</textarea>
-                                </td>
+                	<textarea name="text" id="text" class="textfield_question textfield-mark-full" rows="3">{QUESTION_TEXT}</textarea>
+               	</td>
 			</tr>
+			
+			<!-- Question Type -------------------------------------------------------------------------- -->
 			<tr {HIDE_QUESTION_TYPE}>
 				<td class="ilFormOption" id="il_prop_cont_type"><label
 					for="type">{QUESTION_TYPE} <span class="asterisk">*</span></label></td>
-				<td class="ilFormValue"><select id="type" name="type" {DISABLE_OPTION_FORM}>
+				<td class="ilFormValue">
+					<select id="type" name="type" {DISABLE_OPTION_FORM}>
 						<option value="1" {SELECTED_MULTIPLE} >Multiple Choice</option>
 						<option value="2" {SELECTED_SINGLE} >Single Choice</option>
 						<option value="3" {SELECTED_NUMERIC} >Numeric</option>
-				</select></td>
+					</select>
+				</td>
 			</tr>
                         
-                        <!-- Choice Formular -->
+            <!-- Choice Formular -->
 			<tr>
 				<td class="ilFormOption" id="il_prop_cont_type">{CHOICES}<span class="asterisk">*</span></td>
 				<td class="ilFormValue">
@@ -492,7 +489,7 @@
 							<a href="#" id="add_choice_multiple" class="add_button">Add Antwort</a>
 						</div>
                                                             
-                                                <!-- Template for adding-->
+                        <!-- Template for adding-->
 						<fieldset id="fieldset_multiple_choice_999" class="choice" style="display: none;">
 							<input type="hidden" name="rowID[999]" value="" class="rowID">
 							<textarea name="choice_multiple_text[999]" class="textfield_choice" rows="3">{MUL_TEXT}</textarea>
@@ -590,8 +587,28 @@
 
 				</td>
 			</tr>
+            
+            <!-- Solution Formular -------------------------------------------------------------------- -->
+			<tr>
+				<td class="ilFormOption" id="il_prop_cont_text">
+                	<label for="solution">{SOLUTION}</label>
+                </td>
+				<td class="ilFormValue">
+                	<textarea name="solution" id="solution" class="textfield_solution textfield-mark-full" rows="2">{SOLUTION_TEXT}</textarea>
+               	</td>
+			</tr>
+			
+			<!-- Further Information Formular -------------------------------------------------------------------- -->
+			<tr>
+				<td class="ilFormOption" id="il_prop_cont_text">
+                	<label for="furthermore">{FURTHERMORE}</label>
+                </td>
+				<td class="ilFormValue">
+                	<textarea name="furthermore" id="furthermore" class="textfield_furthermore textfield-mark-full" rows="2">{FURTHERMORE_TEXT}</textarea>
+               	</td>
+			</tr>
                         
-                        <!-- Footer -->
+            <!-- Footer -->
 			<tr>
 				<td class="ilFormFooter" colspan="2">
 					<div style="float: left;">
@@ -599,8 +616,7 @@
 							Erforderliche Angabe</span>
 					</div>
 					<div align="right">
-						<input class="submit" type="SUBMIT" name="{COMMAND}"
-							value="{SUBMIT_BUTTON}">
+						<input class="submit" type="SUBMIT" name="{COMMAND}" value="{SUBMIT_BUTTON}">
 					</div>
 				</td>
 			</tr>

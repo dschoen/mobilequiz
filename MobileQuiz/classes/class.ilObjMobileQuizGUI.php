@@ -1123,119 +1123,31 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
         return $correct_answers_count;
     }
 
-    // -------------------------------------------------------------------------
+    //--------------------------------------------------------------------------
+    //                         Questions - LIST
+    //--------------------------------------------------------------------------
 
     /**
      * Edit Quiz
-     * Enter description here ...
+     * 
      */
     public function editQuiz() {
         global $tpl, $ilTabs;
         $ilTabs->activateTab("editQuiz");
         iljQueryUtil::initjQuery();
 
-        $tpl->setContent($this->initQuestionAndAnswersTable());
+        $tpl->setContent($this->initQuestionTable());
     }
 
+    // -------------------------------------------------------------------------
+    
     /**
      * Add Question ansd Answers. This creates the question form by calling the initAddQuestionAndAnswersForm() method.
      */
     public function addQuestionAndAnswers () {
         global $tpl, $ilTabs;
         $ilTabs->activateTab("editQuiz");
-        $this->initAddQuestionAndAnswersForm();
-    }
-
-    /**
-     * Init Add Question and Answers Form. This was separated to be used from different
-     * commands. Though right now it is only called by one command.
-     */
-    public function initAddQuestionAndAnswersForm () {
-        global $tpl, $ilCtrl;
-
-        $my_tpl = new ilTemplate("tpl.question_and_answers.html", true, true,
-            "Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz");
-        $rtokenFactory = new ilCtrl();
-        $my_tpl->setVariable("ACTION_URL",$this->ctrl->getFormAction($this));
-        $my_tpl->setVariable("SUBMIT_BUTTON", $this->txt("save"));
-        $my_tpl->setVariable("NEW_QUESTION", $this->txt("question_add_head"));
-        $my_tpl->setVariable("QUESTION", $this->txt("question_add_text"));
-        $my_tpl->setVariable("QUESTION_TYPE", $this->txt("question_add_type"));
-        $my_tpl->setVariable("CHOICES", $this->txt("choice_add_texts"));
-        $my_tpl->setVariable("VAR_1", "value1");
-        $my_tpl->setVariable("COMMAND", "cmd[createQuestionAndAnswers]");
-        $my_tpl->setVariable("MINIMUM", $this->txt("choice_add_numeric_minimum"));
-        $my_tpl->setVariable("MAXIMUM", $this->txt("choice_add_numeric_maximum"));
-        $my_tpl->setVariable("STEP", $this->txt("choice_add_numeric_steprange"));
-        $my_tpl->setVariable("CORRECT_VALUE", $this->txt("choice_add_numeric_correctvalue"));
-        $my_tpl->setVariable("TOLERANCE_RANGE", $this->txt("choice_add_numeric_tolerenace_range"));
-        $my_tpl->setVariable("SELECTED_SINGLE", 'selected="selected"');
-
-        $my_tpl->setVariable("HIDE_NUMERIC_BLOCK", 'style="display:none;"');
-        $my_tpl->setVariable("HIDE_SINGLE_CHOICE_BLOCK", 'style="display:none;"');
-
-        $html = $my_tpl->get();
-        $tpl->setContent($html);
-    }
-
-    //--------------------------------------------------------------------------
-
-    public function initAddQuestionAndAnswersFormAfterError () {
-        global $tpl, $ilCtrl;
-
-        $my_tpl = new ilTemplate("tpl.question_and_answers.html", true, true,
-            "Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz");
-        $rtokenFactory = new ilCtrl();
-        $my_tpl->setVariable("ACTION_URL",$this->ctrl->getFormAction($this));
-        $my_tpl->setVariable("SUBMIT_BUTTON", $this->txt("save"));
-        $my_tpl->setVariable("NEW_QUESTION", $this->txt("question_add_head"));
-        $my_tpl->setVariable("QUESTION", $this->txt("question_add_text"));
-        $my_tpl->setVariable("QUESTION_TYPE", $this->txt("question_add_type"));
-        $my_tpl->setVariable("CHOICES", $this->txt("choice_add_texts"));
-        $my_tpl->setVariable("VAR_1", "value1");
-        $my_tpl->setVariable("MINIMUM", $this->txt("choice_add_numeric_minimum"));
-        $my_tpl->setVariable("MAXIMUM", $this->txt("choice_add_numeric_maximum"));
-        $my_tpl->setVariable("STEP", $this->txt("choice_add_numeric_steprange"));
-        $my_tpl->setVariable("CORRECT_VALUE", $this->txt("choice_add_numeric_correctvalue"));
-        $my_tpl->setVariable("TOLERANCE_RANGE", $this->txt("choice_add_numeric_tolerenace_range"));
-
-        // refill fields
-        include_once('class.ilObjMobileQuizWizard.php');
-        $wiz = new ilObjMobileQuizWizard();
-        $wiz -> fillQuestionAndAnswersAfterError($my_tpl);
-
-        $html = $my_tpl->get();
-        $tpl->setContent($html);
-    }
-
-    //--------------------------------------------------------------------------
-    
-    /**
-     * Create Question and Answers. This is called after the firm was filled out. From here
-     * the function in the Model is called to insert the question to the database
-     */
-    public function createQuestionAndAnswers () {
-        global $tpl, $lng, $ilCtrl, $ilTabs;
-
-        // create wizard object
-        include_once('class.ilObjMobileQuizWizard.php');
-        $wiz = new ilObjMobileQuizWizard();
-
-
-        $ilTabs->activateTab("editQuiz");
-
-
-        if ($wiz->checkInput()){
-            $wiz->createQuestionAndAnswers($this->object);
-            ilUtil::sendSuccess($this->txt("question_obj_create"), true);
-            $ilCtrl->redirect($this, "editQuiz");
-        }
-        $this->initAddQuestionAndAnswersFormAfterError();
-        //$tpl->setContent("Test");
-    }
-
-    public function showQuestionAndAnswers () {
-
+        $this->openQuestionAndAnswersForm();
     }
 
     //--------------------------------------------------------------------------
@@ -1243,7 +1155,7 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
     /**
      * Renders the view of all questions in the Table List
      */
-    public function initQuestionAndAnswersTable () {
+    public function initQuestionTable () {
         global $ilAccess, $ilUser, $ilDB;
         include_once('./Services/Table/classes/class.ilTable2GUI.php');
         $tbl = new ilTable2GUI($this);
@@ -1357,6 +1269,195 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
     //--------------------------------------------------------------------------
     
     /**
+     * Switch one question UP
+     */
+    public function switchUp(){
+    	global $ilCtrl;
+    	$question_id = $_GET['question_id'];
+    	$this->object->switchUp($question_id);
+    	$ilCtrl->redirect($this, "editQuiz");
+    }
+    
+    //--------------------------------------------------------------------------
+    
+    /**
+     * Switch one questino DOWN
+     */
+    public function switchDown(){
+    	global $ilCtrl;
+    	$question_id = $_GET['question_id'];
+    	$this->object->switchDown($question_id);
+    	$ilCtrl->redirect($this, "editQuiz");
+    }
+    
+    //--------------------------------------------------------------------------
+    
+    /**
+     * Open this question in Choices FORM
+     */
+    public function editQuestionAndAnswers () {
+    	global $tpl, $ilTabs;
+    	$ilTabs->activateTab("editQuiz");
+    	$this->openQuestionAndAnswersForm();
+    }
+    
+    //--------------------------------------------------------------------------
+    //                   Choices aka. Questions and Answers FORM
+    //--------------------------------------------------------------------------
+    
+//     /**
+//      * Init Add Question and Answers Form. This was separated to be used from different
+//      * commands. Though right now it is only called by one command.
+//      */
+//     public function initAddQuestionAndAnswersForm () {
+//     	global $tpl, $ilCtrl;
+    
+//     	$my_tpl = new ilTemplate("tpl.question_and_answers.html", true, true,
+//     			"Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz");
+//     	$rtokenFactory = new ilCtrl();
+    
+//     	$my_tpl->setVariable("ACTION_URL",$this->ctrl->getFormAction($this));
+//     	$my_tpl->setVariable("SUBMIT_BUTTON", $this->txt("save"));
+//     	$my_tpl->setVariable("NEW_QUESTION", $this->txt("question_add_head"));
+//     	$my_tpl->setVariable("QUESTION", $this->txt("question_add_text"));
+//     	$my_tpl->setVariable("QUESTION_TYPE", $this->txt("question_add_type"));
+//     	$my_tpl->setVariable("CHOICES", $this->txt("choice_add_texts"));
+//     	$my_tpl->setVariable("VAR_1", "value1");
+//     	$my_tpl->setVariable("COMMAND", "cmd[createQuestionAndAnswers]");
+//     	$my_tpl->setVariable("MINIMUM", $this->txt("choice_add_numeric_minimum"));
+//     	$my_tpl->setVariable("MAXIMUM", $this->txt("choice_add_numeric_maximum"));
+//     	$my_tpl->setVariable("STEP", $this->txt("choice_add_numeric_steprange"));
+//     	$my_tpl->setVariable("CORRECT_VALUE", $this->txt("choice_add_numeric_correctvalue"));
+//     	$my_tpl->setVariable("TOLERANCE_RANGE", $this->txt("choice_add_numeric_tolerenace_range"));
+//     	$my_tpl->setVariable("SELECTED_SINGLE", 'selected="selected"');
+    
+//     	$my_tpl->setVariable("HIDE_NUMERIC_BLOCK", 'style="display:none;"');
+//     	$my_tpl->setVariable("HIDE_SINGLE_CHOICE_BLOCK", 'style="display:none;"');
+    
+//     	$html = $my_tpl->get();
+//     	$tpl->setContent($html);
+//     }
+    
+//     //--------------------------------------------------------------------------
+    
+//     public function initAddQuestionAndAnswersFormAfterError () {
+//     	global $tpl, $ilCtrl;
+    
+//     	$my_tpl = new ilTemplate("tpl.question_and_answers.html", true, true,
+//     			"Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz");
+//     	$rtokenFactory = new ilCtrl();
+//     	$my_tpl->setVariable("ACTION_URL",$this->ctrl->getFormAction($this));
+//     	$my_tpl->setVariable("SUBMIT_BUTTON", $this->txt("save"));
+//     	$my_tpl->setVariable("NEW_QUESTION", $this->txt("question_add_head"));
+//     	$my_tpl->setVariable("QUESTION", $this->txt("question_add_text"));
+//     	$my_tpl->setVariable("QUESTION_TYPE", $this->txt("question_add_type"));
+//     	$my_tpl->setVariable("CHOICES", $this->txt("choice_add_texts"));
+//     	$my_tpl->setVariable("VAR_1", "value1");
+//     	$my_tpl->setVariable("MINIMUM", $this->txt("choice_add_numeric_minimum"));
+//     	$my_tpl->setVariable("MAXIMUM", $this->txt("choice_add_numeric_maximum"));
+//     	$my_tpl->setVariable("STEP", $this->txt("choice_add_numeric_steprange"));
+//     	$my_tpl->setVariable("CORRECT_VALUE", $this->txt("choice_add_numeric_correctvalue"));
+//     	$my_tpl->setVariable("TOLERANCE_RANGE", $this->txt("choice_add_numeric_tolerenace_range"));
+    
+//     	// refill fields
+//     	include_once('class.ilObjMobileQuizWizard.php');
+//     	$wiz = new ilObjMobileQuizWizard();
+//     	$wiz -> fillQuestionAndAnswersAfterError($my_tpl);
+    
+//     	$html = $my_tpl->get();
+//     	$tpl->setContent($html);
+//     }
+    
+    //--------------------------------------------------------------------------
+    
+    /**
+     * Creates the form for editing question and choices
+     */
+    public function openQuestionAndAnswersForm () {
+    	global $tpl, $ilCtrl;
+    
+    	$my_tpl = new ilTemplate("tpl.question_and_answers.html", true, true,
+    			"Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz");
+    	$rtokenFactory = new ilCtrl();
+    
+    	$my_tpl->setVariable("ACTION_URL",		$this->ctrl->getFormAction($this));
+    	
+    	// labels    	
+    	$my_tpl->setVariable("SUBMIT_BUTTON", 	$this->txt("save"));
+    	$my_tpl->setVariable("CHOICES_HEADLINE",$this->txt("choice_form_headline"));
+    	$my_tpl->setVariable("QUESTION", 		$this->txt("question_add_text"));
+    	$my_tpl->setVariable("QUESTION_TYPE", 	$this->txt("question_add_type"));
+    	$my_tpl->setVariable("CHOICES", 		$this->txt("choice_add_texts"));
+    	$my_tpl->setVariable("MINIMUM", 		$this->txt("choice_add_numeric_minimum"));
+    	$my_tpl->setVariable("MAXIMUM", 		$this->txt("choice_add_numeric_maximum"));
+    	$my_tpl->setVariable("STEP", 			$this->txt("choice_add_numeric_steprange"));
+    	$my_tpl->setVariable("CORRECT_VALUE", 	$this->txt("choice_add_numeric_correctvalue"));
+    	$my_tpl->setVariable("TOLERANCE_RANGE", $this->txt("choice_add_numeric_tolerenace_range"));    
+    	$my_tpl->setVariable("DELETE",          $this->txt("choice_delete"));
+    	$my_tpl->setVariable("DELETE_INFO",     $this->txt("choice_delete_info"));
+    	$my_tpl->setVariable("MOVE_UP",         $this->txt("choice_up"));
+    	$my_tpl->setVariable("MOVE_UP_INFO",    $this->txt("choice_up_info"));
+    	$my_tpl->setVariable("MOVE_DOWN",       $this->txt("choice_down"));
+    	$my_tpl->setVariable("MOVE_DOWN_INFO",  $this->txt("choice_down_info"));    
+    	$my_tpl->setVariable("SOLUTION", 		$this->txt("choice_form_solution"));
+    	$my_tpl->setVariable("FURTHERMORE", 	$this->txt("choice_form_furthermore"));
+        	
+    	// check if it is a new question or editing an existing one
+    	if (!isset($_GET['question_id'])) {
+    		// new question
+    		$my_tpl->setVariable("COMMAND", "cmd[createQuestionAndAnswers]");
+    		$my_tpl->setVariable("HIDE_NUMERIC_BLOCK", 'style="display:none;"');
+    		$my_tpl->setVariable("HIDE_SINGLE_CHOICE_BLOCK", 'style="display:none;"');
+    		
+    	} else {
+    		// prepare for edit existing question and choices
+    		$question_id = $_GET['question_id'];
+    		$my_tpl->setVariable("COMMAND", "cmd[changeQuestionAndAnswers]");
+    		$my_tpl->setVariable("HIDE_QUESTION_TYPE", 'style="display:none;"');
+    	}
+    	
+    	
+    	// Open Wizard and fill fields with data
+    	include_once('class.ilObjMobileQuizWizard.php');
+    	$wiz = new ilObjMobileQuizWizard();
+    	$wiz -> loadAnswerAndQuestions($_GET['question_id'],$my_tpl, $this->object);
+    
+    	$html = $my_tpl->get();
+    	$tpl->setContent($html);
+    
+    	$this->ctrl->clearParameters($this);
+    }
+    
+    //--------------------------------------------------------------------------
+    
+    /**
+     * Create Question and Answers. This is called after the form was filled out. From here
+     * the function in the Model is called to insert the question to the database
+     */
+    public function createQuestionAndAnswers () {
+    	global $tpl, $lng, $ilCtrl, $ilTabs;
+    
+    	// create wizard object
+    	include_once('class.ilObjMobileQuizWizard.php');
+    	$wiz = new ilObjMobileQuizWizard();
+    
+    	$ilTabs->activateTab("editQuiz");
+    
+    	if ($wiz->checkInput()){
+    		$wiz->createQuestionAndAnswers($this->object);
+    		ilUtil::sendSuccess($this->txt("question_obj_create"), true);
+    		$ilCtrl->redirect($this, "editQuiz");
+    	}
+    	$this->openQuestionAndAnswersForm();
+    }
+    
+//     public function showQuestionAndAnswers () {
+    
+//     }
+    
+    //--------------------------------------------------------------------------
+    
+    /**
      * Deleting the question and its choices from the database
      */
     public function deleteQuestionAndAnswers () {
@@ -1375,77 +1476,6 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
             $ilCtrl->redirect($this, "editQuiz");
         }
     }
-    
-    //--------------------------------------------------------------------------
-    
-    public function switchUp(){
-    	global $ilCtrl;
-    	$question_id = $_GET['question_id'];
-    	$this->object->switchUp($question_id);
-    	$ilCtrl->redirect($this, "editQuiz");
-    }
-    
-    //--------------------------------------------------------------------------
-    
-    public function switchDown(){
-    	global $ilCtrl;
-    	$question_id = $_GET['question_id'];
-    	$this->object->switchDown($question_id);
-    	$ilCtrl->redirect($this, "editQuiz");
-    }
-
-    //--------------------------------------------------------------------------
-    
-    public function editQuestionAndAnswers () {
-        global $tpl, $ilTabs;
-        $ilTabs->activateTab("editQuiz");
-        $this->initQuestionAndAnswersEditForm();
-    }
-
-    //--------------------------------------------------------------------------
-    
-    /**
-     * Creates the form for editing question and choices
-     */
-    public function initQuestionAndAnswersEditForm () {
-        global $tpl, $ilCtrl;
-
-        $my_tpl = new ilTemplate("tpl.question_and_answers.html", true, true,
-            "Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz");
-        $rtokenFactory = new ilCtrl();
-        $my_tpl->setVariable("ACTION_URL",$this->ctrl->getFormAction($this));
-        $my_tpl->setVariable("SUBMIT_BUTTON", $this->txt("save"));
-        $my_tpl->setVariable("NEW_QUESTION", $this->txt("question_add_head"));
-        $my_tpl->setVariable("QUESTION", $this->txt("question_add_text"));
-        $my_tpl->setVariable("QUESTION_TYPE", $this->txt("question_add_type"));
-        $my_tpl->setVariable("CHOICES", $this->txt("choice_add_texts"));
-        $my_tpl->setVariable("MINIMUM", $this->txt("choice_add_numeric_minimum"));
-        $my_tpl->setVariable("MAXIMUM", $this->txt("choice_add_numeric_maximum"));
-        $my_tpl->setVariable("STEP", $this->txt("choice_add_numeric_steprange"));
-        $my_tpl->setVariable("CORRECT_VALUE", $this->txt("choice_add_numeric_correctvalue"));
-        $my_tpl->setVariable("TOLERANCE_RANGE", $this->txt("choice_add_numeric_tolerenace_range"));
-        $my_tpl->setVariable("VAR_1", "value1");
-        $my_tpl->setVariable("COMMAND", "cmd[changeQuestionAndAnswers]");
-        $my_tpl->setVariable("HIDE_QUESTION_TYPE", 'style="display:none;"');
-        
-        $my_tpl->setVariable("DELETE",          $this->txt("choice_delete"));
-        $my_tpl->setVariable("DELETE_INFO",     $this->txt("choice_delete_info"));
-        $my_tpl->setVariable("MOVE_UP",         $this->txt("choice_up"));
-        $my_tpl->setVariable("MOVE_UP_INFO",    $this->txt("choice_up_info"));
-        $my_tpl->setVariable("MOVE_DOWN",       $this->txt("choice_down"));
-        $my_tpl->setVariable("MOVE_DOWN_INFO",  $this->txt("choice_down_info"));
-        
-        
-        // refill fields
-        include_once('class.ilObjMobileQuizWizard.php');
-        $wiz = new ilObjMobileQuizWizard();
-        $wiz -> loadAnswerAndQuestions($_GET['question_id'],$my_tpl, $this->object);
-
-        $html = $my_tpl->get();
-        $tpl->setContent($html);
-
-        $this->ctrl->clearParameters($this);
-    }
 
     //--------------------------------------------------------------------------
     
@@ -1463,10 +1493,9 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
         $wiz->changeQuestionAndAnswers($this->object);
 
         $_GET['question_id'] = $_POST['question_id'];
-        $this->initQuestionAndAnswersEditForm();
+        $this->openQuestionAndAnswersForm();
 
-        // load changed data and display them
+        // loads changed data and display them
     }
-
 }
 ?>

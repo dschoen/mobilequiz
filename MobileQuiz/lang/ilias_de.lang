@@ -49,7 +49,15 @@ question_table_delete#:#Löschen
 question_table_up#:#Hoch
 question_table_down#:#Runter
 
-<!-- Choice table Edit formular -------------------------------------------- -->	
+<!-- Choice formular -------------------------------------------- -->
+choice_form_headline#:#Fragen erstellen und bearbeiten
+choice_form_question#:#Frage
+choice_form_type#:#Typ
+choice_form_choices#:#Antwort
+choice_form_solution#:#Lösung
+choice_form_furthermore#:#Weitere Informationen
+choice_form_asterisk#:#Angabe erforderlich
+
 choice_table_text#:#Antwort
 choice_table_value#:#Wert
 choice_table_edit#:#Bearbeiten

@@ -43,4 +43,39 @@
             break;
     }
     ?>
+    <div>
+    <?php if (!empty($question->solution)) { ?>
+    	<a id="button-solution-<?php echo $question->question_id;?>" 
+    		class="button-optional"
+    		href="#"
+    		>Solution</a>
+    		    
+	    <div id="text-button-solution-<?php echo $question->question_id;?>" class="solution text-info">
+	    	 Solution: <?php echo $question->solution;?>
+	    </div>
+    <?php } ?>
+    
+    <?php if (!empty($question->furthermore)) { ?>
+	    <a id="button-furthermore-<?php echo $question->question_id;?>" 
+	    	class="button-optional"
+	    	href="#"
+	    	>Further Information</a>
+	    
+	    <div id="text-button-furthermore-<?php echo $question->question_id;?>" class="furthermore text-info">
+	    	 Further Information: <?php echo $question->furthermore;?>
+	    </div>
+     <?php } ?>
+    </div>
 </li>
+
+<!-- JAVASCRIPT ---------------------------------------------------------------- -->
+
+<script language="javascript" type="text/javascript">
+
+//bind additional info buttons
+$( ".button-optional" ).click(function(event) {
+	$("#"+event.target.id).hide();
+	$("#text-"+event.target.id).show();	  
+});
+
+</script>

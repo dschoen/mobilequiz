@@ -132,3 +132,8 @@ $ilDB->createTable("rep_robj_xuiz_answers", $definition_answers);
 $ilDB->addPrimaryKey("rep_robj_xuiz_answers", array("answer_id"));
 $ilDB->createSequence("rep_robj_xuiz_answers");
 ?>
+
+
+<#2>
+ALTER TABLE rep_robj_xuiz_qs ADD COLUMN solution VARCHAR(4000);
+ALTER TABLE rep_robj_xuiz_qs ADD COLUMN furthermore VARCHAR(2000);

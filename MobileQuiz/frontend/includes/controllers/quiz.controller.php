@@ -143,10 +143,10 @@ class QuizController{
             
             $questions = Question::find(array('quiz_id'=>$_POST['quiz_id']));
             render('success',array(
-                'title'     => 'Quiz submitted',
-                'type'      =>  $row[0]->type,
-                'questions' => $questions,
-                'result'    => $answers
+                'title'     	=> 'Quiz submitted',
+                'type'      	=>  $row[0]->type,
+                'questions' 	=> $questions,
+                'result'    	=> $answers
             ));
         }
 

@@ -11,6 +11,9 @@
 	<link rel="stylesheet" href="assets/css/styles.css" />
 	<script src="assets/scripts/jquery.min.js"></script>
 	<script src="assets/jquery.mobile/jquery.mobile.min.js"></script>
+	
+	<!-- Local JavaScript commands -->
+	<script src="assets/js/main.js"></script>
         
     <!-- Enable LaTeX Support -------------------------------------------------- -->
     <script type="text/javascript">

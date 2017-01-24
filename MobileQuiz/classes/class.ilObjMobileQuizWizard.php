@@ -92,7 +92,7 @@ class ilObjMobileQuizWizard {
 		//Check input for bad syntax
 		$this->inputSecurity();
 		// create question and get question_id
-		$question_id = $model->createQuestion($_POST['text'], $_POST['type']);
+		$question_id = $model->createQuestion($_POST['text'], $_POST['type'], $_POST['solution'], $_POST['furthermore']);
 		
 		// create choice(s)
 		switch($_POST['type']) {
@@ -181,16 +181,29 @@ class ilObjMobileQuizWizard {
 		}
 	}
 	
+	// -----------------------------------------------------------------------------------
+	
+	/**
+	 * 
+	 * Loads data to fill the form
+	 * 
+	 * @param int $question_id
+	 * @param template $tpl
+	 * @param $model
+	 */
 	public function loadAnswerAndQuestions($question_id, $tpl, $model) {
 		$question = $model->getQuestion($question_id);
                 
-                // escape curvy brackets, so that ILIAS cannot use them as
-                // placeholder
-                $question['text'] = ilObjMobileQuizHelper::escapeCurvyBrackets($question['text']);
+        // escape curvy brackets, so that ILIAS cannot use them as placeholder
+		$question['text'] = ilObjMobileQuizHelper::escapeCurvyBrackets($question['text']);
+		$question['solution'] = ilObjMobileQuizHelper::escapeCurvyBrackets($question['solution']);
+		$question['furthermore'] = ilObjMobileQuizHelper::escapeCurvyBrackets($question['furthermore']);
                 
 		$tpl->setVariable("QUESTION_ID", $question_id);
-                $tpl->setVariable("QUESTION_TEXT", $question["text"]);
+		$tpl->setVariable("QUESTION_TEXT", $question["text"]);
 		$tpl->setVariable("QUESTION_TYPE_2", $question["type"]);
+		$tpl->setVariable("SOLUTION_TEXT", $question["solution"]);
+		$tpl->setVariable("FURTHERMORE_TEXT", $question["furthermore"]);
 		
 		switch($question["type"]) {
 			case QUESTION_TYPE_MULTI:
@@ -205,6 +218,8 @@ class ilObjMobileQuizWizard {
 		}		
 		
 	}
+	
+	// -----------------------------------------------------------------------------------
 	
 	public function loadAnswerMultipleChoice($question_id, $tpl, $model) {
 		// Get the questions' choices from the database
@@ -298,18 +313,22 @@ class ilObjMobileQuizWizard {
 		
 	}
 	
+	// -------------------------------------------------------------------------------------
+	
 	/**
-	* Change the submitted question and the answers
+	* Change the submitted question infos 
+	* and call functions to change the choices
 	*
 	* @param unknown_type $model
 	*/
 	public function changeQuestionAndAnswers($model) {
 		//check input for bad syntax
 		$this->inputSecurity();
-		// ### question ###
+		
 		// update question
-		$model->updateQuestion($_POST['question_id'], $_POST['text'], $_POST['type']);
-		// ### answers ###
+		$model->updateQuestion($_POST['question_id'], $_POST['text'], $_POST['type'],$_POST['solution'] ,$_POST['furthermore'] );
+		
+		// update choices
 		switch($_POST['type']) {
 			case QUESTION_TYPE_MULTI :
 				$this->changeAnswersMultipleChoice($model);
@@ -322,6 +341,8 @@ class ilObjMobileQuizWizard {
 				break;
 		}
 	}
+	
+	// -------------------------------------------------------------------------------------
 	
 	private function changeAnswersMultipleChoice($model) {
 		// iterate through the choices

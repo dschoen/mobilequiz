@@ -84,6 +84,22 @@ class ilObjMobileQuizHelper {
     // -------------------------------------------------------------------------
     
     /**
+     * Escape backslashes as they are the escape symbol in JavaScript 
+     *
+     * @author dschoen
+     * @param String $text
+     */
+    public function escapeBackslashesForJavaScript($text) {
+    
+    	// replace "\" with "\\" so that JavaScript later reads an escaped "\"
+    	$text = str_replace("\\", "\\\\", $text);
+    
+    	return $text;
+    }
+    
+    // -------------------------------------------------------------------------
+    
+    /**
      * Returns the global URL of the plugin.
      * Ends with .../MobileQuiz/
      * 

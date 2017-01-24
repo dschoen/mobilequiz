@@ -31,7 +31,7 @@ require_once(__DIR__."/../configuration.local.php");
 try {
    
     // Get Parameters
-    $question_id     = $_POST['question_id'];
+    $question_id    = $_POST['question_id'];
     $round_id       = $_POST['round_id'];
     $action         = $_POST['action'];
     $secret         = $_POST['secret'];
@@ -71,15 +71,9 @@ function getDataChoice($question_id, $round_id){
     if(!count($choices) == 0) {
         $return = array();
         foreach($choices as $choice){
-            $count = 0;
             $choice_id = $choice['choice_id'];
-            $answers = getAnswers($choice_id, $round_id);
-            foreach ($answers as $answer){
-                if (($answer['choice_id'] == $choice['choice_id'])&&($answer['value'] != 0)){
-                    $count++;
-                }            }
-            
-            $return[] = $count;
+
+            $return[] = countAnswers($round_id, $choice_id);
         }
     }
     
@@ -151,9 +145,30 @@ function getAnswers($choice_id, $round_id){
 
     $st = $db->prepare("SELECT * FROM rep_robj_xuiz_answers WHERE choice_id = :choice_id AND round_id = :round_id");
 		
-     $st->execute(array(':choice_id' => $choice_id, ':round_id' => $round_id ));
+    $st->execute(array(':choice_id' => $choice_id, ':round_id' => $round_id ));
 		
     return $st->fetchAll();
+}
+
+// -----------------------------------------------------------------------------
+
+function countAnswers($round_id, $choice_id){
+
+	$db = getDB();
+
+	$st = $db->prepare("Select COUNT(answer_id) as answers"
+			." FROM rep_robj_xuiz_answers"
+			." WHERE round_id = :round_id"
+				." AND choice_id = :choice_id"
+	    		." AND value > 0"
+	    	.";");
+
+	$st->execute(array(':choice_id' => $choice_id, ':round_id' => $round_id ));
+	$rows = $st->fetchAll();
+	$result = $rows[0];
+	$count = $result["answers"];
+	
+	return $count;
 }
 
 // -----------------------------------------------------------------------------

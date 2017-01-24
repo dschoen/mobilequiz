@@ -120,6 +120,9 @@ function polishText($text) {
 
     // remove all line breaks
     $text = str_replace(array("\r","\n"), "", $text);
+    
+	// add class to rendered <p>
+    $text = str_replace(array("<p>"), "<p class='question-text'>", $text);
 
     return $text;                
 }

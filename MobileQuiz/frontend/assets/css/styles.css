@@ -73,7 +73,10 @@
     max-width: 400px;
 }
 
-.ui-listview li p {
+/* Rendered text for questions and answers */
+.ui-listview li .question-text {
+	overflow: auto;
+    white-space: normal;
     font-size: 1.0em;
     font-weight: normal;
     margin: 0 0;

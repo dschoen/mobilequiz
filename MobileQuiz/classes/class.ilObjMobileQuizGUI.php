@@ -751,12 +751,12 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
      * @param unknown_type $question
      */
     public function showRoundResultsForMultipleChoice($question, $answers, $answer_count, $round_id) {
-        
+    	
         $chart_tpl = new ilTemplate("tpl.result_row.html", '', '',
             "Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz");
 
         // Collect Data
-        $datas = $this->getResultDataForMultipleChoice($question, $answers, $answer_count, $round_id);
+        $datas = $this->getResultDataForMultipleChoice($question, $answers, $answer_count, $round_id);     
         
         // Structure the data for Chart displaying
         $chart_data_string;
@@ -765,7 +765,14 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
         $chart_color_border_string;
         foreach( $datas as $data ) {
                 $chart_data_string .= " ".$data['data']['y'].",";
-                $chart_label_string .= ' "'.ilObjMobileQuizHelper::polishText($data['label']).'",';
+                
+                // prepare text and escape Curvy Brackets for MathJax LaTeX transformation
+                // and escape backslash "\" with "\\" for it is used in JavaScript
+                $label_string = ilObjMobileQuizHelper::polishText($data['label']);                
+                $label_string = ilObjMobileQuizHelper::escapeCurvyBrackets($label_string);
+                $label_string = ilObjMobileQuizHelper::escapeBackslashesForJavaScript($label_string);
+                
+                $chart_label_string .= ' "'.$label_string.'",';
                 
                 switch ($data['colorName']){
                     case 'blue':
@@ -782,8 +789,12 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
                         break;
                 }
         }
-
-        $chart_tpl->setVariable("title", ilObjMobileQuizHelper::polishText($question['text']));
+        
+        // prepare and escape title
+        $chart_title = ilObjMobileQuizHelper::polishText($question['text']);
+        $chart_title = ilObjMobileQuizHelper::escapeCurvyBrackets($chart_title);
+           
+        $chart_tpl->setVariable("title", $chart_title);
         $chart_tpl->setVariable("question_id", $question['question_id']);
         $chart_tpl->setVariable("round_id", $round_id);
         $chart_tpl->setVariable("data", $chart_data_string);
@@ -798,7 +809,7 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
         
         // Get number of correct answers
         $correct_answers = $this->getCorrectAnswersCount($question['question_id'], $round_id);
-
+        
         // calculating percentage
         $count1 = empty($answer_count)? 0 : ($correct_answers / $answer_count);
         $count2 = $count1 * 100;
@@ -919,12 +930,9 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
         if(!count($choices) == 0) {
             $return = array();
             foreach($choices as $choice){
-                $count = 0;
-                foreach ($answers as $answer){
-                    if (($answer['choice_id'] == $choice['choice_id'])&&($answer['value'] != 0)){
-                        $count++;
-                    }
-                }
+                
+            	// get the numbers for this answer
+                $count = $this->object->countAnswers($round_id, $choice['choice_id']);
 
                 if ($choice['correct_value'] == 2){ // neutral
                     $choice['colorName'] = "blue";

@@ -42,6 +42,8 @@
     }
 </style>
 
+<!-- ----------------------------------------------------------------------- -->
+
 <div class="choice-chart-div"> 
     <div class="choice-chart-title">
         {title}
@@ -117,8 +119,6 @@
         // -----------------------------------------------------------------------
 
         function plotTheChart(data){
-
-            console.log("ddd");
 
             var plot = document.getElementById("canvas-{question_id}");
             var myChart = new Chart(plot, {

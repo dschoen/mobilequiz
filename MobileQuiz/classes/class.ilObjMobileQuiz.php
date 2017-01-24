@@ -295,7 +295,7 @@ class ilObjMobileQuiz extends ilObjectPlugin
     // -------------------------------------------------------------------------
     
     /**
-     * Get Question
+     * Switch question one positino up
      *
      * @param	int		question_id
         */
@@ -314,19 +314,16 @@ class ilObjMobileQuiz extends ilObjectPlugin
     				$this->updateOrder($question_id, $question_order2);
     				$this->updateOrder($question_id2, $question_order1);
     				
-    				break;
-    				
-    				
+    				break;    				    				
     			}
-    		}
-    		
+    		}    		
     	} 
     }
     
     // -------------------------------------------------------------------------    
     
     /**
-     * Get Question
+     * Switch questino one position down
      *
      * @param	int		question_id
      */
@@ -345,12 +342,9 @@ class ilObjMobileQuiz extends ilObjectPlugin
     				$this->updateOrder($question_id, $question_order2);
     				$this->updateOrder($question_id2, $question_order1);
     	
-    				break;
-    	
-    	
+    				break;    	
     			}
-    		}
-    	
+    		}    	
     	}
     }
     
@@ -542,7 +536,7 @@ class ilObjMobileQuiz extends ilObjectPlugin
         $round_id = $currentRound[round_id];
         
         // get hostname and check if proxy is used
-	$hostname = (!empty($_SERVER['HTTP_X_FORWARDED_HOST'])) ? $_SERVER['HTTP_X_FORWARDED_HOST'] : $_SERVER['SERVER_NAME'];
+		$hostname = (!empty($_SERVER['HTTP_X_FORWARDED_HOST'])) ? $_SERVER['HTTP_X_FORWARDED_HOST'] : $_SERVER['SERVER_NAME'];
         $url = (!empty($_SERVER['HTTPS'])) ? "https://".$hostname.$_SERVER['REQUEST_URI'] : "http://".$hostname.$_SERVER['REQUEST_URI'];
         
         // crafting quiz url:
@@ -669,7 +663,7 @@ class ilObjMobileQuiz extends ilObjectPlugin
         return $answers;
     }
     
-        // -------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     
     /**
      * Get all answers to a given round and choice
@@ -703,6 +697,36 @@ class ilObjMobileQuiz extends ilObjectPlugin
         return $answers;
     }
 
+    // -------------------------------------------------------------------------
+    
+    /**
+     * Count all submitted answers to a given round_id and choice_id and return the counted number.
+     *
+     * @param	int round_id
+     * @param	int choice_id
+     * @return	int number of Answers
+     */
+    public function countAnswers($round_id, $choice_id) {
+    	global $ilDB;
+    	
+    	$set = $ilDB->query("
+		Select COUNT(answer_id) as answers
+		FROM rep_robj_xuiz_answers
+		WHERE round_id = ".$ilDB->quote($round_id, "integer")
+    			." AND choice_id = ".$ilDB->quote($choice_id, "integer")
+    			." AND value > 0"
+    			.";");
+    
+    	$answer = array();
+    
+    	$rec = $ilDB->fetchAssoc($set);
+    	$count = $rec["answers"];
+    	    	
+//     	ilLoggerFactory::getLogger('xuiz')->info('ANSWERS COUNT: '.$count);
+    	
+    	return $count;
+    }
+    
     // -------------------------------------------------------------------------
     
     /**
@@ -819,11 +843,9 @@ class ilObjMobileQuiz extends ilObjectPlugin
                             " round_id = ".$ilDB->quote($round_id, "integer")
                     );
                 }
-
             }
         }
     }
-
 }
 
 ?>

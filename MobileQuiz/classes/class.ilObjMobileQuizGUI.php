@@ -751,12 +751,12 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
      * @param unknown_type $question
      */
     public function showRoundResultsForMultipleChoice($question, $answers, $answer_count, $round_id) {
-        
+    	
         $chart_tpl = new ilTemplate("tpl.result_row.html", '', '',
             "Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz");
 
         // Collect Data
-        $datas = $this->getResultDataForMultipleChoice($question, $answers, $answer_count, $round_id);
+        $datas = $this->getResultDataForMultipleChoice($question, $answers, $answer_count, $round_id);     
         
         // Structure the data for Chart displaying
         $chart_data_string;
@@ -809,7 +809,7 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
         
         // Get number of correct answers
         $correct_answers = $this->getCorrectAnswersCount($question['question_id'], $round_id);
-
+        
         // calculating percentage
         $count1 = empty($answer_count)? 0 : ($correct_answers / $answer_count);
         $count2 = $count1 * 100;
@@ -930,12 +930,9 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
         if(!count($choices) == 0) {
             $return = array();
             foreach($choices as $choice){
-                $count = 0;
-                foreach ($answers as $answer){
-                    if (($answer['choice_id'] == $choice['choice_id'])&&($answer['value'] != 0)){
-                        $count++;
-                    }
-                }
+                
+            	// get the numbers for this answer
+                $count = $this->object->countAnswers($round_id, $choice['choice_id']);
 
                 if ($choice['correct_value'] == 2){ // neutral
                     $choice['colorName'] = "blue";

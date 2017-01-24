@@ -31,7 +31,7 @@ require_once(__DIR__."/../configuration.local.php");
 try {
    
     // Get Parameters
-    $question_id     = $_POST['question_id'];
+    $question_id    = $_POST['question_id'];
     $round_id       = $_POST['round_id'];
     $action         = $_POST['action'];
     $secret         = $_POST['secret'];

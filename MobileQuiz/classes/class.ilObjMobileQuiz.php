@@ -710,17 +710,19 @@ class ilObjMobileQuiz extends ilObjectPlugin
     	global $ilDB;
     	
     	$set = $ilDB->query("
-			Select COUNT(answer_id) as answers
-			FROM rep_robj_xuiz_answers
-			WHERE round_id = ".$ilDB->quote($round_id, "integer")
-	    			." AND choice_id = ".$ilDB->quote($choice_id, "integer")
-	    			." AND value > 0"
-	    			.";");
+		Select COUNT(answer_id) as answers
+		FROM rep_robj_xuiz_answers
+		WHERE round_id = ".$ilDB->quote($round_id, "integer")
+    			." AND choice_id = ".$ilDB->quote($choice_id, "integer")
+    			." AND value > 0"
+    			.";");
     
     	$answer = array();
     
     	$rec = $ilDB->fetchAssoc($set);
     	$count = $rec["answers"];
+    	    	
+//     	ilLoggerFactory::getLogger('xuiz')->info('ANSWERS COUNT: '.$count);
     	
     	return $count;
     }
@@ -841,11 +843,9 @@ class ilObjMobileQuiz extends ilObjectPlugin
                             " round_id = ".$ilDB->quote($round_id, "integer")
                     );
                 }
-
             }
         }
     }
-
 }
 
 ?>

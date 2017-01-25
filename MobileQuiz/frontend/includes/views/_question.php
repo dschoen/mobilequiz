@@ -1,6 +1,7 @@
 <li class="question">
     <?php
     // If you want to add new question types, you must modify this file here.
+    
     echo polishText($question->text);
 
     $type_of_question = array( "type_of_question" => $question->type);

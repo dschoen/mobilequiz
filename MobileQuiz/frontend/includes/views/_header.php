@@ -5,15 +5,14 @@
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1" /> 
 	<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-        <link rel="stylesheet" href="assets/jquery.mobile/jquery.mobile.custom.min.css" />
-        <link rel="stylesheet" href="assets/jquery.mobile/jquery.mobile.icons.min.css" />
+	
+	<link rel="stylesheet" href="assets/jquery.mobile/jquery.mobile.custom.min.css" />
+	<link rel="stylesheet" href="assets/jquery.mobile/jquery.mobile.icons.min.css" />
 	<link rel="stylesheet" href="assets/jquery.mobile/jquery.mobile.structure.min.css" />
 	<link rel="stylesheet" href="assets/css/styles.css" />
+	
 	<script src="assets/scripts/jquery.min.js"></script>
 	<script src="assets/jquery.mobile/jquery.mobile.min.js"></script>
-	
-	<!-- Local JavaScript commands -->
-	<script src="assets/js/main.js"></script>
         
     <!-- Enable LaTeX Support -------------------------------------------------- -->
     <script type="text/javascript">

@@ -98,6 +98,9 @@ label.ui-btn {
 	border-radius: 4px;
 	background-color: #FAFAD2;
 	display: none;
+	
+	overflow: auto;
+    white-space: normal;
 }
 
 .button-optional {

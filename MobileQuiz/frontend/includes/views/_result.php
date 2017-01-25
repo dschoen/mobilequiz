@@ -51,7 +51,7 @@
     		>Solution</a>
     		    
 	    <div id="text-button-solution-<?php echo $question->question_id;?>" class="solution text-info">
-	    	 Solution: <?php echo $question->solution;?>
+	    	 Solution: <?php echo polishText($question->solution);?>
 	    </div>
     <?php } ?>
     
@@ -62,7 +62,7 @@
 	    	>Further Information</a>
 	    
 	    <div id="text-button-furthermore-<?php echo $question->question_id;?>" class="furthermore text-info">
-	    	 Further Information: <?php echo $question->furthermore;?>
+	    	 Further Information: <?php echo polishText($question->furthermore);?>
 	    </div>
      <?php } ?>
     </div>

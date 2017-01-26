@@ -45,141 +45,6 @@ class ilObjMobileQuizWizard {
 			}
 		}
 	}
-
-
-	public function checkInput() {
-		if(empty($_POST['text']) || $_POST['type'] == 0) {
-			return false;
-		}
-
-		switch($_POST['type']) {
-			case 1:
-				return $this->checkInputMultipleChoice();
-				break;
-			case 2:
-				return $this->checkInputSingleChoice();
-				break;
-			case 3:
-				return $this->checkInputNumericChoice();
-				break;
-		}
-		return false;
-	}
-
-	private function checkInputMultipleChoice() {
-		$i = 1;
-		while(isset($_POST['choice_multiple_text'][$i])) {
-			$i++;
-		}
-		return true;
-	}
-
-	private function checkInputSingleChoice() {
-		return true;
-	}
-
-	private function checkInputNumericChoice() {
-		return true;
-	}
-
-
-	/**
-	 * Creates the submitted question and the answers
-	 * 
-	 * @param unknown_type $model
-	 */
-	public function createQuestionAndAnswers($model) {
-		//Check input for bad syntax
-		$this->inputSecurity();
-		// create question and get question_id
-		$question_id = $model->createQuestion($_POST['text'], $_POST['type'], $_POST['solution'], $_POST['furthermore']);
-		
-		// create choice(s)
-		switch($_POST['type']) {
-			case 1:
-				$this->createAnswersMultipleChoice($model, $question_id);
-				break;
-			case 2:
-				$this->createAnswersMultipleChoice($model, $question_id);
-				break;
-			case 3:
-				$this->createAnswersNumericChoice($model, $question_id);
-				break;
-		}
-	}
-
-	/**
-	 * Create multiple choice answers
-	 * 
-	 */
-	private function createAnswersMultipleChoice($model, $question_id) {
-		$i = "1";
-		// now iterate though all answers
-		while(isset($_POST['choice_multiple_text'][$i])) {
-		// now check whether the answer was deleted
-			if($_POST['choice_multiple_deleted'][$i] != true && !empty($_POST['choice_multiple_text'][$i])) {
-			$model->createChoice($question_id,$_POST['choice_multiple_type'][$i],$_POST['choice_multiple_text'][$i]);
-					}
-		$i++;
-		}
-	}
-	
-	/**
-	* Create single choice answers
-	*
-	*/
-	private function createAnswersSingleChoice($model, $question_id) {
-		$i = "1";
-		// now iterate though all answers
-		while(isset($_POST['choice_single_text'][$i])) {
-		// now check whether the answer was deleted
-			if($_POST['choice_single_deleted'][$i] != true && !empty($_POST['choice_single_text'][$i])) {
-			$model->createChoice($question_id,$_POST['choice_single_type'][$i],$_POST['choice_single_text'][$i]);
-					}
-		$i++;
-		}
-	}
-
-	/**
-	* Create numeric choice answer
-	*
-	*/
-	private function createAnswersNumericChoice($model, $question_id) {
-		$text = $_POST['choice_numeric_minimum'].";".
-			$_POST['choice_numeric_maximum'].";".
-			$_POST['choice_numeric_step'].";".
-			$_POST['choice_numeric_correct_value'].";".
-			$_POST['choice_numeric_tol_range'];
-		// replace comma (',') by dot ('.')
-		$text = str_replace(',','.',$text);
-		// if a correct number exists, then the quesition is a correct/not correct one
-		if($_POST['correct_number']) {
-			$correct_value = "1";
-		} else {
-			$correct_value = "2";
-		}
-		$model->createChoice($question_id,$correct_value, $text);
-	}
-
-
-	public function fillQuestionAndAnswersAfterError($tpl) {
-		$i = "1";
-		$tpl->setVariable("QUESTION_TEXT", $_POST['text']);
-		while(isset($_POST['choice_multiple_text'][$i])) {
-			$tpl->setCurrentBlock("multiple_choice_block");
-			$tpl->setVariable("MUL_SHOW", ($_POST['choice_multiple_deleted'][$i] == 1) ? "none" : "");
-			$tpl->setVariable("MUL_TEXT", $_POST['choice_multiple_text'][$i]);
-			$tpl->setVariable("MUL_ID", "");
-			$tpl->setVariable("MUL_COU", $i);
-			$tpl->setVariable("MUL_DEL", $_POST['choice_multiple_deleted'][$i]);
-			$tpl->setVariable("MUL_TYPE_C", ($_POST['choice_multiple_type'][$i] == 1) ? "checked" : "");
-			$tpl->setVariable("MUL_TYPE_N", ($_POST['choice_multiple_type'][$i] == 2) ? "checked" : "");
-			$tpl->setVariable("MUL_TYPE_I", ($_POST['choice_multiple_type'][$i] == 0) ? "checked" : "");
-			$tpl->parseCurrentBlock();
-
-			$i++;
-		}
-	}
 	
 	// -----------------------------------------------------------------------------------
 	
@@ -199,11 +64,11 @@ class ilObjMobileQuizWizard {
 		$question['solution'] = ilObjMobileQuizHelper::escapeCurvyBrackets($question['solution']);
 		$question['furthermore'] = ilObjMobileQuizHelper::escapeCurvyBrackets($question['furthermore']);
                 
-		$tpl->setVariable("QUESTION_ID", $question_id);
-		$tpl->setVariable("QUESTION_TEXT", $question["text"]);
-		$tpl->setVariable("QUESTION_TYPE_2", $question["type"]);
-		$tpl->setVariable("SOLUTION_TEXT", $question["solution"]);
-		$tpl->setVariable("FURTHERMORE_TEXT", $question["furthermore"]);
+		$tpl->setVariable("QUESTION_ID", 		$question_id);
+		$tpl->setVariable("QUESTION_TEXT", 		$question["text"]);
+		$tpl->setVariable("QUESTION_TYPE_2", 	$question["type"]);
+		$tpl->setVariable("SOLUTION_TEXT", 		$question["solution"]);
+		$tpl->setVariable("FURTHERMORE_TEXT", 	$question["furthermore"]);
 		
 		switch($question["type"]) {
 			case QUESTION_TYPE_MULTI:
@@ -235,9 +100,8 @@ class ilObjMobileQuizWizard {
 			foreach($choices as $choice){
 				$tpl->setCurrentBlock("multiple_choice_block");
                                 
-                                // escape curvy brackets, so that ILIAS cannot use them as                
-                                // placeholder
-                                $choice['text'] = ilObjMobileQuizHelper::escapeCurvyBrackets($choice['text']);
+                // escape curvy brackets, so that ILIAS cannot use them as placeholder               
+				$choice['text'] = ilObjMobileQuizHelper::escapeCurvyBrackets($choice['text']);
                                                                 
 				$tpl->setVariable("MUL_SHOW", "");
 				$tpl->setVariable("MUL_TEXT", $choice['text']);
@@ -255,6 +119,8 @@ class ilObjMobileQuizWizard {
 		}
 	}
 	
+	// -------------------------------------------------------------------------
+	
 	public function loadAnswerSingleChoice($question_id, $tpl, $model) {
 		// Get the questions' choices from the database
 		$choices = $model->getChoices($question_id);
@@ -267,37 +133,38 @@ class ilObjMobileQuizWizard {
 		
 		if(!count($choices) == 0) {
 			foreach($choices as $choice){
-                            $tpl->setCurrentBlock("single_choice_block");
-                            
-                            // escape curvy brackets, so that ILIAS cannot use them as                
-                            // placeholder
-                            $choice['text'] = ilObjMobileQuizHelper::escapeCurvyBrackets($choice['text']);
-                            
-                            $tpl->setVariable("MUL_SHOW", "");
-                            $tpl->setVariable("MUL_TEXT", $choice['text']);
-                            $tpl->setVariable("MUL_ID", $choice['choice_id']);
-                            $tpl->setVariable("MUL_COU", $i);
-                            $tpl->setVariable("MUL_DEL", false);
-                            $tpl->setVariable("MUL_TYPE_C", ($choice['correct_value'] == 1) ? "checked" : "");
-                            $tpl->setVariable("MUL_TYPE_N", ($choice['correct_value'] == 2) ? "checked" : "");
-                            $tpl->setVariable("MUL_TYPE_I", ($choice['correct_value'] == 0) ? "checked" : "");
-                            $tpl->setVariable("ROW_ID", $choice['choice_order']);                                
-                                
-                            $tpl->parseCurrentBlock();
-	
-                            $i++;
+				$tpl->setCurrentBlock ( "single_choice_block" );
+				
+				// escape curvy brackets, so that ILIAS cannot use them as placeholder
+				$choice ['text'] = ilObjMobileQuizHelper::escapeCurvyBrackets ( $choice ['text'] );
+				
+				$tpl->setVariable ( "MUL_SHOW", "" );
+				$tpl->setVariable ( "MUL_TEXT", $choice ['text'] );
+				$tpl->setVariable ( "MUL_ID", $choice ['choice_id'] );
+				$tpl->setVariable ( "MUL_COU", $i );
+				$tpl->setVariable ( "MUL_DEL", false );
+				$tpl->setVariable ( "MUL_TYPE_C", ($choice ['correct_value'] == 1) ? "checked" : "" );
+				$tpl->setVariable ( "MUL_TYPE_N", ($choice ['correct_value'] == 2) ? "checked" : "" );
+				$tpl->setVariable ( "MUL_TYPE_I", ($choice ['correct_value'] == 0) ? "checked" : "" );
+				$tpl->setVariable ( "ROW_ID", $choice ['choice_order'] );
+				
+				$tpl->parseCurrentBlock ();
+				
+				$i ++;
 			}
 		}
 	}
+	
+	// -------------------------------------------------------------------------
 	
 	public function loadAnswerNumericChoice($question_id, $tpl, $model) {
 		// Get the questions' choices from the database
 		$choices = $model->getChoices($question_id);
 		
 		$numeric_values		= (explode(';',$choices[0]['text']));
-		$minimum 		= $numeric_values[0];
-		$maximum 		= $numeric_values[1];	
-		$step 			= $numeric_values[2];
+		$minimum 			= $numeric_values[0];
+		$maximum 			= $numeric_values[1];	
+		$step 				= $numeric_values[2];
 		$correct_number		= $numeric_values[3];
 		$tolerance_range	= $numeric_values[4];
 
@@ -324,27 +191,33 @@ class ilObjMobileQuizWizard {
 	public function changeQuestionAndAnswers($model) {
 		//check input for bad syntax
 		$this->inputSecurity();
+			
 		
-		// update question
-		$model->updateQuestion($_POST['question_id'], $_POST['text'], $_POST['type'],$_POST['solution'] ,$_POST['furthermore'] );
+		// if question_id is empty, create new question, else update existing one
+		if (empty($_POST['question_id'])) {
+			$question_id = $model->createQuestion($_POST['text'], $_POST['type'], $_POST['solution'], $_POST['furthermore']);
+		} else {
+			$model->updateQuestion($_POST['question_id'], $_POST['text'], $_POST['type'],$_POST['solution'] ,$_POST['furthermore'] );
+			$question_id = $_POST['question_id'];
+		}
 		
 		// update choices
 		switch($_POST['type']) {
 			case QUESTION_TYPE_MULTI :
-				$this->changeAnswersMultipleChoice($model);
+				$this->updateChoiceMulti($model, $question_id);
 				break;
 			case QUESTION_TYPE_SINGLE:
-				$this->changeAnswersSingleChoice($model);
+				$this->updateChoiceSingle($model, $question_id);
 				break;
 			case QUESTION_TYPE_NUM:
-				$this->changeAnswersNumericChoice($model);
+				$this->updateChoiceNumeric($model, $question_id);
 				break;
 		}
 	}
 	
 	// -------------------------------------------------------------------------------------
 	
-	private function changeAnswersMultipleChoice($model) {
+	private function updateChoiceMulti($model, $question_id) {
 		// iterate through the choices
 		$i = 1;
 		while(isset($_POST['choice_multiple_text'][$i])) {
@@ -354,7 +227,7 @@ class ilObjMobileQuizWizard {
 				if($_POST['choice_multiple_deleted'][$i] != true 
 						&& !empty($_POST['choice_multiple_text'][$i])) {
 					// create choice
-					$model->createChoice($_POST['question_id'],$_POST['choice_multiple_type'][$i],
+					$model->createChoice($question_id, $_POST['choice_multiple_type'][$i],
 											$_POST['choice_multiple_text'][$i]);
 				}				
 			}
@@ -374,7 +247,9 @@ class ilObjMobileQuizWizard {
 		}
 	}
 	
-	private function changeAnswersSingleChoice($model) {
+	// -------------------------------------------------------------------------
+	
+	private function updateChoiceSingle($model, $question_id) {
 		// iterate through the choices
 		$i = 1;
 		while(isset($_POST['choice_single_text'][$i])) {
@@ -384,7 +259,7 @@ class ilObjMobileQuizWizard {
 				if($_POST['choice_single_deleted'][$i] != true
 				&& !empty($_POST['choice_single_text'][$i])) {
 					// create choice
-					$model->createChoice($_POST['question_id'],$_POST['choice_single_type'][$i],
+					$model->createChoice($question_id, $_POST['choice_single_type'][$i],
 					$_POST['choice_single_text'][$i]);
 				}
 			}
@@ -404,7 +279,9 @@ class ilObjMobileQuizWizard {
 		}
 	}
 	
-	private function changeAnswersNumericChoice($model) {
+	// -------------------------------------------------------------------------
+	
+	private function updateChoiceNumeric($model, $question_id) {
 		$text = $_POST['choice_numeric_minimum'].";".
 			$_POST['choice_numeric_maximum'].";".
 			$_POST['choice_numeric_step'].";".
@@ -418,8 +295,16 @@ class ilObjMobileQuizWizard {
 		} else {
 			$correct_value = "2";
 		}
-		$model->updateChoice($_POST['choice_numeric_id'],$correct_value, $text, -1);
+		
+		if (!empty($_POST['choice_numeric_id'])) {
+			// if choice exists, then update, else create
+			$model->updateChoice($_POST['choice_numeric_id'],$correct_value, $text, -1);
+		} else {			
+			$model->createChoice($question_id, $correct_value, $text);
+		}		
 	}
+	
+	// -------------------------------------------------------------------------
 }
 
 ?>

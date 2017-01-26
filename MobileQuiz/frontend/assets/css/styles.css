@@ -87,11 +87,14 @@ label.ui-btn {
 }
 
 /* -- Result Page -----------------*/
-.optional-information {
-	
+.optional-information-header {
+	text-decoration: underline;
+	color: #777777;
+	font-size: 0.9em;
 }
 
-.text-info {
+
+.optional-information-text {
 	margin: 5px;
 	padding: 5px;
 	border: 1px solid #999999;
@@ -101,6 +104,10 @@ label.ui-btn {
 	
 	overflow: auto;
     white-space: normal;
+}
+
+.optional-information-text a{
+	font-weight: normal;
 }
 
 .button-optional {
@@ -119,4 +126,10 @@ label.ui-btn {
     vertical-align: middle;
     text-align: center;
     cursor: pointer;   
+}
+
+/* -- HOME ------------------------------- */
+.home-error-message {
+	background-color: #fcf8e3 !important;
+	text-align: center !important;
 }

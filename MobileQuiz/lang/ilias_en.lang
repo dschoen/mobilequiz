@@ -29,6 +29,9 @@ tabmenu_show_result#:#Rounds & Result
 tabmenu_edit_quiz#:#Questions & Answers
 tabmenu_info#:#Further Information
 
+<!-- Startpage -->
+startpage_fullscreen#:#Full Screen
+
 <!-- Properties -->						
 edit_properties#:#Edit Properties
 properties_title#:#Title
@@ -38,7 +41,8 @@ properties_description#:#Description
 question_add_head#:#Edit Questions
 question_add_text#:#Question
 question_add_type#:#Type
-question_obj_create#:#Question has been sent successfully
+question_message_created#:#Question has been created.
+question_message_edited#:#Question has been changed.
 
 <!-- Question table -->	
 question_table_text#:#Question
@@ -57,6 +61,8 @@ choice_form_choices#:#Choices
 choice_form_solution#:#Solution
 choice_form_furthermore#:#Further information
 choice_form_asterisk#:#required
+choice_form_button_add#:#Add new Answer
+choice_form_button_delete#:#Delete
 
 choice_table_text#:#Answer
 choice_table_value#:#Value

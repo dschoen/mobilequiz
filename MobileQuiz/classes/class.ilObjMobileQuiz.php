@@ -428,7 +428,11 @@ class ilObjMobileQuiz extends ilObjectPlugin
     public function updateChoice($choice_id, $a_correct_value, $a_text, $choice_order){
         global $ilDB, $ilAccess, $ilUser;
 
-        $ilDB->manipulate("UPDATE rep_robj_xuiz_choices SET text= ".$ilDB->quote($a_text, "text").", correct_value= ".$ilDB->quote($a_correct_value, "text").", choice_order= ".$ilDB->quote($choice_order, "integer")." WHERE choice_id = ".$ilDB->quote($choice_id, "integer"));
+        $ilDB->manipulate("UPDATE rep_robj_xuiz_choices" 
+        		." SET text= ".$ilDB->quote($a_text, "text")
+        		.", correct_value= ".$ilDB->quote($a_correct_value, "text")
+        		.", choice_order= ".$ilDB->quote($choice_order, "integer")
+        		." WHERE choice_id = ".$ilDB->quote($choice_id, "integer"));
     }
 
     // -------------------------------------------------------------------------

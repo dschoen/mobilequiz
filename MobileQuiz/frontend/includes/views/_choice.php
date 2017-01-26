@@ -7,18 +7,7 @@ $color = "";
 if ( !empty( $result ) ) {
     $correct_value = $choice->correct_value;
     
-    
-    
-    if ( $correct_value == "1" && $result[$choice->choice_id] == "1" ) {
-    	// Richtig
-        $symbole = "correct";
-        $color = "green";
-    }
-    if ( $correct_value == "1" && $result[$choice->choice_id] == "0" ) {
-    	// Richtig aber nicht gewählt
-        $symbole = "correct";
-        $color = "";
-    }
+
     if ( $correct_value == "0" && $result[$choice->choice_id] == "1" ) {
     	// Falsch und gewählt
         $symbole = "incorrect";
@@ -28,6 +17,26 @@ if ( !empty( $result ) ) {
     	// Falsch und nicht gewählt
         $symbole = "incorrect";
         $color = "";
+    }
+    if ( $correct_value == "1" && $result[$choice->choice_id] == "1" ) {
+    	// Richtig
+    	$symbole = "correct";
+    	$color = "green";
+    }
+    if ( $correct_value == "1" && $result[$choice->choice_id] == "0" ) {
+    	// Richtig aber nicht gewählt
+    	$symbole = "correct";
+    	$color = "";
+    }
+    if ( $correct_value == "2" && $result[$choice->choice_id] == "1" ) {
+    	// Richtig
+    	$symbole = "neutral";
+    	$color = "blue";
+    }
+    if ( $correct_value == "2" && $result[$choice->choice_id] == "0" ) {
+    	// Richtig aber nicht gewählt
+    	$symbole = "neutral";
+    	$color = "";
     }
 }
 
@@ -41,7 +50,11 @@ switch($type_of_question) {
             ?>
             <ul style="margin-bottom: 10px;">
                 <li>
-                    <div style="width: 19px; float: left;"><?php if ( !empty( $symbole ) ) : ?><img src="assets/img/<?php echo $symbole; ?>.png" alt="" title="" width="16" /><?php else: ?>&nbsp;<?php endif; ?></div> <span style="color:<?php echo$color; ?>"><?php echo $choice->text; ?></span>
+                    <div style="width: 19px; float: left;"><?php if ( !empty( $symbole ) ) : ?>
+                    <img src="assets/img/<?php echo $symbole; ?>.png" alt="" title="" width="16" />
+                    <?php else: ?>&nbsp;<?php endif; ?></div>
+                    <span>&nbsp;-&nbsp;</span> 
+                    <span style="color:<?php echo$color; ?>"><?php echo $choice->text; ?></span>
                 </li>
             </ul>
             <div style="clear: both;"></div>
@@ -146,10 +159,3 @@ switch($type_of_question) {
         break;
 }
 ?>
-
-
-
-
-
-
-

@@ -1,34 +1,13 @@
-<style>
-
-.start_button {
-  font-family: Arial;
-  color: #ffffff ! important;
-  text-decoration: none  ! important;
-  font-size: 18px;
-  padding: 10px;
-  text-decoration: none;
-  -webkit-border-radius: 9px;
-  -moz-border-radius: 9px;
-  -webkit-box-shadow: 0px 1px 3px #666666;
-  -moz-box-shadow: 0px 1px 3px #666666;
-  text-shadow: 1px 1px 3px #666666;
-  border: solid #003366 0px;
-  background: -webkit-gradient(linear, 0 0, 0 100%, from(#178feb), to(#295a8a));
-  background: -moz-linear-gradient(top, #178feb, #295a8a);
-  -ms-filter: progid:DXImageTransform.Microsoft.gradient(startColorStr=#178feb, endColorStr=#295a8a);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorStr=#178feb, endColorStr=#295a8a);
-  display:inline-block; /* IE is so silly */
-}
-.start_button:hover {
-  background: #325e80;
-}
-
-
-</style>
+<link rel="stylesheet" href="./Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/templates/css/mq_startpage.css">
 
 
 <center>
-    {START_LINK}
+	<a class="btn btn-lg btn-success start-button"
+		href="{START_BUTTON_LINK}"
+	>
+	{START_BUTTON_TEXT}
+	</a>
+    
     <br /> 
     <br />
     Status: {INFO_TEXT}

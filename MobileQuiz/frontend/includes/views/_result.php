@@ -1,7 +1,7 @@
 <li class="question">
     <?php
-    // If you want to add new question types, you must modify this file here.
-    echo $question->text;
+    
+    echo polishText($question->text);
 
     $answer = array();
     $type_of_question = Array( "type_of_question" => $question->type, "result" => $result);
@@ -14,7 +14,7 @@
             ?>
             <div data-role="fieldcontain">
                 <fieldset data-role="controlgroup" id="question<?php echo $question->question_id;?>">
-                    <?php render($question->choices,$type_of_question);?>
+                    <?php render($question->choices, $type_of_question);?>
                 </fieldset>
             </div>
             <?php
@@ -26,7 +26,7 @@
             ?>
             <div data-role="fieldcontain">
                 <fieldset data-role="controlgroup" id="question<?php echo $question->question_id;?>">
-                    <?php render($question->choices,$type_of_question);?>
+                    <?php render($question->choices, $type_of_question);?>
                 </fieldset>
             </div>
             <?php
@@ -37,7 +37,7 @@
             $type_for_choice = "3";
             ?>
             <div data-role="fieldcontain">
-                <?php render($question->choices,$type_of_question);?>
+                <?php render($question->choices, $type_of_question);?>
             </div>
             <?php
             break;
@@ -50,8 +50,8 @@
     		href="#"
     		>Solution</a>
     		    
-	    <div id="text-button-solution-<?php echo $question->question_id;?>" class="solution text-info">
-	    	 Solution: <?php echo polishText($question->solution);?>
+	    <div id="text-button-solution-<?php echo $question->question_id;?>" class="solution optional-information-text">
+	    	 <span class="optional-information-header">Solution:</span> <?php echo polishText($question->solution);?>
 	    </div>
     <?php } ?>
     
@@ -61,8 +61,8 @@
 	    	href="#"
 	    	>Further Information</a>
 	    
-	    <div id="text-button-furthermore-<?php echo $question->question_id;?>" class="furthermore text-info">
-	    	 Further Information: <?php echo polishText($question->furthermore);?>
+	    <div id="text-button-furthermore-<?php echo $question->question_id;?>" class="furthermore optional-information-text">
+	    	 <span class="optional-information-header">Further Information:</span> <?php echo polishText($question->furthermore);?>
 	    </div>
      <?php } ?>
     </div>
@@ -72,7 +72,7 @@
 
 <script language="javascript" type="text/javascript">
 
-//bind additional info buttons
+// add pop up functionality to Solution and further information button
 $( ".button-optional" ).click(function(event) {
 	$("#"+event.target.id).hide();
 	$("#text-"+event.target.id).show();	  

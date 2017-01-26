@@ -1,4 +1,6 @@
 <link rel="stylesheet" href="./Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/lib/simplemde/simplemde.min.css">
+<link rel="stylesheet" href="./Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/templates/css/mq_choice_editor.css">
+
 <script src="./Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/lib/simplemde/simplemde.min.js"></script>
 
 <!-- JAVASCRIPT ----------------------------------------------------------------- -->
@@ -22,9 +24,17 @@
 
     // -------------------------------------------------------------------------
 
+    /**
+    * Is called by a delete button.
+    * Hides (and therefore removes a choice.
+    */    
     function removeThis(field) {
             $(field).siblings(".deleted_hidden").val("true");
             $(field).parent().slideUp();
+            
+            // hide fieldset with all elements
+            $("#"+field.getAttribute("data-choice-id")).hide();
+            
             return false;
     }
 
@@ -53,27 +63,29 @@
    
     // -------------------------------------------------------------------------
     /**
-    Event Listener for "Nach unten" und "Nach oben" Buttons
+    Event Listener for Up and Down Buttons
     */
     function moveChoiceDown(field) {
-        // Fuer Button "Nach unten"
-        // Eigene ID und naechste ID ermitteln
-        ownElement = field.parentNode;
+    	
+    	//get fieldset of whole choice
+        ownElement = field.parentNode.parentNode;    	
+    	ownID = field.getAttribute("data-row-id");
+
         ownChildRowElements = ownElement.getElementsByClassName("rowID");
         if(ownChildRowElements.length == 0) return false;
-        ownID = ownChildRowElements[0].getAttribute("value");
-        nextElement = next(field.parentNode);
+        
+ 		nextElement = next(ownElement);
         if(!nextElement) return false;
+        
         nextChildRowElements = nextElement.getElementsByClassName("rowID");
         if(nextChildRowElements.length == 0) return false;
         nextID = nextChildRowElements[0].getAttribute("value");
-        /* nextID = nextElement.getAttribute("rowID"); */
 
-        //Eigene ID und n�chste ID vertauschen
+        //Switch IDs
         ownChildRowElements[0].setAttribute("value", nextID);
         nextChildRowElements[0].setAttribute("value", ownID);
 
-        //Reihenfolge vertauschen
+        //Switch order
         ownElement.parentNode.insertBefore(nextElement, ownElement);
         return false;
     }
@@ -81,30 +93,35 @@
     // -------------------------------------------------------------------------
 	    
     function moveChoiceUp(field) {
-        // Fuer Button "Nach unten"
-        // Eigene ID und naechste ID ermitteln
-        ownElement = field.parentNode;
+    	
+    	//get fieldset of whole choice
+        ownElement = field.parentNode.parentNode;    	
+    	ownID = field.getAttribute("data-row-id");
+    	
         ownChildRowElements = ownElement.getElementsByClassName("rowID");
         if(ownChildRowElements.length == 0) return false;
-        ownID = ownChildRowElements[0].getAttribute("value");
-        nextElement = previous(field.parentNode);
+        
+        nextElement = previous(ownElement);
         if(!nextElement) return false;
+        
         nextChildRowElements = nextElement.getElementsByClassName("rowID");
         if(nextChildRowElements.length == 0) return false;
         nextID = nextChildRowElements[0].getAttribute("value");
-        /* nextID = nextElement.getAttribute("rowID"); */
 
         //Switch this and next ID
         ownChildRowElements[0].setAttribute("value", nextID);
         nextChildRowElements[0].setAttribute("value", ownID);
 
-        //Reihenfolge vertauschen
+        //Switch order
         ownElement.parentNode.insertBefore(ownElement, nextElement);
         return false;
     }
 
     // -------------------------------------------------------------------------
 
+    /**
+    * Add a new MULTIPLE Choice from Template
+    */
     $(document).ready(function() {
             // use this to reset several forms at once
             $("#add_choice_multiple").click(function() {
@@ -130,6 +147,11 @@
             });
     });
 
+    // -----------------------------------------------------------------------------
+    
+    /**
+     * Add a new SINGLE Choice from Template
+     */
     $(document).ready(function() {
             // use this to reset several forms at once
             $("#add_choice_single").click(function() {
@@ -156,6 +178,8 @@
             });
     });
 
+ 	// -----------------------------------------------------------------------------
+    
     $(document).ready(function() {
             $("#type").change(function() {
                     var src = $(this).val();
@@ -178,6 +202,8 @@
             });
 
     });
+    
+ 	// -----------------------------------------------------------------------------
     
     // simpleMDE - Editor
     $(document).ready(function() {
@@ -206,27 +232,30 @@
 	                   status: false,
 	       });
 	       textfield.render();
+	       
+	       // wrap $$ $$ around text when LaTeX is clicked
+			function latexAction(){	        	
+			     cm = textfield.codemirror;
+			     var output = '';
+			     var selectedText = cm.getSelection();
+			     var text = selectedText || 'LaTeX';
+			
+			     output = '$$' + text + '$$';
+			     cm.replaceSelection(output);
+			 }
+	        
+			// wrap $$$ $$$ around text when LaTeX is clicked
+	        function latexInlineAction(){	        	
+	            cm = textfield.codemirror;
+	            var output = '';
+	            var selectedText = cm.getSelection();
+	            var text = selectedText || 'LaTeX';
+	
+	            output = '$$$' + text + '$$$';
+	            cm.replaceSelection(output);
+	        }
+        
     	});
-        
-        function latexAction(){
-            cm = question.codemirror;
-            var output = '';
-            var selectedText = cm.getSelection();
-            var text = selectedText || 'LaTeX';
-
-            output = '$$' + text + '$$';
-            cm.replaceSelection(output);
-        }
-        
-        function latexInlineAction(){
-            cm = question.codemirror;
-            var output = '';
-            var selectedText = cm.getSelection();
-            var text = selectedText || 'LaTeX';
-
-            output = '$$$' + text + '$$$';
-            cm.replaceSelection(output);
-        }
                 
         // render every choice field
         $(".textfield_choice").each(function() {
@@ -243,171 +272,8 @@
         });
         
     });
-    
-    function latexAction(){
-        cm = question.codemirror;
-        var output = '';
-        var selectedText = cm.getSelection();
-        var text = selectedText || 'placeholder';
-
-        output = '$$' + text + '$$';
-        cm.replaceSelection(output);
-    }
 
 </script>
-
-<!-- ------------------------------------------------------------------ -->
-
-<style>    
-
-    #text {
-        
-    }
-    #formular fieldset,
-    #formular_single fieldset,
-    #formular_multiple fieldset {
-        padding: 5px;
-    }
-
-    .choice {
-        margin: 3px 0px 3px 0px;
-        border: 1px solid #c9c9c9;
-        background-color: #f9f9f9;   
-
-    }
-    .textfield_choice {
-        /*width: 487px;*/
-    }
-    .choice_actions{
-    }
-    .choice_actions_label {
-        font-size: 0.9em;
-        margin-right: 10px;
-    }
-
-    #numeric_choice label {
-        display:inline-block;
-        width: 150px;
-        font-size: 10pt;
-        padding:5px;
-    }
-
-    #numeric_choice input {
-        width: 220px;
-        margin-top:5px;
-    }
-
-    .ilFormValue{
-        padding-left: 10px;        
-        width: 700px;
-    }
-    
-    a.add_button, a.add_button:hover {
-        -moz-border-radius:4px;
-        -webkit-border-radius:4px;
-        border-radius:4px;
-        background:#04c904; background: -moz-linear-gradient(top, #04c904 0%, #3d8f0e 100%);background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#04c904), color-stop(100%,#3d8f0e));;
-        filter:progid:DXImageTransform.Microsoft.gradient( startColorstr='#04c904', endColorstr='#3d8f0e',GradientType=0 );
-        border:1px solid #656565;    
-        text-shadow:0 -1px 1px rgba(0,0,0,0.3);
-        color:#FFFFFF;
-        padding:0px;
-        font-weight:bold;
-        font-family:'Helvetica Neue', Helvetica, Arial, sans-serif;
-        font-size:13px;
-        cursor:pointer;
-        width:90px;
-        height:20px;
-        text-align:center;
-        display:inline-block;
-        font-size:11px;
-        text-decoration: none;
-    }
-
-    a.delete_button, a.delete_button:hover {
-        -moz-border-radius:4px;
-        -webkit-border-radius:4px;
-        border-radius:4px;
-        background:#e61919; background: -moz-linear-gradient(top, #e61919 0%, #ad1a26 100%);background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#e61919), color-stop(100%,#ad1a26));;
-        filter:progid:DXImageTransform.Microsoft.gradient( startColorstr='#e61919', endColorstr='#ad1a26',GradientType=0 );
-        border:1px solid #656565;
-        text-shadow:0 -1px 1px rgba(0,0,0,0.3);
-        color:#FFFFFF;
-        padding:0px;
-        font-weight:bold;
-        font-family:'Helvetica Neue', Helvetica, Arial, sans-serif;
-        font-size:11px;
-        cursor:pointer;
-        width:60px;
-        height:20px;
-        text-align:center;
-        display:inline-block;
-        text-decoration: none;
-        float:right;
-        margin: 5px;    
-    }
-
-
-    a.upBTN, a.upBTN:hover, a.downBTN, a.downBTN:hover {
-        -moz-border-radius:4px;
-        -webkit-border-radius:4px;
-        border-radius:4px;
-        background:#1980E6; background: -moz-linear-gradient(top, #1980E6 0%, #1259A1 100%);background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#1259A1), color-stop(100%,#1259A1));;
-        filter:progid:DXImageTransform.Microsoft.gradient( startColorstr='#1980E6', endColorstr='#1259A1',GradientType=0 );
-        border:1px solid #656565;
-        text-shadow:0 -1px 1px rgba(0,0,0,0.3);
-        color:#FFFFFF;
-        padding:0px;
-        font-weight:bold;
-        font-family:'Helvetica Neue', Helvetica, Arial, sans-serif;
-        font-size:13px;
-        cursor:pointer;
-        width:30px;
-        height:20px;
-        text-align:center;
-        display:inline-block;
-        text-decoration: none;
-
-        float:right;
-        margin: 5px;
-    }
-
-    a.upBTN:hover,a.downBTN:hover {
-        background:#39A0E6; background: -moz-linear-gradient(top, #39A0E6 0%, #3279C1 100%);background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#3279C1), color-stop(100%,#3279C1));;
-        box-shadow:1px 1px 1px rgba(0,0,0,0.6);
-        -moz-box-shadow:1px 1px 1px rgba(0,0,0,0.6);
-        -webkit-box-shadow:1px 1px 1px rgba(0,0,0,0.6);
-    }
-    a.delete_button:hover {
-        background:#F63939; background: -moz-linear-gradient(top, #F63939 0%, #Cd3a56 100%);background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#Cd3a56), color-stop(100%,#Cd3a56));;
-        box-shadow:1px 1px 1px rgba(0,0,0,0.6);
-        -moz-box-shadow:1px 1px 1px rgba(0,0,0,0.6);
-        -webkit-box-shadow:1px 1px 1px rgba(0,0,0,0.6);
-    }
-    a.add_button:hover {
-        /*background:#24E924; background: -moz-linear-gradient(top, #24E924 0%, #5dAf2e 100%);background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#5dAf2e), color-stop(100%,#5dAf2e));;*/
-        box-shadow:1px 1px 1px rgba(0,0,0,0.6);
-        -moz-box-shadow:1px 1px 1px rgba(0,0,0,0.6);
-        -webkit-box-shadow:1px 1px 1px rgba(0,0,0,0.6);
-    }
-
-    /* SimpleMDE*/
-    .editor-toolbar::before{
-        margin-bottom: 0px;
-    }
-    .editor-toolbar::after{
-        margin-top: 0px;    
-    }
-    .CodeMirror, 
-    .CodeMirror-scroll {
-        min-height: 100px;
-    }
-    .choice_area .CodeMirror, 
-    .choice_area .CodeMirror-scroll {
-        min-height: 50px;
-    }
-
-</style>
 
 <!-- HTML page structure ------------------------------------------------------>
 
@@ -422,8 +288,7 @@
 			<tr class="ilFormHeader">
 	            <td class="ilFormHeader" colspan="2">
 	                <div style="float: right; margin-left: 20px;">
-	                        <input class="submit" type="SUBMIT" name="{COMMAND}"
-	                                value="{SUBMIT_BUTTON}">
+	                        <input class="btn btn-default" type="SUBMIT" name="{COMMAND}" value="{SUBMIT_BUTTON}">
 	                        <input type="hidden" name="question_id" value="{QUESTION_ID}">
 	                </div>
 	                <h3 class="ilFormHeader ilHeader ilTableHeaderTitle">
@@ -443,6 +308,11 @@
                	</td>
 			</tr>
 			
+			<!-- Horizontal line -->
+            <tr>
+          		<td colspan="2"><hr class="table-seperator"/></td>
+    		</tr>
+			
 			<!-- Question Type -------------------------------------------------------------------------- -->
 			<tr {HIDE_QUESTION_TYPE}>
 				<td class="ilFormOption" id="il_prop_cont_type"><label
@@ -456,140 +326,239 @@
 				</td>
 			</tr>
                         
-            <!-- Choice Formular -->
+            <!-- Choice Formular ------------------------------------------------------------------------ -->
 			<tr>
-				<td class="ilFormOption" id="il_prop_cont_type">{CHOICES}<span class="asterisk">*</span></td>
+				<td class="ilFormOption" id="il_prop_cont_type">{CHOICES}<span
+					class="asterisk">*</span></td>
 				<td class="ilFormValue">
-
-					<!--  Multiple Choice BEGIN -->
+				
+					<!--  Multiple Choice BEGIN ----------------------------------------------------------- -->
 					<div id="multiple_choice" class="choice_area" {HIDE_MULTIPLE_CHOICE_BLOCK}>
 						<div id="formular_multiple">
-						<!-- BEGIN multiple_choice_block -->
-						<fieldset id="fieldset_multiple_choice_{MUL_COU}" class="choice" style="display: {MUL_SHOW};">
-							<input type="hidden" name="rowID[{MUL_COU}]" value="{ROW_ID}" class="rowID">
-							<textarea name="choice_multiple_text[{MUL_COU}]" class="textfield_choice" rows="3">{MUL_TEXT}</textarea>
-                                                        <div class="choice_actions">
-                                                            <input type="hidden" name="choice_multiple_id[{MUL_COU}]" value="{MUL_ID}">
-                                                            <input type="hidden" name="choice_multiple_deleted[{MUL_COU}]" value="{MUL_DEL}" class="deleted_hidden">
-                                                            <input type="radio" name="choice_multiple_type[{MUL_COU}]" value="1" id="correct[{MUL_COU}]" {MUL_TYPE_C}> 
-                                                                <label for="correct[{MUL_COU}]" class="choice_actions_label">correct</label>
-                                                            <input type="radio" name="choice_multiple_type[{MUL_COU}]" value="2" id="neutral[{MUL_COU}]" {MUL_TYPE_N}> 
-                                                                <label for="neutral[{MUL_COU}]" class="choice_actions_label">neutral</label>
-                                                            <input type="radio" name="choice_multiple_type[{MUL_COU}]" value="0" id="incorrect[{MUL_COU}]" {MUL_TYPE_I}> 
-                                                                <label for="incorrect[{MUL_COU}]" class="choice_actions_label">incorrect</label>
-
-                                                            <a href="#" id="delete_choice[{MUL_COU}]" class="delete_choice delete_button" onclick="removeThis(this);" title="{DELETE_INFO}">Delete</a>
-                                                            <a href="#" class="downBTN" onclick="moveChoiceDown(this);  return false;" title="{MOVE_DOWN_INFO}">&#9660;</a>
-                                                            <a href="#" class="upBTN"   onclick="moveChoiceUp(this);    return false;" title="{MOVE_UP_INFO}">&#9650;</a>		
-                                                        <div>
-						</fieldset>
-						<!-- END multiple_choice_block -->
-						</div>
-						<div style="display:block; text-align:right;">
-							<a href="#" id="add_choice_multiple" class="add_button">Add Antwort</a>
-						</div>
-                                                            
-                        <!-- Template for adding-->
-						<fieldset id="fieldset_multiple_choice_999" class="choice" style="display: none;">
-							<input type="hidden" name="rowID[999]" value="" class="rowID">
-							<textarea name="choice_multiple_text[999]" class="textfield_choice" rows="3">{MUL_TEXT}</textarea>
-                                                        <div class="choice_actions">
-                                                            <input type="hidden" name="choice_multiple_id[999]" value="">
-                                                            <input type="hidden" name="choice_multiple_deleted[999]" value="0" class="deleted_hidden">
-                                                            <input type="radio" name="choice_multiple_type[999]" value="1" id="correct[999]"> 
-                                                                <label for="correct[999]" class="choice_actions_label">correct</label>
-                                                            <input type="radio" name="choice_multiple_type[999]" value="2" id="neutral[999]" checked> 
-                                                                <label for="neutral[999]" class="choice_actions_label">neutral</label>
-                                                            <input type="radio" name="choice_multiple_type[999]" value="0" id="incorrect[999]"> 
-                                                                <label for="incorrect[999]" class="choice_actions_label">incorrect</label>
-
-                                                            <a href="#" id="delete_choice[999]" class="delete_choice delete_button" onclick="removeThis(this);" title="{DELETE_INFO}">Delete</a>
-                                                            <a href="#" class="downBTN" onclick="moveChoiceDown(this);  return false;" title="{MOVE_DOWN_INFO}">&#9660;</a>
-                                                            <a href="#" class="upBTN"   onclick="moveChoiceUp(this);    return false;" title="{MOVE_UP_INFO}">&#9650;</a>		
-                                                        <div>
-						</fieldset>
-                                                <!-- End Template -->
-					</div>
-
-					<!--  Single Choice BEGIN -->
-					<div id="single_choice" class="choice_area" {HIDE_SINGLE_CHOICE_BLOCK}>
-                                            <div id="formular_single">
-						<!-- BEGIN single_choice_block -->
-						<fieldset id="fieldset_single_choice_{MUL_COU}" class="choice" style="display: {MUL_SHOW};">
-							<input type="hidden" name="rowID[{MUL_COU}]" value="{ROW_ID}" class="rowID">
-							<textarea name="choice_single_text[{MUL_COU}]" class="textfield_choice" rows="3">{MUL_TEXT}</textarea>
-							<input type="hidden" name="choice_single_id[{MUL_COU}]" value="{MUL_ID}">
-							<input type="hidden" name="choice_single_deleted[{MUL_COU}]" value="{MUL_DEL}" class="deleted_hidden">
-							<input type="radio" name="choice_single_type[{MUL_COU}]" value="1" id="correct[{MUL_COU}]" {MUL_TYPE_C}> 
-                                                            <label for="correct[{MUL_COU}]" class="choice_actions_label">correct</label>
-							<input type="radio" name="choice_single_type[{MUL_COU}]" value="2" id="neutral[{MUL_COU}]" {MUL_TYPE_N}>
-                                                            <label for="neutral[{MUL_COU}]" class="choice_actions_label">neutral</label>
-							<input type="radio" name="choice_single_type[{MUL_COU}]" value="0" id="incorrect[{MUL_COU}]" {MUL_TYPE_I}> 
-                                                            <label for="incorrect[{MUL_COU}]" class="choice_actions_label">incorrect</label>
 							
-							<a href="#" id="delete_choice_{MUL_COU}" class="delete_choice delete_button" onclick="removeThis(this);" title="{DELETE_INFO}">Delete</a>
-                                                        <a href="#" class="downBTN" onclick="moveChoiceDown(this);  return false;" title="{MOVE_DOWN_INFO}">&#9660;</a>
-                                                        <a href="#" class="upBTN"   onclick="moveChoiceUp(this);    return false;" title="{MOVE_UP_INFO}">&#9650;</a>							
+							<!-- BEGIN multiple_choice_block -->
+							<fieldset id="fieldset_multiple_choice_{MUL_COU}" class="choice" style="display: {MUL_SHOW};>
+								<input id="rowID[{MUL_COU}]" type="hidden" name="rowID[{MUL_COU}]" value="{ROW_ID}" class="rowID">
+								<textarea name="choice_multiple_text[{MUL_COU}]"
+									class="textfield_choice" rows="3">{MUL_TEXT}</textarea>
+								<div class="choice_actions">
+									<input type="hidden" name="choice_multiple_id[{MUL_COU}]"
+										value="{MUL_ID}"> <input type="hidden"
+										name="choice_multiple_deleted[{MUL_COU}]" value="{MUL_DEL}"
+										class="deleted_hidden"> <input type="radio"
+										name="choice_multiple_type[{MUL_COU}]" value="1"
+										id="correct[{MUL_COU}]"{MUL_TYPE_C}> <label
+										for="correct[{MUL_COU}]" class="choice_actions_label">correct</label>
+									<input type="radio" name="choice_multiple_type[{MUL_COU}]"
+										value="2" id="neutral[{MUL_COU}]"{MUL_TYPE_N}> <label
+										for="neutral[{MUL_COU}]" class="choice_actions_label">neutral</label>
+									<input type="radio" name="choice_multiple_type[{MUL_COU}]"
+										value="0" id="incorrect[{MUL_COU}]"{MUL_TYPE_I}> <label
+										for="incorrect[{MUL_COU}]" class="choice_actions_label">incorrect</label>
+
+									<a href="#" id="delete_multiple_choice[{MUL_COU}]"
+										data-choice-id="fieldset_multiple_choice_{MUL_COU}"
+										class="btn btn-danger btn-xs right"
+										onclick="removeThis(this); return false;" 
+										title="{DELETE_INFO}"><span class="glyphicon glyphicon-remove"></span></a> 
+									<a	href="#" 
+										class="btn btn-default btn-xs right"
+										data-row-id="{ROW_ID}"
+										onclick="moveChoiceDown(this); return false;"
+										title="{MOVE_DOWN_INFO}"><span class="glyphicon glyphicon-chevron-down"></span></a> 
+									<a href="#" 
+										class="btn btn-default btn-xs right"
+										data-row-id="{ROW_ID}"
+										onclick="moveChoiceUp(this); return false;"
+										title="{MOVE_UP_INFO}"><span class="glyphicon glyphicon-chevron-up"></span></a>
+								</div>
+							</fieldset>
+							<!-- END multiple_choice_block -->
+						</div>
+						
+						<!-- Add Multiple Choice Button -->
+						<div style="display: block; text-align: right;">
+							<a href="#" 
+								id="add_choice_multiple" 
+								class="btn btn-success btn-xs"
+								>{BUTTON_CHOICE_ADD}</a>
+						</div>
+
+						<!-- Multiple Choice TEMPLATE --------------------------------------------- -->
+						<fieldset id="fieldset_multiple_choice_999" class="choice" style="display: none;">
+							<input id="rowID[999]" type="hidden" name="rowID[999]" value="" class="rowID" />
+							<textarea name="choice_multiple_text[999]"
+								class="textfield_choice" rows="3">{MUL_TEXT}</textarea>
+							<div class="choice_actions">
+								<input type="hidden" name="choice_multiple_id[999]" value="">
+								<input type="hidden" name="choice_multiple_deleted[999]"
+									value="0" class="deleted_hidden"> 
+								<input type="radio"
+									name="choice_multiple_type[999]" value="1" id="correct[999]">
+								<label for="correct[999]" class="choice_actions_label">correct</label>
+								<input type="radio" name="choice_multiple_type[999]" value="2"
+									id="neutral[999]" checked /> 
+								<label for="neutral[999]"
+									class="choice_actions_label">neutral</label> 
+								<input type="radio" name="choice_multiple_type[999]" value="0"
+									id="incorrect[999]" /> 
+								<label for="incorrect[999]"
+									class="choice_actions_label">incorrect</label> 
+								<a href="#"	id="delete_choice[999]" 
+									data-choice-id="fieldset_multiple_choice_999"
+									class="btn btn-danger btn-xs right"
+									onclick="removeThis(this);  return false;" 
+									title="{DELETE_INFO}"><span class="glyphicon glyphicon-remove"></span></a> 
+								<a	href="#" 
+									class="btn btn-default btn-xs right"
+									data-row-id="{ROW_ID}"
+									onclick="moveChoiceDown(this);  return false;"
+									title="{MOVE_DOWN_INFO}"><span class="glyphicon glyphicon-chevron-down"></span></a> 
+								<a href="#" 
+									class="btn btn-default btn-xs right"
+									data-row-id="{ROW_ID}"
+									onclick="moveChoiceUp(this);    return false;"
+									title="{MOVE_UP_INFO}"><span class="glyphicon glyphicon-chevron-up"></span></a>
+							</div>
 						</fieldset>
-						<!-- END single_choice_block -->
-                                            </div>
-                                            <div style="display:block; text-align:right;">
-                                                    <a href="#" id="add_choice_single" class="add_button">Add Choice</a>
-                                            </div>
-                                            
-                                            <!-- Template for adding-->
-                                            <fieldset id="fieldset_single_choice_999" class="choice" style="display: none;">
-                                                    <input type="hidden" name="rowID[999]" value="" class="rowID">
-                                                    <textarea name="choice_single_text[999]" class="textfield_choice" rows="3">{MUL_TEXT}</textarea>
-                                                    <input type="hidden" name="choice_single_id[999]" value="">
-                                                    <input type="hidden" name="choice_single_deleted[999]" value="0" class="deleted_hidden">
-                                                    <input type="radio" name="choice_single_type[999]" value="1" id="correct[999]">
-                                                        <label for="correct[999]" class="choice_actions_label">correct</label>
-                                                    <input type="radio" name="choice_single_type[999]" value="2" id="neutral[999]" checked>
-                                                        <label for="neutral[999]" class="choice_actions_label">neutral</label>
-                                                    <input type="radio" name="choice_single_type[999]" value="0" id="incorrect[999]">
-                                                        <label for="incorrect[999]" class="choice_actions_label">incorrect</label>
+						<!-- End Template -->
+					</div> 
+					
+					<!--  Single Choice BEGIN ---------------------------------------------------------- -->
+					<div id="single_choice" class="choice_area" {HIDE_SINGLE_CHOICE_BLOCK}>
+						<div id="formular_single">
+							
+							<!-- BEGIN single_choice_block -->
+							<fieldset id="fieldset_single_choice_{MUL_COU}" class="choice" style="display: {MUL_SHOW};">
+								<input type="hidden" name="rowID[{MUL_COU}]" value="{ROW_ID}" class="rowID">
+								<textarea name="choice_single_text[{MUL_COU}]"
+										class="textfield_choice" 
+										rows="3">{MUL_TEXT}</textarea>
+									
+								<div class="choice_actions">
+									<input type="hidden" name="choice_single_id[{MUL_COU}]"
+										value="{MUL_ID}"> <input type="hidden"
+										name="choice_single_deleted[{MUL_COU}]" value="{MUL_DEL}"
+										class="deleted_hidden"> <input type="radio"
+										name="choice_single_type[{MUL_COU}]" value="1"
+										id="correct[{MUL_COU}]"{MUL_TYPE_C}> <label
+										for="correct[{MUL_COU}]" class="choice_actions_label">correct</label>
+									<input type="radio" name="choice_single_type[{MUL_COU}]"
+										value="2" id="neutral[{MUL_COU}]"{MUL_TYPE_N}> <label
+										for="neutral[{MUL_COU}]" class="choice_actions_label">neutral</label>
+									<input type="radio" name="choice_single_type[{MUL_COU}]"
+										value="0" id="incorrect[{MUL_COU}]"{MUL_TYPE_I}> <label
+										for="incorrect[{MUL_COU}]" class="choice_actions_label">incorrect</label>
+	
+									<a href="#" id="delete_choice_{MUL_COU}"
+										data-choice-id="fieldset_single_choice_{MUL_COU}"
+										class="btn btn-danger btn-xs right"
+										onclick="removeThis(this);  return false;"
+										title="{DELETE_INFO}"><span class="glyphicon glyphicon-remove"></span></a> 
+									<a href="#" 
+										class="btn btn-default btn-xs right"
+										data-row-id="{ROW_ID}"
+										onclick="moveChoiceDown(this);  return false;"
+										title="{MOVE_DOWN_INFO}"><span class="glyphicon glyphicon-chevron-down"></span></a> 
+									<a href="#" 
+										class="btn btn-default btn-xs right"
+										data-row-id="{ROW_ID}"
+										onclick="moveChoiceUp(this);    return false;"
+										title="{MOVE_UP_INFO}"><span class="glyphicon glyphicon-chevron-up"></span></a>
+								</div>
+							</fieldset>							
+						</div>
+						
+						<!-- Add Single Choice Button -->
+						<div style="display: block; text-align: right;">
+							<a href="#" 
+								id="add_choice_single" 
+								class="btn btn-success btn-xs"
+								>{BUTTON_CHOICE_ADD}</a>
+						</div>
 
-                                                    <a href="#" id="delete_choice[999]" class="delete_choice delete_button"  onclick="removeThis(this);" title="{DELETE_INFO}">Delete</a>
-                                                    <a href="#" class="downBTN" onclick="moveChoiceDown(this);  return false;" title="{MOVE_DOWN_INFO}">&#9660;</a>
-                                                    <a href="#" class="upBTN"   onclick="moveChoiceUp(this);    return false;" title="{MOVE_UP_INFO}">&#9650;</a>							
-                                            </fieldset>
-                                            <!-- End Template -->
+						<!-- Single Choice TEMPLATE ---------------------------------------------------- -->
+						<fieldset id="fieldset_single_choice_999" class="choice" style="display: none;">
+							<input type="hidden" name="rowID[999]" value="" class="rowID">
+							<textarea name="choice_single_text[999]" 
+									class="textfield_choice"
+									rows="3">{MUL_TEXT}</textarea>
+							
+							<div class="choice_actions">
+								<input type="hidden" name="choice_single_id[999]" value="">
+								<input type="hidden" name="choice_single_deleted[999]" value="0"
+									class="deleted_hidden"> <input type="radio"
+									name="choice_single_type[999]" value="1" id="correct[999]">
+								<label for="correct[999]" class="choice_actions_label">correct</label>
+								<input type="radio" name="choice_single_type[999]" value="2"
+									id="neutral[999]" checked> <label for="neutral[999]"
+									class="choice_actions_label">neutral</label> <input type="radio"
+									name="choice_single_type[999]" value="0" id="incorrect[999]">
+								<label for="incorrect[999]" class="choice_actions_label">incorrect</label>
+	
+								<a href="#" id="delete_choice[999]"
+									data-choice-id="fieldset_single_choice_999"
+									class="btn btn-danger btn-xs right"
+									onclick="removeThis(this);  return false;"
+									title="{DELETE_INFO}"><span class="glyphicon glyphicon-remove"></span></a> 
+								<a href="#" 
+									class="btn btn-default btn-xs right"
+									data-row-id="{ROW_ID}"
+									onclick="moveChoiceDown(this);  return false;"
+									title="{MOVE_DOWN_INFO}"><span class="glyphicon glyphicon-chevron-down"></span></a> 
+								<a href="#" 
+									class="btn btn-default btn-xs right"
+									data-row-id="{ROW_ID}"
+									onclick="moveChoiceUp(this); return false;"
+									title="{MOVE_UP_INFO}"><span class="glyphicon glyphicon-chevron-up"></span></a>
+							</div>
+						</fieldset>						
 					</div>
-					<!--  Single Choice END -->
-
-
-					<!--  Numeric Choice BEGIN -->
+					<!-- End Template -->
+					<!-- Single Choice END --> 
+				
+					
+					<!--  Numeric Choice BEGIN ------------------------------------------------------------- -->
 					<div id="numeric_choice" {HIDE_NUMERIC_BLOCK}>
 						<div id="formular">
-							<fieldset id="fieldset_multiple_choice_1" class="choice" >
-								<input type="hidden" name="choice_numeric_id" value="{CHOICE_ID}">
-
-								<label for="choice_numeric_minimum">{MINIMUM}<span class="asterisk">*</span></label>
-									<input type="Text" name="choice_numeric_minimum"
-														id="choice_numeric_minimum" value="{MINIMUM_VAL}"/><br />
-								<label for="choice_numeric_maximum">{MAXIMUM}<span class="asterisk">*</span></label>
-								<input type="Text" name="choice_numeric_maximum"
-														id="choice_numeric_maximum" value="{MAXIMUM_VAL}"/><br />
+							<fieldset id="fieldset_multiple_choice_1" class="choice">
+								<input type="hidden" name="choice_numeric_id"
+									value="{CHOICE_ID}"> 
+								<label for="choice_numeric_minimum">{MINIMUM}<span
+									class="asterisk">*</span></label> 
+								<input type="Text"
+									name="choice_numeric_minimum" id="choice_numeric_minimum"
+									value="{MINIMUM_VAL}" /><br /> 
+								<label for="choice_numeric_maximum">{MAXIMUM}<span
+									class="asterisk">*</span></label> 
+								<input type="Text"
+									name="choice_numeric_maximum" id="choice_numeric_maximum"
+									value="{MAXIMUM_VAL}" /><br /> 
 								<label for="choice_numeric_step">{STEP}<span class="asterisk">*</span></label>
 								<input type="Text" name="choice_numeric_step"
-														id="choice_numeric_step" value="{STEP_VAL}"/><br />
-								<label for="">{CORRECT_VALUE}</label>
-								<input type="Text" name="choice_numeric_correct_value"
-														id="choice_numeric_correct_value" value="{CORRECT_VALUE_VAL}"/><br />
+									id="choice_numeric_step" value="{STEP_VAL}" /><br /> 
+								<label for="">{CORRECT_VALUE}</label> 
+								<input type="Text"
+									name="choice_numeric_correct_value"
+									id="choice_numeric_correct_value" value="{CORRECT_VALUE_VAL}" /><br />
 								<label for="choice_numeric_tol_range">{TOLERANCE_RANGE}</label>
 								<input type="Text" name="choice_numeric_tol_range"
-														id="choice_numeric_tol_range" value="{TOLERANCE_RANGE_VAL}"/><br />
+									id="choice_numeric_tol_range" value="{TOLERANCE_RANGE_VAL}" /><br />
 							</fieldset>
 						</div>
-					</div>
+					</div> 
 					<!--  Numeric Choice END -->
 
 				</td>
 			</tr>
+
+			<!-- Horizontal line -->
+            <tr>
+          		<td colspan="2"><hr class="table-seperator" /></td>
+    		</tr>
             
             <!-- Solution Formular -------------------------------------------------------------------- -->
-			<tr>
+			<tr class="table-row-solution">
 				<td class="ilFormOption" id="il_prop_cont_text">
                 	<label for="solution">{SOLUTION}</label>
                 </td>
@@ -599,7 +568,7 @@
 			</tr>
 			
 			<!-- Further Information Formular -------------------------------------------------------------------- -->
-			<tr>
+			<tr class="table-row-furthermore">
 				<td class="ilFormOption" id="il_prop_cont_text">
                 	<label for="furthermore">{FURTHERMORE}</label>
                 </td>
@@ -607,16 +576,24 @@
                 	<textarea name="furthermore" id="furthermore" class="textfield_furthermore textfield-mark-full" rows="2">{FURTHERMORE_TEXT}</textarea>
                	</td>
 			</tr>
-                        
+                    
+                    
+            <!-- Horizontal line -->
+            <tr>
+          		<td colspan="2"><hr class="table-seperator" /></td>
+    		</tr>
+    		    
             <!-- Footer -->
 			<tr>
 				<td class="ilFormFooter" colspan="2">
 					<div style="float: left;">
-						<span class="asterisk">*</span><span class="small">
-							Erforderliche Angabe</span>
+						<span class="asterisk">*</span>
+						<span class="small">
+							{ASTERISK_TEXT}
+						</span>
 					</div>
 					<div align="right">
-						<input class="submit" type="SUBMIT" name="{COMMAND}" value="{SUBMIT_BUTTON}">
+						<input class="btn btn-default" type="SUBMIT" name="{COMMAND}" value="{SUBMIT_BUTTON}">
 					</div>
 				</td>
 			</tr>

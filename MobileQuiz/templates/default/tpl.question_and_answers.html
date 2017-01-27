@@ -120,19 +120,19 @@
     // -------------------------------------------------------------------------
 
     /**
-    * Add a new MULTIPLE Choice from Template
+    * Add a new Choice from Template
     */
     $(document).ready(function() {
             // use this to reset several forms at once
-            $("#add_choice_multiple").click(function() {
-                var $newElem = $('#fieldset_multiple_choice_999').clone().show();
-                $("#formular_multiple").append($newElem);
-                var a = $("#formular_multiple fieldset").index($newElem) + 1;
+            $("#add_choice").click(function() {
+                var $newElem = $('#fieldset_choice_999').clone().show();
+                $("#formular_choice").append($newElem);
+                var a = $("#formular_choice fieldset").index($newElem) + 1;
 
-                $newElem.attr("id", "fieldset_multiple_choice_" + a);
+                $newElem.attr("id", "fieldset_choice_" + a);
                 $newElem.html($newElem.html().replace(/999/g, a));
 
-                var b = $("#formular_multiple fieldset")[a-2];
+                var b = $("#formular_choice fieldset")[a-2];
                 if (b == null) {
                     lastID=0;
                 } else {
@@ -140,37 +140,6 @@
                     lastID = ownChildRowElements[0].getAttribute("value");
                 }
 
-                // render the new Textarea as Editor
-                renderNewChoiceTextArea();
-
-                return false;
-            });
-    });
-
-    // -----------------------------------------------------------------------------
-    
-    /**
-     * Add a new SINGLE Choice from Template
-     */
-    $(document).ready(function() {
-            // use this to reset several forms at once
-            $("#add_choice_single").click(function() {
-                
-                // Create new Choice by cloning the template
-                var $newElem = $('#fieldset_single_choice_999').clone().show();
-                $("#formular_single").append($newElem);
-                var a = $("#formular_single fieldset").index($newElem) + 1;
-                $newElem.attr("id", "fieldset_single_choice_" + a);
-                $newElem.html($newElem.html().replace(/999/g, a));
-
-                var b = $("#formular_single fieldset")[a-2];
-                if (b == null) {
-                    lastID=0;
-                } else {
-                    ownChildRowElements = b.getElementsByClassName("rowID");
-                    lastID = ownChildRowElements[0].getAttribute("value");
-                }
-               
                 // render the new Textarea as Editor
                 renderNewChoiceTextArea();
 
@@ -184,18 +153,15 @@
             $("#type").change(function() {
                     var src = $(this).val();
                     if (src == '1') {
-                            $("#multiple_choice").show();
-                            $("#single_choice").hide();
+                            $("#choice").show();
                             $("#numeric_choice").hide();
                     }
                     if (src == '2') {
-                            $("#single_choice").show();
-                            $("#multiple_choice").hide();
+                            $("#choice").show();
                             $("#numeric_choice").hide();
                     }
                     if (src == '3') {
-                            $("#multiple_choice").hide();
-                            $("#single_choice").hide();
+                            $("#choice").hide();
                             $("#numeric_choice").show();
                     }
                     return false;
@@ -332,32 +298,33 @@
 					class="asterisk">*</span></td>
 				<td class="ilFormValue">
 				
-					<!--  Multiple Choice BEGIN ----------------------------------------------------------- -->
-					<div id="multiple_choice" class="choice_area" {HIDE_MULTIPLE_CHOICE_BLOCK}>
-						<div id="formular_multiple">
+					<!-- Choice Start ----------------------------------------------------------- -->
+					<div id="choice" class="choice_area" {HIDE_MULTIPLE_CHOICE_BLOCK}>
+						<div id="formular_choice">
 							
-							<!-- BEGIN multiple_choice_block -->
-							<fieldset id="fieldset_multiple_choice_{MUL_COU}" class="choice" style="display: {MUL_SHOW};>
+							<!-- !! do not change the next comment, it is necessary for ILIAS ilTemplate -->
+							<!-- BEGIN choice_block -->
+							<fieldset id="fieldset_choice_{MUL_COU}" class="choice" style="display: {MUL_SHOW};">
 								<input id="rowID[{MUL_COU}]" type="hidden" name="rowID[{MUL_COU}]" value="{ROW_ID}" class="rowID">
-								<textarea name="choice_multiple_text[{MUL_COU}]"
+								<textarea name="choice_text[{MUL_COU}]"
 									class="textfield_choice" rows="3">{MUL_TEXT}</textarea>
 								<div class="choice_actions">
-									<input type="hidden" name="choice_multiple_id[{MUL_COU}]"
+									<input type="hidden" name="choice_id[{MUL_COU}]"
 										value="{MUL_ID}"> <input type="hidden"
-										name="choice_multiple_deleted[{MUL_COU}]" value="{MUL_DEL}"
+										name="choice_deleted[{MUL_COU}]" value="{MUL_DEL}"
 										class="deleted_hidden"> <input type="radio"
-										name="choice_multiple_type[{MUL_COU}]" value="1"
+										name="choice_type[{MUL_COU}]" value="1"
 										id="correct[{MUL_COU}]"{MUL_TYPE_C}> <label
 										for="correct[{MUL_COU}]" class="choice_actions_label">correct</label>
-									<input type="radio" name="choice_multiple_type[{MUL_COU}]"
+									<input type="radio" name="choice_type[{MUL_COU}]"
 										value="2" id="neutral[{MUL_COU}]"{MUL_TYPE_N}> <label
 										for="neutral[{MUL_COU}]" class="choice_actions_label">neutral</label>
-									<input type="radio" name="choice_multiple_type[{MUL_COU}]"
+									<input type="radio" name="choice_type[{MUL_COU}]"
 										value="0" id="incorrect[{MUL_COU}]"{MUL_TYPE_I}> <label
 										for="incorrect[{MUL_COU}]" class="choice_actions_label">incorrect</label>
 
-									<a href="#" id="delete_multiple_choice[{MUL_COU}]"
-										data-choice-id="fieldset_multiple_choice_{MUL_COU}"
+									<a href="#" id="delete_choice[{MUL_COU}]"
+										data-choice-id="fieldset_choice_{MUL_COU}"
 										class="btn btn-danger btn-xs right"
 										onclick="removeThis(this); return false;" 
 										title="{DELETE_INFO}"><span class="glyphicon glyphicon-remove"></span></a> 
@@ -373,39 +340,39 @@
 										title="{MOVE_UP_INFO}"><span class="glyphicon glyphicon-chevron-up"></span></a>
 								</div>
 							</fieldset>
-							<!-- END multiple_choice_block -->
+							<!-- END choice_block -->
 						</div>
 						
 						<!-- Add Multiple Choice Button -->
 						<div style="display: block; text-align: right;">
 							<a href="#" 
-								id="add_choice_multiple" 
+								id="add_choice" 
 								class="btn btn-success btn-xs"
 								>{BUTTON_CHOICE_ADD}</a>
 						</div>
 
 						<!-- Multiple Choice TEMPLATE --------------------------------------------- -->
-						<fieldset id="fieldset_multiple_choice_999" class="choice" style="display: none;">
+						<fieldset id="fieldset_choice_999" class="choice" style="display: none;">
 							<input id="rowID[999]" type="hidden" name="rowID[999]" value="" class="rowID" />
-							<textarea name="choice_multiple_text[999]"
+							<textarea name="choice_text[999]"
 								class="textfield_choice" rows="3">{MUL_TEXT}</textarea>
 							<div class="choice_actions">
-								<input type="hidden" name="choice_multiple_id[999]" value="">
-								<input type="hidden" name="choice_multiple_deleted[999]"
+								<input type="hidden" name="choice_id[999]" value="">
+								<input type="hidden" name="choice_deleted[999]"
 									value="0" class="deleted_hidden"> 
 								<input type="radio"
-									name="choice_multiple_type[999]" value="1" id="correct[999]">
+									name="choice_type[999]" value="1" id="correct[999]">
 								<label for="correct[999]" class="choice_actions_label">correct</label>
-								<input type="radio" name="choice_multiple_type[999]" value="2"
+								<input type="radio" name="choice_type[999]" value="2"
 									id="neutral[999]" checked /> 
 								<label for="neutral[999]"
 									class="choice_actions_label">neutral</label> 
-								<input type="radio" name="choice_multiple_type[999]" value="0"
+								<input type="radio" name="choice_type[999]" value="0"
 									id="incorrect[999]" /> 
 								<label for="incorrect[999]"
 									class="choice_actions_label">incorrect</label> 
 								<a href="#"	id="delete_choice[999]" 
-									data-choice-id="fieldset_multiple_choice_999"
+									data-choice-id="fieldset_choice_999"
 									class="btn btn-danger btn-xs right"
 									onclick="removeThis(this);  return false;" 
 									title="{DELETE_INFO}"><span class="glyphicon glyphicon-remove"></span></a> 
@@ -422,101 +389,7 @@
 							</div>
 						</fieldset>
 						<!-- End Template -->
-					</div> 
-					
-					<!--  Single Choice BEGIN ---------------------------------------------------------- -->
-					<div id="single_choice" class="choice_area" {HIDE_SINGLE_CHOICE_BLOCK}>
-						<div id="formular_single">
-							
-							<!-- BEGIN single_choice_block -->
-							<fieldset id="fieldset_single_choice_{MUL_COU}" class="choice" style="display: {MUL_SHOW};">
-								<input type="hidden" name="rowID[{MUL_COU}]" value="{ROW_ID}" class="rowID">
-								<textarea name="choice_single_text[{MUL_COU}]"
-										class="textfield_choice" 
-										rows="3">{MUL_TEXT}</textarea>
-									
-								<div class="choice_actions">
-									<input type="hidden" name="choice_single_id[{MUL_COU}]"
-										value="{MUL_ID}"> <input type="hidden"
-										name="choice_single_deleted[{MUL_COU}]" value="{MUL_DEL}"
-										class="deleted_hidden"> <input type="radio"
-										name="choice_single_type[{MUL_COU}]" value="1"
-										id="correct[{MUL_COU}]"{MUL_TYPE_C}> <label
-										for="correct[{MUL_COU}]" class="choice_actions_label">correct</label>
-									<input type="radio" name="choice_single_type[{MUL_COU}]"
-										value="2" id="neutral[{MUL_COU}]"{MUL_TYPE_N}> <label
-										for="neutral[{MUL_COU}]" class="choice_actions_label">neutral</label>
-									<input type="radio" name="choice_single_type[{MUL_COU}]"
-										value="0" id="incorrect[{MUL_COU}]"{MUL_TYPE_I}> <label
-										for="incorrect[{MUL_COU}]" class="choice_actions_label">incorrect</label>
-	
-									<a href="#" id="delete_choice_{MUL_COU}"
-										data-choice-id="fieldset_single_choice_{MUL_COU}"
-										class="btn btn-danger btn-xs right"
-										onclick="removeThis(this);  return false;"
-										title="{DELETE_INFO}"><span class="glyphicon glyphicon-remove"></span></a> 
-									<a href="#" 
-										class="btn btn-default btn-xs right"
-										data-row-id="{ROW_ID}"
-										onclick="moveChoiceDown(this);  return false;"
-										title="{MOVE_DOWN_INFO}"><span class="glyphicon glyphicon-chevron-down"></span></a> 
-									<a href="#" 
-										class="btn btn-default btn-xs right"
-										data-row-id="{ROW_ID}"
-										onclick="moveChoiceUp(this);    return false;"
-										title="{MOVE_UP_INFO}"><span class="glyphicon glyphicon-chevron-up"></span></a>
-								</div>
-							</fieldset>							
-						</div>
-						
-						<!-- Add Single Choice Button -->
-						<div style="display: block; text-align: right;">
-							<a href="#" 
-								id="add_choice_single" 
-								class="btn btn-success btn-xs"
-								>{BUTTON_CHOICE_ADD}</a>
-						</div>
-
-						<!-- Single Choice TEMPLATE ---------------------------------------------------- -->
-						<fieldset id="fieldset_single_choice_999" class="choice" style="display: none;">
-							<input type="hidden" name="rowID[999]" value="" class="rowID">
-							<textarea name="choice_single_text[999]" 
-									class="textfield_choice"
-									rows="3">{MUL_TEXT}</textarea>
-							
-							<div class="choice_actions">
-								<input type="hidden" name="choice_single_id[999]" value="">
-								<input type="hidden" name="choice_single_deleted[999]" value="0"
-									class="deleted_hidden"> <input type="radio"
-									name="choice_single_type[999]" value="1" id="correct[999]">
-								<label for="correct[999]" class="choice_actions_label">correct</label>
-								<input type="radio" name="choice_single_type[999]" value="2"
-									id="neutral[999]" checked> <label for="neutral[999]"
-									class="choice_actions_label">neutral</label> <input type="radio"
-									name="choice_single_type[999]" value="0" id="incorrect[999]">
-								<label for="incorrect[999]" class="choice_actions_label">incorrect</label>
-	
-								<a href="#" id="delete_choice[999]"
-									data-choice-id="fieldset_single_choice_999"
-									class="btn btn-danger btn-xs right"
-									onclick="removeThis(this);  return false;"
-									title="{DELETE_INFO}"><span class="glyphicon glyphicon-remove"></span></a> 
-								<a href="#" 
-									class="btn btn-default btn-xs right"
-									data-row-id="{ROW_ID}"
-									onclick="moveChoiceDown(this);  return false;"
-									title="{MOVE_DOWN_INFO}"><span class="glyphicon glyphicon-chevron-down"></span></a> 
-								<a href="#" 
-									class="btn btn-default btn-xs right"
-									data-row-id="{ROW_ID}"
-									onclick="moveChoiceUp(this); return false;"
-									title="{MOVE_UP_INFO}"><span class="glyphicon glyphicon-chevron-up"></span></a>
-							</div>
-						</fieldset>						
-					</div>
-					<!-- End Template -->
-					<!-- Single Choice END --> 
-				
+					</div> 				
 					
 					<!--  Numeric Choice BEGIN ------------------------------------------------------------- -->
 					<div id="numeric_choice" {HIDE_NUMERIC_BLOCK}>

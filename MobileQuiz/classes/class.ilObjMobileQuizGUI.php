@@ -1307,70 +1307,6 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
     //                   Choices aka. Questions and Answers FORM
     //--------------------------------------------------------------------------
     
-//     /**
-//      * Init Add Question and Answers Form. This was separated to be used from different
-//      * commands. Though right now it is only called by one command.
-//      */
-//     public function initAddQuestionAndAnswersForm () {
-//     	global $tpl, $ilCtrl;
-    
-//     	$my_tpl = new ilTemplate("tpl.question_and_answers.html", true, true,
-//     			"Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz");
-//     	$rtokenFactory = new ilCtrl();
-    
-//     	$my_tpl->setVariable("ACTION_URL",$this->ctrl->getFormAction($this));
-//     	$my_tpl->setVariable("SUBMIT_BUTTON", $this->txt("save"));
-//     	$my_tpl->setVariable("NEW_QUESTION", $this->txt("question_add_head"));
-//     	$my_tpl->setVariable("QUESTION", $this->txt("question_add_text"));
-//     	$my_tpl->setVariable("QUESTION_TYPE", $this->txt("question_add_type"));
-//     	$my_tpl->setVariable("CHOICES", $this->txt("choice_add_texts"));
-//     	$my_tpl->setVariable("VAR_1", "value1");
-//     	$my_tpl->setVariable("COMMAND", "cmd[createQuestionAndAnswers]");
-//     	$my_tpl->setVariable("MINIMUM", $this->txt("choice_add_numeric_minimum"));
-//     	$my_tpl->setVariable("MAXIMUM", $this->txt("choice_add_numeric_maximum"));
-//     	$my_tpl->setVariable("STEP", $this->txt("choice_add_numeric_steprange"));
-//     	$my_tpl->setVariable("CORRECT_VALUE", $this->txt("choice_add_numeric_correctvalue"));
-//     	$my_tpl->setVariable("TOLERANCE_RANGE", $this->txt("choice_add_numeric_tolerenace_range"));
-//     	$my_tpl->setVariable("SELECTED_SINGLE", 'selected="selected"');
-    
-//     	$my_tpl->setVariable("HIDE_NUMERIC_BLOCK", 'style="display:none;"');
-//     	$my_tpl->setVariable("HIDE_SINGLE_CHOICE_BLOCK", 'style="display:none;"');
-    
-//     	$html = $my_tpl->get();
-//     	$tpl->setContent($html);
-//     }
-    
-//     //--------------------------------------------------------------------------
-    
-//     public function initAddQuestionAndAnswersFormAfterError () {
-//     	global $tpl, $ilCtrl;
-    
-//     	$my_tpl = new ilTemplate("tpl.question_and_answers.html", true, true,
-//     			"Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz");
-//     	$rtokenFactory = new ilCtrl();
-//     	$my_tpl->setVariable("ACTION_URL",$this->ctrl->getFormAction($this));
-//     	$my_tpl->setVariable("SUBMIT_BUTTON", $this->txt("save"));
-//     	$my_tpl->setVariable("NEW_QUESTION", $this->txt("question_add_head"));
-//     	$my_tpl->setVariable("QUESTION", $this->txt("question_add_text"));
-//     	$my_tpl->setVariable("QUESTION_TYPE", $this->txt("question_add_type"));
-//     	$my_tpl->setVariable("CHOICES", $this->txt("choice_add_texts"));
-//     	$my_tpl->setVariable("VAR_1", "value1");
-//     	$my_tpl->setVariable("MINIMUM", $this->txt("choice_add_numeric_minimum"));
-//     	$my_tpl->setVariable("MAXIMUM", $this->txt("choice_add_numeric_maximum"));
-//     	$my_tpl->setVariable("STEP", $this->txt("choice_add_numeric_steprange"));
-//     	$my_tpl->setVariable("CORRECT_VALUE", $this->txt("choice_add_numeric_correctvalue"));
-//     	$my_tpl->setVariable("TOLERANCE_RANGE", $this->txt("choice_add_numeric_tolerenace_range"));
-    
-//     	// refill fields
-//     	include_once('class.ilObjMobileQuizWizard.php');
-//     	$wiz = new ilObjMobileQuizWizard();
-//     	$wiz -> fillQuestionAndAnswersAfterError($my_tpl);
-    
-//     	$html = $my_tpl->get();
-//     	$tpl->setContent($html);
-//     }
-    
-    //--------------------------------------------------------------------------
     
     /**
      * Creates the form for editing question and choices
@@ -1416,7 +1352,7 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
     		// new question
     		$my_tpl->setVariable("COMMAND", "cmd[createQuestionAndAnswers]");
     		$my_tpl->setVariable("HIDE_NUMERIC_BLOCK", 'style="display:none;"');
-    		$my_tpl->setVariable("HIDE_SINGLE_CHOICE_BLOCK", 'style="display:none;"');
+//     		$my_tpl->setVariable("HIDE_SINGLE_CHOICE_BLOCK", 'style="display:none;"');
     		// multiple choice is not hidden as it is the default value
     		
     	} else {

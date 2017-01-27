@@ -72,10 +72,10 @@ class ilObjMobileQuizWizard {
 		
 		switch($question["type"]) {
 			case QUESTION_TYPE_MULTI:
-				$this->loadAnswerMultipleChoice($question_id, $tpl, $model);
+				$this->loadAnswerChoice($question_id, $tpl, $model, QUESTION_TYPE_MULTI);
 				break;
 			case QUESTION_TYPE_SINGLE:
-				$this->loadAnswerSingleChoice($question_id, $tpl, $model);
+				$this->loadAnswerChoice($question_id, $tpl, $model, QUESTION_TYPE_SINGLE);
 				break;
 			case QUESTION_TYPE_NUM:
 				$this->loadAnswerNumericChoice($question_id, $tpl, $model);
@@ -84,56 +84,29 @@ class ilObjMobileQuizWizard {
 		
 	}
 	
-	// -----------------------------------------------------------------------------------
-	
-	public function loadAnswerMultipleChoice($question_id, $tpl, $model) {
-		// Get the questions' choices from the database
-		$choices = $model->getChoices($question_id);
-		$result = array();
-		$i = "1";
-		
-		$tpl->setVariable("HIDE_NUMERIC_BLOCK", 'style="display:none;"');
-		$tpl->setVariable("HIDE_SINGLE_CHOICE_BLOCK", 'style="display:none;"');
-		$tpl->setVariable("SELECTED_MULTIPLE",'selected="selected"');
-		
-		if(!count($choices) == 0) {
-			foreach($choices as $choice){
-				$tpl->setCurrentBlock("multiple_choice_block");
-                                
-                // escape curvy brackets, so that ILIAS cannot use them as placeholder               
-				$choice['text'] = ilObjMobileQuizHelper::escapeCurvyBrackets($choice['text']);
-                                                                
-				$tpl->setVariable("MUL_SHOW", "");
-				$tpl->setVariable("MUL_TEXT", $choice['text']);
-				$tpl->setVariable("MUL_ID", $choice['choice_id']);
-				$tpl->setVariable("MUL_COU", $i);
-				$tpl->setVariable("MUL_DEL", false);
-				$tpl->setVariable("MUL_TYPE_C", ($choice['correct_value'] == 1) ? "checked" : "");
-				$tpl->setVariable("MUL_TYPE_N", ($choice['correct_value'] == 2) ? "checked" : "");
-				$tpl->setVariable("MUL_TYPE_I", ($choice['correct_value'] == 0) ? "checked" : "");			
-				$tpl->setVariable("ROW_ID", $choice['choice_order']);
-				$tpl->parseCurrentBlock();
-				
-				$i++;
-			}
-		}
-	}
-	
 	// -------------------------------------------------------------------------
 	
-	public function loadAnswerSingleChoice($question_id, $tpl, $model) {
+	public function loadAnswerChoice($question_id, $tpl, $model, $type) {
 		// Get the questions' choices from the database
 		$choices = $model->getChoices($question_id);
 		$result = array();
 		$i = "1";
 	
-		$tpl->setVariable("HIDE_NUMERIC_BLOCK", 'style="display:none;"');
-		$tpl->setVariable("HIDE_MULTIPLE_CHOICE_BLOCK", 'style="display:none;"');
-		$tpl->setVariable("SELECTED_SINGLE", 'selected="selected"');
+		if ($type == QUESTION_TYPE_MULTI) {
+			$tpl->setVariable("SELECTED_MULTIPLE",'selected="selected"');
+			
+		} else if ($type == QUESTION_TYPE_SINGLE) {
+			$tpl->setVariable("SELECTED_SINGLE", 'selected="selected"');
+		}
+		
+		// hide numeric block
+		$tpl->setVariable("HIDE_NUMERIC_BLOCK", 'style="display:none;"');		
 		
 		if(!count($choices) == 0) {
 			foreach($choices as $choice){
-				$tpl->setCurrentBlock ( "single_choice_block" );
+				
+				//set ilTemplate block which defines the context for the variables in the curvy brackets
+				$tpl->setCurrentBlock ( "choice_block" );
 				
 				// escape curvy brackets, so that ILIAS cannot use them as placeholder
 				$choice ['text'] = ilObjMobileQuizHelper::escapeCurvyBrackets ( $choice ['text'] );
@@ -204,43 +177,44 @@ class ilObjMobileQuizWizard {
 		// update choices
 		switch($_POST['type']) {
 			case QUESTION_TYPE_MULTI :
-				$this->updateChoiceMulti($model, $question_id);
+				$this->updateChoice($model, $question_id);
 				break;
 			case QUESTION_TYPE_SINGLE:
-				$this->updateChoiceSingle($model, $question_id);
+				$this->updateChoice($model, $question_id);
 				break;
 			case QUESTION_TYPE_NUM:
-				$this->updateChoiceNumeric($model, $question_id);
+				$this->updateNumeric($model, $question_id);
 				break;
 		}
 	}
 	
 	// -------------------------------------------------------------------------------------
 	
-	private function updateChoiceMulti($model, $question_id) {
+	private function updateChoice($model, $question_id) {
+		
 		// iterate through the choices
 		$i = 1;
-		while(isset($_POST['choice_multiple_text'][$i])) {
+		while(isset($_POST['choice_text'][$i])) {
 			// add choice
-			if($_POST['choice_multiple_id'][$i] == "") {
+			if($_POST['choice_id'][$i] == "") {
 				// now check whether the answer was deleted
-				if($_POST['choice_multiple_deleted'][$i] != true 
-						&& !empty($_POST['choice_multiple_text'][$i])) {
-					// create choice
-					$model->createChoice($question_id, $_POST['choice_multiple_type'][$i],
-											$_POST['choice_multiple_text'][$i]);
-				}				
+				if($_POST['choice_deleted'][$i] != true
+						&& !empty($_POST['choice_text'][$i])) {
+							// create choice
+							$model->createChoice($question_id, $_POST['choice_type'][$i],
+									$_POST['choice_text'][$i]);
+						}
 			}
 			// delete choice
-			else if($_POST['choice_multiple_deleted'][$i] == true) {
-				$model->deleteChoice($_POST['choice_multiple_id'][$i]);
+			else if($_POST['choice_deleted'][$i] == true) {
+				$model->deleteChoice($_POST['choice_id'][$i]);
 			}
 			// change choice
 			else {
-				$model->updateChoice($_POST['choice_multiple_id'][$i], 
-										$_POST['choice_multiple_type'][$i],
-										$_POST['choice_multiple_text'][$i],
-										$_POST['rowID'][$i]);
+				$model->updateChoice($_POST['choice_id'][$i],
+						$_POST['choice_type'][$i],
+						$_POST['choice_text'][$i],
+						$_POST['rowID'][$i]);
 			}
 			// increment counter
 			$i++;
@@ -249,46 +223,16 @@ class ilObjMobileQuizWizard {
 	
 	// -------------------------------------------------------------------------
 	
-	private function updateChoiceSingle($model, $question_id) {
-		// iterate through the choices
-		$i = 1;
-		while(isset($_POST['choice_single_text'][$i])) {
-			// add choice
-			if($_POST['choice_single_id'][$i] == "") {
-				// now check whether the answer was deleted
-				if($_POST['choice_single_deleted'][$i] != true
-				&& !empty($_POST['choice_single_text'][$i])) {
-					// create choice
-					$model->createChoice($question_id, $_POST['choice_single_type'][$i],
-					$_POST['choice_single_text'][$i]);
-				}
-			}
-			// delete choice
-			else if($_POST['choice_single_deleted'][$i] == true) {
-				$model->deleteChoice($_POST['choice_single_id'][$i]);
-			}
-			// change choice
-			else {
-				$model->updateChoice($_POST['choice_single_id'][$i],
-				$_POST['choice_single_type'][$i],
-				$_POST['choice_single_text'][$i],
-				$_POST['rowID'][$i]);
-			}
-			// increment counter
-			$i++;
-		}
-	}
-	
-	// -------------------------------------------------------------------------
-	
-	private function updateChoiceNumeric($model, $question_id) {
+	private function updateNumeric($model, $question_id) {
 		$text = $_POST['choice_numeric_minimum'].";".
 			$_POST['choice_numeric_maximum'].";".
 			$_POST['choice_numeric_step'].";".
 			$_POST['choice_numeric_correct_value'].";".
 			$_POST['choice_numeric_tol_range'];
+		
 		// replace comma (',') by dot ('.')
 		$text = str_replace(',','.',$text);
+		
 		// if a correct number exists, then the quesition is a correct/not correct one
 		if($_POST['correct_number']) {
 			$correct_value = "1";

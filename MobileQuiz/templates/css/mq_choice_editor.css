@@ -1,8 +1,7 @@
 @CHARSET "UTF-8";
 
 #formular fieldset,
-#formular_single fieldset,
-#formular_multiple fieldset {
+#formular_choice fieldset {
     padding: 3px 3px 1px 3px;
 }
 

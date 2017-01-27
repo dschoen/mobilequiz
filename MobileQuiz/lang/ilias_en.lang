@@ -58,11 +58,12 @@ choice_form_headline#:#Add/Edit Question
 choice_form_question#:#Question
 choice_form_type#:#Type
 choice_form_choices#:#Choices
-choice_form_solution#:#Solution
+choice_form_solution#:#Explanation <br /> of Solution
 choice_form_furthermore#:#Further information
 choice_form_asterisk#:#required
 choice_form_button_add#:#Add new Answer
 choice_form_button_delete#:#Delete
+choice_form_text_correct_label#:#Optional correct Answer
 
 choice_table_text#:#Answer
 choice_table_value#:#Value

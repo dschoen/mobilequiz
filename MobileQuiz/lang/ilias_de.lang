@@ -58,11 +58,12 @@ choice_form_headline#:#Fragen erstellen und bearbeiten
 choice_form_question#:#Frage
 choice_form_type#:#Typ
 choice_form_choices#:#Antwort
-choice_form_solution#:#Lösung
+choice_form_solution#:#Lösungserklärung
 choice_form_furthermore#:#Weitere Informationen
 choice_form_asterisk#:#Angabe erforderlich
 choice_form_button_add#:#Antwort hinzufügen
 choice_form_button_delete#:#Löschen
+choice_form_text_correct_label#:#Optionale richtige Lösung
 
 choice_table_text#:#Antwort
 choice_table_value#:#Wert

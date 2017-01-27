@@ -74,14 +74,14 @@ class QuizController{
             ));
 
             // check if the quiz round is still active, if not break
-        }elseif(!isRoundActive($_POST['round_id']) && $row[0]->type != "passive"){
+        } elseif (!isRoundActive($_POST['round_id']) && $row[0]->type != "passive"){
             render('abuse',array(
                 'title'			=> 'Quiz round already closed'
             ));
 
             // if we get to this, we assume it is the first time that user submits
             // for this round and the quiz ist still active
-        }else{
+        } else {
             // store cookie
             $user_string = getGuid();
             $expire=time()+60*60*24*365; // valid for a year
@@ -101,7 +101,8 @@ class QuizController{
             // If you want to add new question types, you must modify this file here.
             // then change the ones the user selected in the quiz to have $value of 1
             foreach($_POST as $name => $value){
-                switch(substr($name, 0, 5)) {
+                
+            	switch(substr($name, 0, 5)) {
                     case "check":	// multiple choice
                         foreach ($answers as $answer){
                             if ($answer->choice_id == $value){
@@ -119,13 +120,21 @@ class QuizController{
                     case "numer":	// numeric
                         foreach ($answers as $answer){
                             // Here we cannot use the value of the form to identify the choice, because
-                            // the value contents the numeric answer. Therefore we use the name of the
+                            // the value contains the numeric answer. Therefore we use the name of the
                             // form to identity the choice. The formname is 'numeric-1234'.
                             if ($answer->choice_id == substr($name, 8)){
                                 $answer->value = $value;
                             }
                         }
                         break;
+                    case "textu":	// text answer
+                     	foreach ($answers as $answer){
+                     		// form to identity the choice. The formname is 'textual-choice-XXX'                  		
+                      		if ($answer->choice_id == substr($name, 15)){
+                       			$answer->value = $value;
+                       		}
+                       	}
+                       	break;
                 }
                 $result[$name] = $answer->value;
             }

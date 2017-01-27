@@ -150,22 +150,29 @@
  	// -----------------------------------------------------------------------------
     
     $(document).ready(function() {
-            $("#type").change(function() {
-                    var src = $(this).val();
-                    if (src == '1') {
-                            $("#choice").show();
-                            $("#numeric_choice").hide();
-                    }
-                    if (src == '2') {
-                            $("#choice").show();
-                            $("#numeric_choice").hide();
-                    }
-                    if (src == '3') {
-                            $("#choice").hide();
-                            $("#numeric_choice").show();
-                    }
-                    return false;
-            });
+		$("#type").change(function() {
+				
+			//hide all
+			$("#numeric_choice").hide();
+			$("#choice").hide();
+			$("#text_choice").hide();            	
+			
+			// show chosen one
+		    var src = $(this).val();
+		    if (src == '1') {
+		            $("#choice").show();
+		    }
+		    if (src == '2') {
+		            $("#choice").show();
+		    }
+		    if (src == '3') {
+		            $("#numeric_choice").show();
+		    }
+		    if (src == '4') {
+		        $("#text_choice").show();
+			}
+		    return false;
+		});
 
     });
     
@@ -219,8 +226,7 @@
 	
 	            output = '$$$' + text + '$$$';
 	            cm.replaceSelection(output);
-	        }
-        
+	        }        
     	});
                 
         // render every choice field
@@ -288,6 +294,7 @@
 						<option value="1" {SELECTED_MULTIPLE} >Multiple Choice</option>
 						<option value="2" {SELECTED_SINGLE} >Single Choice</option>
 						<option value="3" {SELECTED_NUMERIC} >Numeric</option>
+						<option value="4" {SELECTED_TEXT} >Text</option>
 					</select>
 				</td>
 			</tr>
@@ -299,7 +306,7 @@
 				<td class="ilFormValue">
 				
 					<!-- Choice Start ----------------------------------------------------------- -->
-					<div id="choice" class="choice_area" {HIDE_MULTIPLE_CHOICE_BLOCK}>
+					<div id="choice" class="choice_area" {HIDE_CHOICE_BLOCK}>
 						<div id="formular_choice">
 							
 							<!-- !! do not change the next comment, it is necessary for ILIAS ilTemplate -->
@@ -310,17 +317,22 @@
 									class="textfield_choice" rows="3">{MUL_TEXT}</textarea>
 								<div class="choice_actions">
 									<input type="hidden" name="choice_id[{MUL_COU}]"
-										value="{MUL_ID}"> <input type="hidden"
+										value="{MUL_ID}"> 
+									<input type="hidden"
 										name="choice_deleted[{MUL_COU}]" value="{MUL_DEL}"
-										class="deleted_hidden"> <input type="radio"
+										class="deleted_hidden"> 
+									<input type="radio"
 										name="choice_type[{MUL_COU}]" value="1"
-										id="correct[{MUL_COU}]"{MUL_TYPE_C}> <label
+										id="correct[{MUL_COU}]"{MUL_TYPE_C}> 
+									<label
 										for="correct[{MUL_COU}]" class="choice_actions_label">correct</label>
 									<input type="radio" name="choice_type[{MUL_COU}]"
-										value="2" id="neutral[{MUL_COU}]"{MUL_TYPE_N}> <label
+										value="2" id="neutral[{MUL_COU}]"{MUL_TYPE_N}> 
+									<label
 										for="neutral[{MUL_COU}]" class="choice_actions_label">neutral</label>
 									<input type="radio" name="choice_type[{MUL_COU}]"
-										value="0" id="incorrect[{MUL_COU}]"{MUL_TYPE_I}> <label
+										value="0" id="incorrect[{MUL_COU}]"{MUL_TYPE_I}> 
+									<label
 										for="incorrect[{MUL_COU}]" class="choice_actions_label">incorrect</label>
 
 									<a href="#" id="delete_choice[{MUL_COU}]"
@@ -394,7 +406,7 @@
 					<!--  Numeric Choice BEGIN ------------------------------------------------------------- -->
 					<div id="numeric_choice" {HIDE_NUMERIC_BLOCK}>
 						<div id="formular">
-							<fieldset id="fieldset_multiple_choice_1" class="choice">
+							<fieldset id="fieldset_numeric" class="choice">
 								<input type="hidden" name="choice_numeric_id"
 									value="{CHOICE_ID}"> 
 								<label for="choice_numeric_minimum">{MINIMUM}<span
@@ -421,6 +433,23 @@
 						</div>
 					</div> 
 					<!--  Numeric Choice END -->
+
+					<!--  Text Choice Start ------------------------------------------------------------- -->
+					<div id="text_choice" {HIDE_TEXT_BLOCK}>
+						<div id="formular">
+							<fieldset id="fieldset_text" class="choice">
+								<input type="hidden" name="choice_text_id"
+									value="{CHOICE_ID}"> 
+								<label for="choice_text_value">{TEXT_CORRECT_LABEL}: </label>
+								<input type="text"
+									name="choice_text_value" 
+									id="choice_text_value"
+									class="choice_text_input"
+									value="{TEXT_CORRECT_VALUE}" /><br /> 
+							</fieldset>
+						</div>
+					</div> 
+					<!--  Text Choice END -->
 
 				</td>
 			</tr>

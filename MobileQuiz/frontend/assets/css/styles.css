@@ -86,6 +86,11 @@ label.ui-btn {
     font-weight: normal;
 }
 
+.text-choice-textarea {
+	min-height: 100px;
+}
+
+
 /* -- Result Page -----------------*/
 .optional-information-header {
 	text-decoration: underline;
@@ -126,6 +131,17 @@ label.ui-btn {
     vertical-align: middle;
     text-align: center;
     cursor: pointer;   
+}
+
+.result-textfield {
+	margin: 5px;
+	padding: 5px;
+	border: 1px solid #999999;
+	border-radius: 4px;
+	background-color: #FBFBFB;
+	
+	overflow: auto;
+    white-space: normal;
 }
 
 /* -- HOME ------------------------------- */

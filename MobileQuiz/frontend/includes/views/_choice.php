@@ -5,8 +5,7 @@ $symbole = "";
 $color = "";
 
 if ( !empty( $result ) ) {
-    $correct_value = $choice->correct_value;
-    
+    $correct_value = $choice->correct_value;    
 
     if ( $correct_value == "0" && $result[$choice->choice_id] == "1" ) {
     	// Falsch und gewählt
@@ -92,9 +91,8 @@ switch($type_of_question) {
         <?php
         break;
 
+    // numeric question
     case "3":
-        // numeric
-
         $slider_values = (explode(';',$choice->text));
     
         // $slider[0] = minimum
@@ -105,47 +103,44 @@ switch($type_of_question) {
 			$incorrectSymbol = "incorrect";
 			$correctSymbol = "correct";
 
-           $userChoice = $result[$choice->choice_id];
-           $correctNumericValue = $slider_values[3];
+           	$userChoice = $result[$choice->choice_id];
+           	$correctNumericValue = $slider_values[3];
 
  			if ($userChoice!=$correctNumericValue) {
             	
 				?>
 				<ul style="margin-bottom: 10px; list-style-type:none">
-				<li>
-				<div style="width: 19px; float: left;">
-				<?php if ( !empty( $incorrectSymbol ) && $correctNumericValue!="" ) : 
-				$colorUserChoice = "red";
-				?>
-				<img src="assets/img/<?php echo $incorrectSymbol; ?>.png" alt="" title="" width="16" />
-				<?php else: 
-				$colorUserChoice = "";
-				?>&nbsp;<?php endif; ?>
-				</div>
-				<span style="color:<?php echo $colorUserChoice; ?>">
-				            	<?php echo $result[$choice->choice_id];  ?></span>
-				            	           </li>
-				            	            </ul>
-				            	<div style="clear: both;"></div>
-				            	
+					<li>
+						<div style="width: 19px; float: left;">
+							<?php if ( !empty( $incorrectSymbol ) && $correctNumericValue!="" ) : 
+							$colorUserChoice = "red"; ?>
+							
+							<img src="assets/img/<?php echo $incorrectSymbol; ?>.png" alt="" title="" width="16" />
+							<?php else: 
+							$colorUserChoice = "";
+							?>&nbsp;<?php endif; ?>
+						</div>
+						<span style="color:<?php echo $colorUserChoice; ?>">
+					            	<?php echo $result[$choice->choice_id];  ?></span>
+					</li>
+				</ul>
+				<div style="clear: both;"></div>    	
 				    			
 				            
-				           <?php 
-			}else{
+			<?php } else {
+			
 				$colorCorrectValue = "green";
 			} 
-			if ($correctNumericValue!="") {
-				
 			
-			?>
-			
+			if ($correctNumericValue!="") {	?>				
+					
             <ul style="margin-bottom: 10px; list-style-type:none">
             	<li>
-            	<div style="width: 19px; float: left;"><?php if ( !empty( $correctSymbol ) ) : ?><img src="assets/img/<?php echo $correctSymbol; ?>.png" alt="" title="" width="16" /><?php else: ?>&nbsp;<?php endif; ?></div>
-            	<span style="color: <?php echo $colorCorrectValue; ?>"><?php echo $slider_values[3];  ?></span>
-            	           </li>
-            	            </ul>
-            	<div style="clear: both;"></div>
+	            	<div style="width: 19px; float: left;"><?php if ( !empty( $correctSymbol ) ) : ?><img src="assets/img/<?php echo $correctSymbol; ?>.png" alt="" title="" width="16" /><?php else: ?>&nbsp;<?php endif; ?></div>
+	            	<span style="color: <?php echo $colorCorrectValue; ?>"><?php echo $slider_values[3];  ?></span>
+				</li>
+			</ul>
+            <div style="clear: both;"></div>
         	<?php }
         } else {
             ?>
@@ -156,6 +151,34 @@ switch($type_of_question) {
                    step="<?php echo $slider_values[2] ?>" />
         	<?php
         }
+        break;
+        
+    // text question
+	case "4":
+		if ( !empty( $result ) ) {  ?>
+        	<ul style="margin-bottom: 10px; list-style-type:none">
+            	<li>
+            		<div>Answer:</div>
+            		<div class="result-textfield"><?php echo $result[$choice->choice_id]?></div>
+            		<hr />
+	        		<?php if (!empty($choice->text)) { ?>
+	        		<div>Correct Solution:</div>
+	        		<div class="result-textfield"><?php echo $choice->text; ?></div>
+	        		<?php } ?>
+	        		<div style="clear: both;"></div>
+	        	</li>
+	        </ul>
+        
+        <?php } else { ?>   
+                    
+        	<textarea 
+				class="text-choice-textarea"
+        		name="textual-choice-<?php echo $choice->choice_id ?>" 
+        		id="textual-choice-<?php echo $choice->question_id."-".$choice->choice_id ?>" 
+        		></textarea>
+
+        <?php } ?>
+        <?php
         break;
 }
 ?>

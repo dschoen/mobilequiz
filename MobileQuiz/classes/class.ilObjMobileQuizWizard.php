@@ -2,50 +2,7 @@
 include_once("./Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/configuration.php");
 
 class ilObjMobileQuizWizard {
-	
-	/**
-	 * Checks for valid tags. And deletes not allowed <html> tags and every <php> tag.
-	 * 
-	 * @param unknown_type $validate
-	 * @return $validate
-	 */
-	public function inputSecurity($validate=null) {
-		// get allowed Tags
-		$allowded_tags = ALLOWED_TAGS;
-		if ($validate == null) {
-			foreach ($_REQUEST as $key => $val) {
-				if (is_string($val)) {
-					$_REQUEST[$key] = strip_tags($val,$allowded_tags);
-				} else if (is_array($val)) {
-					$_REQUEST[$key] = $this->inputSecurity($val);
-				}
-			}
-			foreach ($_GET as $key => $val) {
-				if (is_string($val)) {
-					$_GET[$key] = strip_tags($val,$allowded_tags);
-				} else if (is_array($val)) {
-					$_GET[$key] = $this->inputSecurity($val);
-				}
-			}
-			foreach ($_POST as $key => $val) {
-				if (is_string($val)) {
-					$_POST[$key] = strip_tags($val,$allowded_tags);
-				} else if (is_array($val)) {
-					$_POST[$key] = $this->inputSecurity($val);
-				}
-			}
-		} else {
-			foreach ($validate as $key => $val) {
-				if (is_string($val)) {
-					$validate[$key] = strip_tags($val,$allowded_tags);
-				} else if (is_array($val)) {
-					$validate[$key] = $this->inputSecurity($val);
-				}
-				return $validate;
-			}
-		}
-	}
-	
+		
 	// -----------------------------------------------------------------------------------
 	
 	/**
@@ -80,6 +37,9 @@ class ilObjMobileQuizWizard {
 			case QUESTION_TYPE_NUM:
 				$this->loadAnswerNumericChoice($question_id, $tpl, $model);
 				break;
+			case QUESTION_TYPE_TEXT:
+				$this->loadAnswerTextChoice($question_id, $tpl, $model);
+				break;
 		}		
 		
 	}
@@ -99,8 +59,9 @@ class ilObjMobileQuizWizard {
 			$tpl->setVariable("SELECTED_SINGLE", 'selected="selected"');
 		}
 		
-		// hide numeric block
-		$tpl->setVariable("HIDE_NUMERIC_BLOCK", 'style="display:none;"');		
+		// hide numeric and Text block
+		$tpl->setVariable("HIDE_NUMERIC_BLOCK", 'style="display:none;"');
+		$tpl->setVariable("HIDE_TEXT_BLOCK", 'style="display:none;"');
 		
 		if(!count($choices) == 0) {
 			foreach($choices as $choice){
@@ -148,9 +109,26 @@ class ilObjMobileQuizWizard {
 		$tpl->setVariable("STEP_VAL", $step);
 		$tpl->setVariable("CORRECT_VALUE_VAL", $correct_number);
 		$tpl->setVariable("TOLERANCE_RANGE_VAL", $tolerance_range);
-		$tpl->setVariable("HIDE_SINGLE_CHOICE_BLOCK", 'style="display:none;"');
-		$tpl->setVariable("HIDE_MULTIPLE_CHOICE_BLOCK", 'style="display:none;"');
 		
+		$tpl->setVariable("HIDE_CHOICE_BLOCK", 'style="display:none;"');
+		$tpl->setVariable("HIDE_TEXT_BLOCK", 'style="display:none;"');		
+	}
+	
+	// -------------------------------------------------------------------------
+	
+	public function loadAnswerTextChoice($question_id, $tpl, $model) {
+		// Get the questions' choices from the database
+		$choices = $model->getChoices($question_id);
+	
+		$correct_value = $choices[0]['text'];
+	
+		$tpl->setVariable("SELECTED_TEXT", 'selected="selected"');
+		$tpl->setVariable("CHOICE_ID", $choices[0]['choice_id']);
+		$tpl->setVariable("TEXT_CORRECT_VALUE", $correct_value);
+	
+		//hide other blocks
+		$tpl->setVariable("HIDE_NUMERIC_BLOCK", 'style="display:none;"');
+		$tpl->setVariable("HIDE_CHOICE_BLOCK", 'style="display:none;"');	
 	}
 	
 	// -------------------------------------------------------------------------------------
@@ -162,9 +140,6 @@ class ilObjMobileQuizWizard {
 	* @param unknown_type $model
 	*/
 	public function changeQuestionAndAnswers($model) {
-		//check input for bad syntax
-		$this->inputSecurity();
-			
 		
 		// if question_id is empty, create new question, else update existing one
 		if (empty($_POST['question_id'])) {
@@ -184,6 +159,9 @@ class ilObjMobileQuizWizard {
 				break;
 			case QUESTION_TYPE_NUM:
 				$this->updateNumeric($model, $question_id);
+				break;
+			case QUESTION_TYPE_TEXT:
+				$this->updateText($model, $question_id);
 				break;
 		}
 	}
@@ -246,6 +224,26 @@ class ilObjMobileQuizWizard {
 		} else {			
 			$model->createChoice($question_id, $correct_value, $text);
 		}		
+	}
+	
+	// -------------------------------------------------------------------------
+	
+	private function updateText($model, $question_id) {
+		$text = $_POST['choice_text_value'];
+	
+		// correct value is not empty the question has a correct value
+		if($_POST['choice_text_value']) {
+			$correct_value = "1";
+		} else {
+			$correct_value = "2";
+		}
+
+		if (!empty($_POST['choice_text_id'])) {
+			// if choice exists, then update, else create
+			$model->updateChoice($_POST['choice_text_id'],$correct_value, $text, -1);
+		} else {
+			$model->createChoice($question_id, $correct_value, $text);
+		}
 	}
 	
 	// -------------------------------------------------------------------------

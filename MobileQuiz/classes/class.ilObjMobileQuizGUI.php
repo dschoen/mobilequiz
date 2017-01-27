@@ -733,9 +733,12 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
                     case QUESTION_TYPE_SINGLE:	// Single choice
                         $html = $html.$this->showRoundResultsForSingleChoice($question, $answers, $answer_count, $round_id);
                         break;
-                    case QUESTION_TYPE_NUM:	// Numeric
+                    case QUESTION_TYPE_NUM:		// Numeric
                         $html = $html.$this->showRoundResultsForNumeric($question, $answers, $answer_count, $round_id);
                         break;
+                    case QUESTION_TYPE_TEXT:	// Text
+                       	$html = $html.$this->showRoundResultsForText($question, $answers, $answer_count, $round_id);
+                       	break;
                 }
             }
         }
@@ -920,6 +923,56 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
     //--------------------------------------------------------------------------
     
     /**
+     * Show round results for multiple choice
+     * This method displays the results of a multiple choice question.
+     * It is used by showRoundResults().
+     *
+     * @param unknown_type $question
+     */
+    public function showRoundResultsForText($question, $answers, $answer_count, $round_id) {
+    	 
+    	$chart_tpl = new ilTemplate("tpl.result_text.html", '', '',
+    			"Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz");
+    
+    	// Collect Data
+    	$datas = $this->getResultDataForText($question, $answers, $answer_count, $round_id);
+       
+    	$data_string = "";
+    	
+    	foreach( $datas as $data ) {
+    	
+    		// Skip loop if data is empty
+    		if (empty($data)) {
+    			continue;
+    		}
+    		    		   	
+    		$data_string = $data_string.$data['value'].", ";    	
+    	}
+    	
+    	
+    	// prepare and escape title
+    	$chart_title = ilObjMobileQuizHelper::polishText($question['text']);
+    	$chart_title = ilObjMobileQuizHelper::escapeCurvyBrackets($chart_title);
+    	 
+    	$chart_tpl->setVariable("TITLE", $chart_title);
+    	$chart_tpl->setVariable("question_id", $question['question_id']);
+    	$chart_tpl->setVariable("round_id", $round_id);
+    	
+    	$chart_tpl->setVariable("ANSWERS", $data_string);
+    	
+    	$chart_tpl->setVariable("ajax_interface_url", ilObjMobileQuizHelper::getPluginUrl()."interface/liveChartUpdate.php");
+    	$chart_tpl->setVariable("secret", AJAX_INTERFACE_SECRET);
+    	$chart_tpl->setVariable("ajax_update_time", AJAX_CHART_UPDATE_TIME);
+    	$chart_tpl->setVariable("latex", LATEX_TRANSFORMATION);
+    
+    	$html = $chart_tpl->get();
+    
+    	return $html;
+    }
+    
+    //--------------------------------------------------------------------------
+    
+    /**
      * Get result data for multiple choice
      * This method us for a multiple choice question.
      * It is used by showRoundResultsForMultipleChoice().
@@ -1019,6 +1072,31 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
             );
         }
         return $return;
+    }
+    
+    //--------------------------------------------------------------------------
+    
+    /**
+     * Get result data for multiple choice
+     * This method us for a multiple choice question.
+     * It is used by showRoundResultsForMultipleChoice().
+     * @param unknown_type $question
+     */
+    public function getResultDataForText($question, $answers, $answer_count, $round_id) {
+    	// Get the questions' choices from the database
+    	$choices = $this->object->getChoices($question['question_id']);
+    	
+    	// there should only be one choice
+    	$choice = $choices[0];
+    	
+    	if(count($choices) == 0) {
+    		// failure should not happen
+    		return;
+    	}
+    	
+    	$answers = $this->object->getAnswersToChoice($round_id, $choice['choice_id']);
+    	
+    	return $answers;
     }
     
     //--------------------------------------------------------------------------
@@ -1251,6 +1329,9 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
                     case "3":
                         $question['type'] = "Numeric";
                         break;
+                    case "4":
+                       	$question['type'] = "Text";
+                       	break;
                 }
                 
                 // This is quite ugly, but this way the information can be given
@@ -1342,6 +1423,7 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
     	$my_tpl->setVariable("MOVE_DOWN_INFO",  	$this->txt("choice_down_info"));    
     	$my_tpl->setVariable("SOLUTION", 			$this->txt("choice_form_solution"));
     	$my_tpl->setVariable("FURTHERMORE", 		$this->txt("choice_form_furthermore"));
+    	$my_tpl->setVariable("TEXT_CORRECT_LABEL",  $this->txt("choice_form_text_correct_label"));
         
     	
     	// set Choice fieldset to invisible. If choices exist, this variable is overwritten so that fieldset gets visible
@@ -1352,7 +1434,7 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
     		// new question
     		$my_tpl->setVariable("COMMAND", "cmd[createQuestionAndAnswers]");
     		$my_tpl->setVariable("HIDE_NUMERIC_BLOCK", 'style="display:none;"');
-//     		$my_tpl->setVariable("HIDE_SINGLE_CHOICE_BLOCK", 'style="display:none;"');
+    		$my_tpl->setVariable("HIDE_TEXT_BLOCK", 'style="display:none;"');
     		// multiple choice is not hidden as it is the default value
     		
     	} else {

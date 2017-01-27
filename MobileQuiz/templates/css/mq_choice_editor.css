@@ -31,9 +31,11 @@
     padding:5px;
 }
 
-#numeric_choice input {
-    width: 220px;
-    margin-top:5px;
+#text_choice input {
+    width: 300px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    margin-left: 10px;
 }
 
 .ilFormValue{

@@ -137,3 +137,5 @@ $ilDB->createSequence("rep_robj_xuiz_answers");
 <#2>
 ALTER TABLE rep_robj_xuiz_qs ADD COLUMN solution VARCHAR(4000);
 ALTER TABLE rep_robj_xuiz_qs ADD COLUMN furthermore VARCHAR(2000);
+<#3>
+ALTER TABLE rep_robj_xuiz_answers MODIFY value VARCHAR(500);

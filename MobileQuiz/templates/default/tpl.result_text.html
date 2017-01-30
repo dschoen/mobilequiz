@@ -3,12 +3,21 @@
 <!-- ----------------------------------------------------------------------- -->
 
 <div class="text-chart-div"> 
-    <div class="text-chart-title">
-        {TITLE}
-    </div>
+	<div class="text-chart-top">
+		<div class="text-chart-title">
+	        {TITLE}
+	    </div>
+	    <div class="text-chart-buttons">	    
+	        <a href="#" class="btn btn-xs btn-minor">List</a>
+	        <a href="#" class="btn btn-xs btn-minor" disabled>Tags</a>
+	        <a href="#" class="btn btn-xs btn-minor" disabled>Tag-Cloud</a>
+	    </div>
+	    <div style="clear:both"></div>
+	</div>
     
-    <div class="text-chart-content">
-		{ANSWERS}
+    
+    <div id="text-chart-content_{QUESTION_ID}" class="text-chart-content">		
+		<div id="template-answer-list" class="text-chart-answer template"></div>
     </div>
     
 </div>
@@ -16,12 +25,46 @@
 <!-- ----------------------------------------------------------------------- -->
 
 <script type="text/javascript">
+
 $(document).ready(function() {
 
+	var answers = [{ANSWERS}];
+	var answer_ids = [{ANSWER_IDS}];
+	if (answers.length == 0) {
+		answers = ["..."];
+		answer_ids = ["0"];
+	}	
 	
+	//console.log(answers);
+	//console.log(answer_ids);
+	
+	for (i = 0; i < answers.length; ++i) {		
+		
+		$("#template-answer-list")
+		  .clone()
+		  .attr("id", "answer_list_"+answer_ids[i])
+		  .removeClass("template")
+		  .html(
+			answers[i]
+		  	+'<a id="remove_button_'+answer_ids[i]+'" href="#" class="btn btn-xs button-remove"><span class="glyphicon glyphicon-remove"></span></a>'
+		  	+'<div style="clear:both"></div>')
+		  .appendTo("#text-chart-content_{QUESTION_ID}");
+	}	
 });
 
+/* -- Remove this answer from list*/
+$(document).ready(function() {
 
+	$(".button-remove").click(function(event){
+			
+		var button_id = this.id;
+		var id = button_id.substring(14);
+		
+		$("#answer_list_"+id).hide();
+	});
+	
+});
+	
 </script>
 
 <!-- Enable LaTeX Support -------------------------------------------------- -->

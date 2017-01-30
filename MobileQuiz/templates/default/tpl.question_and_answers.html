@@ -313,27 +313,17 @@
 							<!-- BEGIN choice_block -->
 							<fieldset id="fieldset_choice_{MUL_COU}" class="choice" style="display: {MUL_SHOW};">
 								<input id="rowID[{MUL_COU}]" type="hidden" name="rowID[{MUL_COU}]" value="{ROW_ID}" class="rowID">
-								<textarea name="choice_text[{MUL_COU}]"
-									class="textfield_choice" rows="3">{MUL_TEXT}</textarea>
+								<textarea name="choice_text[{MUL_COU}]" class="textfield_choice" rows="3">{MUL_TEXT}</textarea>
 								<div class="choice_actions">
-									<input type="hidden" name="choice_id[{MUL_COU}]"
-										value="{MUL_ID}"> 
-									<input type="hidden"
-										name="choice_deleted[{MUL_COU}]" value="{MUL_DEL}"
-										class="deleted_hidden"> 
-									<input type="radio"
-										name="choice_type[{MUL_COU}]" value="1"
-										id="correct[{MUL_COU}]"{MUL_TYPE_C}> 
-									<label
-										for="correct[{MUL_COU}]" class="choice_actions_label">correct</label>
-									<input type="radio" name="choice_type[{MUL_COU}]"
-										value="2" id="neutral[{MUL_COU}]"{MUL_TYPE_N}> 
-									<label
-										for="neutral[{MUL_COU}]" class="choice_actions_label">neutral</label>
-									<input type="radio" name="choice_type[{MUL_COU}]"
-										value="0" id="incorrect[{MUL_COU}]"{MUL_TYPE_I}> 
-									<label
-										for="incorrect[{MUL_COU}]" class="choice_actions_label">incorrect</label>
+									<input type="hidden" name="choice_id[{MUL_COU}]" value="{MUL_ID}"> 
+									<input type="hidden" name="choice_deleted[{MUL_COU}]" value="{MUL_DEL}"	class="deleted_hidden"> 
+									
+									<input type="radio"	name="choice_type[{MUL_COU}]" value="1"	id="correct[{MUL_COU}]"{MUL_TYPE_C}> 
+									<label for="correct[{MUL_COU}]" class="choice_actions_label">correct</label>
+									<input type="radio" name="choice_type[{MUL_COU}]" value="2" id="neutral[{MUL_COU}]"{MUL_TYPE_N}> 
+									<label for="neutral[{MUL_COU}]" class="choice_actions_label">neutral</label>
+									<input type="radio" name="choice_type[{MUL_COU}]" value="0" id="incorrect[{MUL_COU}]"{MUL_TYPE_I}> 
+									<label for="incorrect[{MUL_COU}]" class="choice_actions_label">incorrect</label>
 
 									<a href="#" id="delete_choice[{MUL_COU}]"
 										data-choice-id="fieldset_choice_{MUL_COU}"

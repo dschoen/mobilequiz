@@ -86,6 +86,23 @@ class ilObjMobileQuizWizard {
 				
 				$i ++;
 			}
+		} else {
+			//if there are no choices, hide the existing choice Block
+			
+			//set ilTemplate block which defines the context for the variables in the curvy brackets
+			$tpl->setCurrentBlock ( "choice_block" );
+						
+			$tpl->setVariable ( "MUL_SHOW", "none" );
+			$tpl->setVariable ( "MUL_TEXT", "" );
+			$tpl->setVariable ( "MUL_ID", "000" );	// set dummy id to 000
+			$tpl->setVariable ( "MUL_COU", "1" );
+			$tpl->setVariable ( "MUL_DEL", true );
+			$tpl->setVariable ( "MUL_TYPE_C", "" );
+			$tpl->setVariable ( "MUL_TYPE_N", "checked");
+			$tpl->setVariable ( "MUL_TYPE_I", "" );
+			$tpl->setVariable ( "ROW_ID", "1" );
+			
+			$tpl->parseCurrentBlock ();
 		}
 	}
 	
@@ -173,26 +190,30 @@ class ilObjMobileQuizWizard {
 		// iterate through the choices
 		$i = 1;
 		while(isset($_POST['choice_text'][$i])) {
-			// add choice
+			
+			// ADD NEW CHOICE if choice_id is empty
 			if($_POST['choice_id'][$i] == "") {
+				
 				// now check whether the answer was deleted
-				if($_POST['choice_deleted'][$i] != true
-						&& !empty($_POST['choice_text'][$i])) {
-							// create choice
-							$model->createChoice($question_id, $_POST['choice_type'][$i],
-									$_POST['choice_text'][$i]);
-						}
+				if($_POST['choice_deleted'][$i] != true	&& !empty($_POST['choice_text'][$i])) {
+					// create choice
+					$model->createChoice($question_id, $_POST['choice_type'][$i], $_POST['choice_text'][$i]);
+				}
 			}
-			// delete choice
-			else if($_POST['choice_deleted'][$i] == true) {
+			
+			// DELETE CHOICE if choice_id is not empty and deleted = true
+			else if (($_POST['choice_deleted'][$i] == true) && ($_POST['choice_id'][$i] != "")) {
 				$model->deleteChoice($_POST['choice_id'][$i]);
 			}
-			// change choice
-			else {
+			
+			// UPDATE CHOICE if choice_id ist not empty
+			else if ($_POST['choice_id'][$i] != "") {
 				$model->updateChoice($_POST['choice_id'][$i],
 						$_POST['choice_type'][$i],
 						$_POST['choice_text'][$i],
 						$_POST['rowID'][$i]);
+			} else {
+				// do nothing
 			}
 			// increment counter
 			$i++;

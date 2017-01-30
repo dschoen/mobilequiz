@@ -53,7 +53,7 @@ switch($type_of_question) {
                     <img src="assets/img/<?php echo $symbole; ?>.png" alt="" title="" width="16" />
                     <?php else: ?>&nbsp;<?php endif; ?></div>
                     <span>&nbsp;-&nbsp;</span> 
-                    <span style="color:<?php echo$color; ?>"><?php echo $choice->text; ?></span>
+                    <span style="color:<?php echo $color; ?>"><?php echo $choice->text; ?></span>
                 </li>
             </ul>
             <div style="clear: both;"></div>
@@ -87,8 +87,6 @@ switch($type_of_question) {
             </label>
         <?php
         }
-        ?>
-        <?php
         break;
 
     // numeric question
@@ -156,18 +154,16 @@ switch($type_of_question) {
     // text question
 	case "4":
 		if ( !empty( $result ) ) {  ?>
-        	<ul style="margin-bottom: 10px; list-style-type:none">
+        	<ul>
             	<li>
-            		<div>Answer:</div>
-            		<div class="result-textfield"><?php echo $result[$choice->choice_id]?></div>
-            		<hr />
+            		<div class="result-textfield"><?php echo $result[$choice->choice_id]?> </div>
+
 	        		<?php if (!empty($choice->text)) { ?>
-	        		<div>Correct Solution:</div>
-	        		<div class="result-textfield"><?php echo $choice->text; ?></div>
-	        		<?php } ?>
-	        		<div style="clear: both;"></div>
+	        			-><div class="result-textfield solution-textfield"><?php echo $choice->text; ?></div>
+	        		<?php } ?>   		
 	        	</li>
 	        </ul>
+	        <div style="clear: both;"></div>
         
         <?php } else { ?>   
                     
@@ -177,8 +173,7 @@ switch($type_of_question) {
         		id="textual-choice-<?php echo $choice->question_id."-".$choice->choice_id ?>" 
         		></textarea>
 
-        <?php } ?>
-        <?php
+        <?php }
         break;
 }
 ?>

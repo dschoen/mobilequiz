@@ -937,17 +937,20 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
     	// Collect Data
     	$datas = $this->getResultDataForText($question, $answers, $answer_count, $round_id);
        
+    	// Create Data String
     	$data_string = "";
-    	
+    	$data_ids = "";
     	foreach( $datas as $data ) {
     	
     		// Skip loop if data is empty
     		if (empty($data)) {
     			continue;
     		}
-    		    		   	
-    		$data_string = $data_string.$data['value'].", ";    	
+    		
+    		$data_string = $data_string.'"'.ilObjMobileQuizHelper::polishText($data['value']).'", ';
+    		$data_ids = $data_ids.'"'.$data['answer_id'].'", ';
     	}
+    	
     	
     	
     	// prepare and escape title
@@ -955,10 +958,13 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
     	$chart_title = ilObjMobileQuizHelper::escapeCurvyBrackets($chart_title);
     	 
     	$chart_tpl->setVariable("TITLE", $chart_title);
-    	$chart_tpl->setVariable("question_id", $question['question_id']);
-    	$chart_tpl->setVariable("round_id", $round_id);
-    	
+    	$chart_tpl->setVariable("QUESTION_ID", $question['question_id']);
     	$chart_tpl->setVariable("ANSWERS", $data_string);
+    	$chart_tpl->setVariable("ANSWER_IDS", $data_ids);
+    	
+    	$chart_tpl->setVariable("ROUND_ID", $round_id);
+    	
+    	
     	
     	$chart_tpl->setVariable("ajax_interface_url", ilObjMobileQuizHelper::getPluginUrl()."interface/liveChartUpdate.php");
     	$chart_tpl->setVariable("secret", AJAX_INTERFACE_SECRET);
@@ -1424,10 +1430,17 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
     	$my_tpl->setVariable("SOLUTION", 			$this->txt("choice_form_solution"));
     	$my_tpl->setVariable("FURTHERMORE", 		$this->txt("choice_form_furthermore"));
     	$my_tpl->setVariable("TEXT_CORRECT_LABEL",  $this->txt("choice_form_text_correct_label"));
-        
-    	
-    	// set Choice fieldset to invisible. If choices exist, this variable is overwritten so that fieldset gets visible
-    	$my_tpl->setVariable("MUL_SHOW", "none");
+           	
+    	// Set the Parameters for the choice Field, so that it is not visible, but the parameters are valid
+    	$my_tpl->setVariable ( "MUL_SHOW", "none" );
+    	$my_tpl->setVariable ( "MUL_TEXT", "" );
+    	$my_tpl->setVariable ( "MUL_ID", "000" );	// set dummy id to 000
+    	$my_tpl->setVariable ( "MUL_COU", "1" );
+    	$my_tpl->setVariable ( "MUL_DEL", true );
+    	$my_tpl->setVariable ( "MUL_TYPE_C", "" );
+    	$my_tpl->setVariable ( "MUL_TYPE_N", "checked");
+    	$my_tpl->setVariable ( "MUL_TYPE_I", "" );
+    	$my_tpl->setVariable ( "ROW_ID", "1" );
     	
     	// check if it is a new question or editing an existing one
     	if (!isset($_GET['question_id'])) {

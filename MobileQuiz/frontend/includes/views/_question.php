@@ -13,7 +13,7 @@
 	            ?>
 				<div data-role="fieldcontain">
 					<fieldset data-role="controlgroup" id="question<?php echo $question->question_id;?>">
-						<?php render($question->choices,$type_of_question);?>
+						<?php render($question->choices, $type_of_question);?>
 					</fieldset>
 				</div>
 	            <?php
@@ -24,7 +24,7 @@
 				?>
 				<div data-role="fieldcontain">
 					<fieldset data-role="controlgroup" id="question<?php echo $question->question_id;?>">
-						<?php render($question->choices,$type_of_question);?>
+						<?php render($question->choices, $type_of_question);?>
 					</fieldset>
 				</div>
             	<?php
@@ -34,7 +34,7 @@
             	// numeric
 				?>
 				<div data-role="fieldcontain">
-					<?php render($question->choices,$type_of_question);?>
+					<?php render($question->choices, $type_of_question);?>
 				</div>
             	<?php
                 break;
@@ -44,7 +44,7 @@
                	?>
                	<div data-role="fieldcontain">
 	      			<fieldset data-role="controlgroup" id="question<?php echo $question->question_id;?>">
-	        			<?php render($question->choices,$type_of_question);?>
+	        			<?php render($question->choices, $type_of_question);?>
 	        		</fieldset>
         		</div>
                	<?php

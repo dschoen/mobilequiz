@@ -99,7 +99,7 @@ label.ui-btn {
 }
 
 
-.optional-information-text {
+.optional-information-text {	
 	margin: 5px;
 	padding: 5px;
 	border: 1px solid #999999;
@@ -136,12 +136,18 @@ label.ui-btn {
 .result-textfield {
 	margin: 5px;
 	padding: 5px;
+	padding-left: 10px;
 	border: 1px solid #999999;
 	border-radius: 4px;
-	background-color: #FBFBFB;
+	background-color: #FDFDFD;
 	
 	overflow: auto;
     white-space: normal;
+    
+    font-size: 0.9em;
+}
+.solution-textfield {
+	color: #3eb249;
 }
 
 /* -- HOME ------------------------------- */

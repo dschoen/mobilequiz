@@ -42,9 +42,11 @@
         case "4":
            	// text
            	?>
-            <fieldset data-role="controlgroup" id="question<?php echo $question->question_id;?>">
-    	        <?php render($question->choices, $type_of_question);?>
-  	        </div>
+           	<div data-role="fieldcontain">
+            	<fieldset data-role="controlgroup" id="question<?php echo $question->question_id;?>">
+    	        	<?php render($question->choices, $type_of_question);?>
+  	        	</fieldset>
+            </div>
             <?php
             break;
     }

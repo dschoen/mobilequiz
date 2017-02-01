@@ -76,6 +76,28 @@ $(document).ready(function() {
 		var id = button_id.substring(14);
 		
 		$("#answer_list_"+id).hide();
+		
+		var url = "{AJAX_INTERFACE_URL}";
+		
+		// send delete Request to database
+        $.ajax({
+          type: "POST",
+          dataType: "json",
+          url: url,
+          data: {
+                'answer_id':id,
+                'action':"deleteAnswer",
+                'secret':"{AJAX_SECRET}",
+            },
+          success: function(response){
+          	  
+	        console.log("deleted");
+
+            },
+          error: function(){
+              console.log("AJAX Request failed: "+url);
+          },
+        });
 	});
 	
 });
@@ -117,6 +139,46 @@ $(document).ready(function() {
 	});	
 });
 	
+	
+/* -- Tag-Cloud Update Function -- */
+$( document ).ready(function() {
+
+    var url = "{AJAX_INTERFACE_URL}";   
+
+    // set timer for ajax request
+    setInterval(function() {
+
+    	// update chart if Tag-Cloud is visible
+        if ($('#text-chart-cloud_'+{QUESTION_ID}).is(':visible')) {
+    	
+	        // ajax call
+	        $.ajax({
+	          type: "POST",
+	          dataType: "json",
+	          url: url,
+	          data: {
+	                'question_id':"{QUESTION_ID}",
+	                'round_id':"{ROUND_ID}",
+	                'action':"updateText",
+	                'secret':"{AJAX_SECRET}",
+	            },
+	          success: function(response){
+	          	  
+		        $('#text-chart-cloud_'+{QUESTION_ID}).jQCloud('update', response);
+	
+	            },
+	          error: function(){
+	              console.log("AJAX Request failed: "+url);
+	          },
+	        });
+	        
+        } else {
+        	//do nothing
+        	//console.log("Nothing to update");
+        }
+
+    }, {AJAX_UPDATE_TIME});
+});
 </script>
 
 <!-- Enable LaTeX Support -------------------------------------------------- -->

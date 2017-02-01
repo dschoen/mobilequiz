@@ -45,6 +45,9 @@ question_add_type#:#Fragetyp
 question_message_created#:#Neue Frage erstellt.
 question_message_edited#:#Frage wurde geändert.
 
+<!-- Rounds -->
+rounds_open_quiz#:#Quizrunde öffnen
+
 <!-- Question table -->	
 question_table_text#:#Frage
 question_table_type#:#Fragetyp

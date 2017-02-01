@@ -45,6 +45,9 @@ question_add_type#:#Type
 question_message_created#:#Question has been created.
 question_message_edited#:#Question has been changed.
 
+<!-- Rounds -->
+rounds_open_quiz#:#Open quiz round
+
 <!-- Question table -->	
 question_table_text#:#Question
 question_table_type#:#Type

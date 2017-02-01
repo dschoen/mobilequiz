@@ -647,10 +647,11 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
 
         if(!count($rounds) == 0) {
             foreach($rounds as $round){
-                $round["quiz_url"] = $round["tiny_url"];
+                $round["quiz_url"] = $round['tiny_url'];
                 $round["image_url"] = ilUtil::getWebspaceDir()."/MobileQuiz_data/".$round['round_id']."/qrcode.png";
                 $round["show_qr"] = $this->txt("results_show_qr");
-
+                $round["open_quiz"] = $this->txt("rounds_open_quiz");                
+                
                 $this->ctrl->setParameter($this,'round_id',$round['round_id']);
                 $action_status = $this->ctrl->getLinkTarget($this,'changeRoundStatus');
                 $action_status = $this->ctrl->appendRequestTokenParameterString($action_status);
@@ -994,16 +995,15 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
     	$chart_tpl->setVariable("QUESTION_ID", $question['question_id']);
     	$chart_tpl->setVariable("ANSWERS", $data_string);
     	$chart_tpl->setVariable("ANSWER_IDS", $data_ids);
-    	$chart_tpl->setVariable("ANSWERS_WEIGHTED", $data_weight_string);
-    	
-    	
+    	$chart_tpl->setVariable("ANSWERS_WEIGHTED", $data_weight_string);    	
     	$chart_tpl->setVariable("ROUND_ID", $round_id);    	
     	
-    	$chart_tpl->setVariable("ajax_interface_url", ilObjMobileQuizHelper::getPluginUrl()."interface/liveChartUpdate.php");
-    	$chart_tpl->setVariable("secret", AJAX_INTERFACE_SECRET);
-    	$chart_tpl->setVariable("ajax_update_time", AJAX_CHART_UPDATE_TIME);
-    	$chart_tpl->setVariable("latex", LATEX_TRANSFORMATION);
+    	$chart_tpl->setVariable("AJAX_INTERFACE_URL", ilObjMobileQuizHelper::getPluginUrl()."interface/liveChartUpdate.php");
+    	$chart_tpl->setVariable("AJAX_SECRET", AJAX_INTERFACE_SECRET);
+    	$chart_tpl->setVariable("AJAX_UPDATE_TIME", AJAX_CHART_UPDATE_TIME);
     
+    	$chart_tpl->setVariable("latex", LATEX_TRANSFORMATION);
+    	
     	$html = $chart_tpl->get();
     
     	return $html;
@@ -1425,8 +1425,7 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
     
     //--------------------------------------------------------------------------
     //                   Choices aka. Questions and Answers FORM
-    //--------------------------------------------------------------------------
-    
+    //--------------------------------------------------------------------------    
     
     /**
      * Creates the form for editing question and choices

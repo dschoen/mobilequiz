@@ -623,8 +623,8 @@ class ilObjMobileQuiz extends ilObjectPlugin
 
         $set = $ilDB->query("
                     SELECT *
-		    FROM rep_robj_xuiz_rounds
-		    WHERE quiz_id = ".$ilDB->quote($this->getId(), "integer")." ORDER BY round_id DESC");
+		    		FROM rep_robj_xuiz_rounds
+		    		WHERE quiz_id = ".$ilDB->quote($this->getId(), "integer")." ORDER BY round_id DESC");
 
         $rounds = array();
         $round = array();
@@ -634,6 +634,7 @@ class ilObjMobileQuiz extends ilObjectPlugin
             $round["quiz_id"]       = $rec["quiz_id"];
             $round["start_date"]    = $rec["start_date"];
             $round["end_date"]      = $rec["end_date"];
+            $round["tiny_url"]      = $rec["tiny_url"];
             $round["type"]          = $rec["type"];
 
             $rounds[] = $round;

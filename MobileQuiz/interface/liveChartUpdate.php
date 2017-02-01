@@ -30,9 +30,6 @@ require_once(__DIR__."/../configuration.local.php");
 
 try {
    
-    // Get Parameters
-    $question_id    = (isset($_POST['question_id']) ? $_POST['question_id'] : 0);
-    $round_id       = $_POST['round_id'];
     $action         = $_POST['action'];
     $secret         = $_POST['secret'];
     
@@ -43,13 +40,28 @@ try {
     // get updated data
     switch ($action) {
         case "updateChoice":
+        	// Get Parameters
+        	$question_id    = $_POST['question_id'];
+        	$round_id       = $_POST['round_id'];
             $data = getDataChoice($question_id, $round_id);
             break;
         case "updateNumeric":
+        	$question_id    = $_POST['question_id'];
+        	$round_id       = $_POST['round_id'];
             $data = getDataNumeric($question_id, $round_id);
             break;
+        case "updateText":
+        	$question_id    = $_POST['question_id'];
+        	$round_id       = $_POST['round_id'];
+          	$data = getDataText($question_id, $round_id);
+           	break;
         case "updateNumberOfParticipants":
+        	$round_id       = $_POST['round_id'];
         	$data = countParticipants($round_id);
+        	break;
+        case "deleteAnswer":
+        	$answer_id       = $_POST['answer_id'];
+        	$data = deleteAnswer($answer_id);
         	break;
     }       
     
@@ -130,6 +142,55 @@ function getDataNumeric($question_id, $round_id){
 
 // -----------------------------------------------------------------------------
 
+function getDataText($question_id, $round_id){
+
+	$return= array();
+
+	// get the choice
+	$choices = getChoices($question_id);
+
+	if(count($choices) == 0) {
+		return $return;	
+	}
+		
+	$choice = $choices[0];
+	$choice_id = $choice['choice_id'];
+	
+	// get all Answers
+	$datas = getAnswers($choice_id, $round_id);
+		
+	// Count Data for Tag Cloud weight
+	$data_bucket = array();
+	foreach( $datas as $data ) {
+		 
+		// Skip loop if data is empty
+		if (empty($data)) {
+			continue;
+		}
+		
+		$word = trim($data['value']);
+	
+		if (array_key_exists($word, $data_bucket)) {
+			$data_bucket[$word] += 1;
+		} else {
+			$data_bucket[$word] = 1;
+		}
+	}
+	 
+	// create data
+	foreach( $data_bucket as $data => $weight ) {
+		 
+		$return[] = array(
+				'text' => polishTextTagCloud($data), 
+				'weight' => $weight
+				);
+	}		
+	
+	return $return;
+}
+
+// -----------------------------------------------------------------------------
+
 function getChoices($question_id) {
     $db = getDB();
 
@@ -195,6 +256,21 @@ function countParticipants($round_id){
 
 // -----------------------------------------------------------------------------
 
+function deleteAnswer($answer_id){
+
+	$db = getDB();
+	
+	$st = $db->prepare("DELETE FROM rep_robj_xuiz_answers "
+			." WHERE answer_id = :answer_id"
+			.";");
+
+	$st->execute(array(':answer_id' => $answer_id ));
+
+	return;
+}
+
+// -----------------------------------------------------------------------------
+
 function getDB(){
     try {
         $db = new PDO(
@@ -219,5 +295,29 @@ function getDB(){
 }
 
 // -----------------------------------------------------------------------------
+// -------------------------------------------------------------------------
+
+/**
+ * Gets a String and transforms it to a web ready version, without Markdown transformation
+ *
+ * @author dschoen
+ * @param String $text
+ */
+function polishTextTagCloud($text) {
+
+	// remove critical charackters
+	$text = htmlspecialchars($text);
+
+	// Create html line breaks
+	$text = nl2br($text);
+
+	// remove all original line breaks
+	$text = str_replace(array("\r","\n"), "", $text);
+	 
+	// remove all line breaks
+	$text = str_replace(array("<br />"), " ", $text);
+
+	return $text;
+}
 
 ?>

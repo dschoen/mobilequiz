@@ -341,12 +341,21 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
             if ($ilAccess->checkAccess("write", "", $this->object->getRefId())){
             	$my_tpl->setVariable("STOP_BUTTON_LINK", $action_edit);
             	$my_tpl->setVariable("STOP_BUTTON_TEXT", $this->txt("round_stop"));
-            	$my_tpl->setVariable("FULLSCREEN", $this->txt("startpage_fullscreen"));
             }
 
+            $my_tpl->setVariable("LNG_FULLSCREEN", $this->txt("startpage_fullscreen"));
+            $my_tpl->setVariable("LNG_USERS", $this->txt("startpage_users"));
+            $my_tpl->setVariable("DATA_USERS", count($this->object->getDistinctAnswers($round_id)));
+            
             $my_tpl->setVariable("IMAGE_URL",$server_url.ilUtil::getWebspaceDir()."/MobileQuiz_data/".$round_id."/qrcode.png");
             $my_tpl->setVariable("QUIZ_URL",$shorted_url);
 
+            // Ajax Update Information
+            $my_tpl->setVariable("AJAX_INTERFACE_URL", ilObjMobileQuizHelper::getPluginUrl()."interface/liveChartUpdate.php");
+            $my_tpl->setVariable("AJAX_SECRET", AJAX_INTERFACE_SECRET);
+            $my_tpl->setVariable("AJAX_UPDATE_TIME", AJAX_CHART_UPDATE_TIME);
+            $my_tpl->setVariable("ROUND_ID", $round_id);
+            
             $html = $my_tpl->get();
 
             $this->ctrl->clearParameters($this);
@@ -1429,7 +1438,7 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
     			"Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz");
     	$rtokenFactory = new ilCtrl();
     
-    	$my_tpl->setVariable("ACTION_URL",		$this->ctrl->getFormAction($this));
+    	$my_tpl->setVariable("ACTION_URL",			$this->ctrl->getFormAction($this));
     	
     	// labels    	
     	$my_tpl->setVariable("CHOICES_HEADLINE", 	$this->txt("choice_form_headline"));

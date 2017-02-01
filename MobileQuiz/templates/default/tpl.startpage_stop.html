@@ -1,6 +1,6 @@
 <link rel="stylesheet" href="./Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/templates/css/mq_startpage.css">
 
-<script type="text/javascript" language="javascript">
+<script type="text/javascript">
 	/**
 	 * Source: http://www.shopdev.co.uk/blog/text-resizing-with-jquery/
 	 **/
@@ -82,6 +82,40 @@
 			}
 		});
 	});
+	
+	
+<!-- AJAX UPDATE of PARTICIPANTS -->
+$( document ).ready(function() {
+
+    var url = "{AJAX_INTERFACE_URL}";
+
+    // set timer for ajax request
+    setInterval(function() {
+
+        // ajax call
+        $.ajax({
+          type: "POST",
+          dataType: "json",
+          url: url,
+          data: {
+                'round_id':"{ROUND_ID}",
+                'action':"updateNumberOfParticipants",
+                'secret':"{AJAX_SECRET}",
+            },
+          success: function(response){
+              console.log("AJAX Request sucess: "+ response);
+
+              // update chart
+        	  $(".user-counter").html(response);
+
+            },
+          error: function(){
+              console.log("AJAX Request failed: "+url);
+          },
+        });
+
+    }, {AJAX_UPDATE_TIME});
+});
 </script>
 
 <!-- PAGE ------------------------------------------------------ -->
@@ -101,8 +135,13 @@
 					id="btn_qr_fullscreen" 
 					class="btn btn-lg button-fullscreen" >
                    <img src="./Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/templates/images/zoom.png"  width="50" height="50"/>                
-               		{FULLSCREEN}
+               		{LNG_FULLSCREEN}
                </a>
+               <br />
+			   <br />
+			   <div class="startpage-counter">
+			   		{LNG_USERS}:&nbsp;&nbsp;&nbsp;<span class="user-counter">{DATA_USERS}</span>
+			   </div>
                		
 			</td>
 			<td>
@@ -140,6 +179,9 @@
                     <img src="./Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/templates/images/min.png"  width="25" height="25"/>
                 </a>
             </div>                
-        </div>            
+        </div> 
+        <div class="startpage-counter-fullscreen">
+			{LNG_USERS}:&nbsp;&nbsp;&nbsp;<span class="user-counter">{DATA_USERS}</span>
+		</div>          
     </div>	
 </center>

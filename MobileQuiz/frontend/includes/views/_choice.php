@@ -153,13 +153,38 @@ switch($type_of_question) {
         
     // text question
 	case "4":
-		if ( !empty( $result ) ) {  ?>
+		if ( !empty( $result ) ) {  
+		
+			$answer = $result[$choice->choice_id];
+			$correct_answer = $choice->text;
+			
+			$has_correct_answer = false;
+			$is_correct = false;
+			
+			// check if answer is correct
+			if (!empty($choice->text)) {
+				$has_correct_answer = true;						
+				
+				if (strpos(trim(strtolower($answer)), trim(strtolower($correct_answer))) !== false ) {
+					$is_correct = true;
+				}
+			}
+			?>
         	<ul>
             	<li>
-            		<div class="result-textfield"><?php echo $result[$choice->choice_id]?> </div>
+            		<div class="result-textfield 
+            			<?php if ($has_correct_answer) echo ($is_correct ? "answer-correct" : "answer-wrong"); ?>"
+            			>
+            			<?php  if ($has_correct_answer && $is_correct ) { ?>
+            				<img src="assets/img/correct.png" alt="" title="" width="16" />&nbsp;
+            			<?php } else if ($has_correct_answer && !$is_correct ) { ?>
+            				<img src="assets/img/incorrect.png" alt="" title="" width="16" />&nbsp;
+            			<?php } ?>
+            			<?php echo $answer?>
+            		</div>
 
-	        		<?php if (!empty($choice->text)) { ?>
-	        			<div class="result-textfield solution-textfield"><?php echo $choice->text; ?></div>
+	        		<?php if ($has_correct_answer) { ?>
+	        			<div class="result-textfield solution-textfield"><?php echo $correct_answer; ?></div>
 	        		<?php } ?>   		
 	        	</li>
 	        </ul>

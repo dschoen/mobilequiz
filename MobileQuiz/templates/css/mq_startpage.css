@@ -1,8 +1,9 @@
 @CHARSET "UTF-8";
 
 .start-button {
-  font-size: 18px;
-  padding: 10px;
+	width: 180px;
+  	font-size: 18px;
+  	padding: 10px;
 }
 
 .qr-code {
@@ -15,6 +16,7 @@
 }
 
 .button-fullscreen {
+	width: 180px;
 	font-size: 18px !important;
 	background-color: #FEFEFE;
 	border: 1px solid #AAAAAA;
@@ -37,7 +39,7 @@
 	top:0;
 	left:0;        
 	background:rgba(0,0,0,.7);        
-        text-align: center;        
+    text-align: center;        
 }
 
 /* Big QR-Code zoomed on click*/
@@ -80,4 +82,26 @@ a.increaseFont:hover,a.decreaseFont:hover {
 	color: #fff;
 	background-color: #000;
 	text-decoration: none;
+}
+.startpage-counter {
+	width: 180px;	
+	padding: 10px 0px 10px 15px;
+	font-size: 18px !important;
+	border: 1px solid #AAAAAA;
+}
+.startpage-counter-fullscreen {
+	position: fixed;
+	left: 10px;
+	bottom: 10px;
+	margin: 20px;
+	
+	width: 180px;	
+	padding: 10px 0px 10px 15px;
+	font-size: 18px !important;
+	border: 2px solid #CCCCCC;
+	color: #EEEEEE;
+	background:rgba(0,0,0,.8);
+}
+.user-counter{
+	font-weight: bold;
 }

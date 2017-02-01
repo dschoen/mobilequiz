@@ -31,7 +31,7 @@ require_once(__DIR__."/../configuration.local.php");
 try {
    
     // Get Parameters
-    $question_id    = $_POST['question_id'];
+    $question_id    = (isset($_POST['question_id']) ? $_POST['question_id'] : 0);
     $round_id       = $_POST['round_id'];
     $action         = $_POST['action'];
     $secret         = $_POST['secret'];
@@ -47,7 +47,10 @@ try {
             break;
         case "updateNumeric":
             $data = getDataNumeric($question_id, $round_id);
-            break;            
+            break;
+        case "updateNumberOfParticipants":
+        	$data = countParticipants($round_id);
+        	break;
     }       
     
     //return data to requester
@@ -168,6 +171,25 @@ function countAnswers($round_id, $choice_id){
 	$result = $rows[0];
 	$count = $result["answers"];
 	
+	return $count;
+}
+
+// -----------------------------------------------------------------------------
+
+function countParticipants($round_id){
+
+	$db = getDB();
+
+	$st = $db->prepare("Select COUNT(DISTINCT user_string) as answers"
+			." FROM rep_robj_xuiz_answers"
+			." WHERE round_id = :round_id"
+			.";");
+
+	$st->execute(array(':round_id' => $round_id ));
+	$rows = $st->fetchAll();
+	$result = $rows[0];
+	$count = $result["answers"];
+
 	return $count;
 }
 

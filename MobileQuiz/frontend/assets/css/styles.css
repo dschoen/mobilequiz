@@ -91,7 +91,7 @@ label.ui-btn {
 }
 
 
-/* -- Result Page -----------------*/
+/* -- Result Page ----------------------------------------------------------*/
 .optional-information-header {
 	text-decoration: underline;
 	color: #777777;
@@ -147,8 +147,17 @@ label.ui-btn {
     font-size: 0.9em;
 }
 .solution-textfield {
+	font-size: 0.8em;
+	background-color: #FAFAD2;
 	color: #3eb249;
 }
+.answer-correct {
+	color: #3eb249;
+}
+.answer-wrong {
+	color: #FF3333;
+}
+
 
 /* -- HOME ------------------------------- */
 .home-error-message {

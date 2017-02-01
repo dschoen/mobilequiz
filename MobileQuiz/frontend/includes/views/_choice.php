@@ -159,7 +159,7 @@ switch($type_of_question) {
             		<div class="result-textfield"><?php echo $result[$choice->choice_id]?> </div>
 
 	        		<?php if (!empty($choice->text)) { ?>
-	        			-><div class="result-textfield solution-textfield"><?php echo $choice->text; ?></div>
+	        			<div class="result-textfield solution-textfield"><?php echo $choice->text; ?></div>
 	        		<?php } ?>   		
 	        	</li>
 	        </ul>

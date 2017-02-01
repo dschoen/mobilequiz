@@ -64,6 +64,31 @@ class ilObjMobileQuizHelper {
     // -------------------------------------------------------------------------
     
     /**
+     * Gets a String and transforms it to a web ready version, without Markdown transformation
+     *
+     * @author dschoen
+     * @param String $text
+     */
+    public function polishTextTagCloud($text) {
+        
+    	// remove critical charackters
+    	$text = htmlspecialchars($text);
+    
+    	// Create html line breaks
+    	$text = nl2br($text);
+    
+    	// remove all original line breaks
+    	$text = str_replace(array("\r","\n"), "", $text);
+    	
+    	// remove all line breaks
+    	$text = str_replace(array("<br />"), " ", $text);
+    
+    	return $text;
+    }
+    
+    // -------------------------------------------------------------------------
+    
+    /**
      * Escpae curvy Brackets with an additional whitespace, so that ILIAS does
      *  not think its a palceholder
      * 

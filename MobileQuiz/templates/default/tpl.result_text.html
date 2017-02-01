@@ -1,5 +1,9 @@
 <link rel="stylesheet" href="./Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/templates/css/mq_result.css">
 
+<!-- Tag Cloud Plugin -->
+<script src="./Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/lib/jqcloud2/dist/jqcloud.min.js"></script>
+<link rel="stylesheet" href="./Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/lib/jqcloud2/dist/jqcloud.min.css">
+
 <!-- ----------------------------------------------------------------------- -->
 
 <div class="text-chart-div"> 
@@ -8,16 +12,27 @@
 	        {TITLE}
 	    </div>
 	    <div class="text-chart-buttons">	    
-	        <a href="#" class="btn btn-xs btn-minor">List</a>
-	        <a href="#" class="btn btn-xs btn-minor" disabled>Tags</a>
-	        <a href="#" class="btn btn-xs btn-minor" disabled>Tag-Cloud</a>
+	        <a href="#"
+	       	 	id="button-chart-type-list_{QUESTION_ID}"
+	        	class="btn btn-xs btn-minor button-chart-type button-chart-type_{QUESTION_ID} button-chart-type-active"
+	        	data-question-id="{QUESTION_ID}"
+	        	>List</a>
+	        <a href="#"
+	        	id="button-chart-type-cloud_{QUESTION_ID}"
+	        	class="btn btn-xs btn-minor button-chart-type button-chart-type_{QUESTION_ID}"
+	        	data-question-id="{QUESTION_ID}"
+	        	>Tag-Cloud</a>
 	    </div>
 	    <div style="clear:both"></div>
 	</div>
     
-    
+    <!-- List VIEW -->
     <div id="text-chart-content_{QUESTION_ID}" class="text-chart-content">		
 		<div id="template-answer-list" class="text-chart-answer template"></div>
+    </div>
+    
+    <!-- Tag-Cloud VIEW -->
+    <div id="text-chart-cloud_{QUESTION_ID}" class="text-chart-cloud">
     </div>
     
 </div>
@@ -63,6 +78,43 @@ $(document).ready(function() {
 		$("#answer_list_"+id).hide();
 	});
 	
+});
+
+/* Buttonts Change Chart Type */
+$(document).ready(function() {
+
+	/* List Button */
+	$("#button-chart-type-list_{QUESTION_ID}").click(function(event){
+		
+		var question_id = $(this).data('question-id');
+		
+		$("#text-chart-cloud_"+question_id).hide();
+		$("#text-chart-content_"+question_id).show();
+		
+		$(".button-chart-type_"+question_id).removeClass("button-chart-type-active");
+		$(this).addClass("button-chart-type-active");
+		
+		return false;
+	});	
+	
+	/* Tag-Cloud Button*/
+	$("#button-chart-type-cloud_{QUESTION_ID}").click(function(event){
+		
+		var words = [{ANSWERS_WEIGHTED}];
+		
+		var question_id = $(this).data('question-id');
+		
+		$("#text-chart-cloud_"+question_id).show();
+		$("#text-chart-content_"+question_id).hide();
+		
+		$(".button-chart-type_"+question_id).removeClass("button-chart-type-active");
+		$(this).addClass("button-chart-type-active");		
+		
+		/* render Tag Cloud */
+		$("#text-chart-cloud_"+question_id).jQCloud(words);
+		
+		return false;
+	});	
 });
 	
 </script>

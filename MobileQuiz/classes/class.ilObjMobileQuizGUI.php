@@ -939,19 +939,43 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
        
     	// Create Data String
     	$data_string = "";
-    	$data_ids = "";
+    	$data_ids = "";    	
     	foreach( $datas as $data ) {
     	
     		// Skip loop if data is empty
     		if (empty($data)) {
     			continue;
-    		}
-    		
+    		}    		
     		$data_string = $data_string.'"'.ilObjMobileQuizHelper::polishText($data['value']).'", ';
     		$data_ids = $data_ids.'"'.$data['answer_id'].'", ';
     	}
     	
+    	// Count Data for Tag Cloud weight  	
+    	$data_bucket = array();
+    	foreach( $datas as $data ) {
+    		 
+    		// Skip loop if data is empty
+    		if (empty($data)) {
+    			continue;
+    		}
+    		$word = trim($data['value']);
+    		
+    		if (array_key_exists($word, $data_bucket)) {
+    			$data_bucket[$word] += 1;
+    		} else {
+    			$data_bucket[$word] = 1;
+    		}    		
+    	}
     	
+    	// write tag cloud string
+    	$data_weight_string = "";
+    	foreach( $data_bucket as $data => $weight ) {
+    		 
+
+    		$data_weight_string = $data_weight_string
+    			.'{text:"'.ilObjMobileQuizHelper::polishTextTagCloud($data).'",'
+    			. 'weight:'.$weight.'},';
+    	}
     	
     	// prepare and escape title
     	$chart_title = ilObjMobileQuizHelper::polishText($question['text']);
@@ -961,10 +985,10 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
     	$chart_tpl->setVariable("QUESTION_ID", $question['question_id']);
     	$chart_tpl->setVariable("ANSWERS", $data_string);
     	$chart_tpl->setVariable("ANSWER_IDS", $data_ids);
+    	$chart_tpl->setVariable("ANSWERS_WEIGHTED", $data_weight_string);
     	
-    	$chart_tpl->setVariable("ROUND_ID", $round_id);
     	
-    	
+    	$chart_tpl->setVariable("ROUND_ID", $round_id);    	
     	
     	$chart_tpl->setVariable("ajax_interface_url", ilObjMobileQuizHelper::getPluginUrl()."interface/liveChartUpdate.php");
     	$chart_tpl->setVariable("secret", AJAX_INTERFACE_SECRET);

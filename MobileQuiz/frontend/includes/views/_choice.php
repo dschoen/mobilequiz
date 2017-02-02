@@ -180,7 +180,7 @@ switch($type_of_question) {
             			<?php } else if ($has_correct_answer && !$is_correct ) { ?>
             				<img src="assets/img/incorrect.png" alt="" title="" width="16" />&nbsp;
             			<?php } ?>
-            			<?php echo $answer?>
+            			<?php echo nl2br($answer)?>
             		</div>
 
 	        		<?php if ($has_correct_answer) { ?>

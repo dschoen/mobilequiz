@@ -576,13 +576,40 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
                                             $column++;
                                             $mainworksheet->writeNumber($row, $column, ilExcelUtils::_convert_text($value, "excel", 0));
                                             $column++;
-                                            $mainworksheet->writeNumber($row, $column, ilExcelUtils::_convert_text(' ', "excel", 0));
+                                            $mainworksheet->writeString($row, $column, ilExcelUtils::_convert_text('', "excel", 0));
                                             $column++;
                                             $mainworksheet->writeNumber($row, $column, ilExcelUtils::_convert_text($count, "excel", 0));
                                         }
                                     }
                                 }
                                 break;
+                        	case QUESTION_TYPE_TEXT:
+                        		if(count($choices) == 0) {
+                        			// do nothing
+                        			break;
+                        		}
+                        		$choice = $choices[0];
+                        		$answers = $this->object->getAnswersToChoice($round_id, $choice['choice_id']);
+                        		
+                        		error_log("---------------");
+                        		
+                        		
+                        		// write into sheet
+                        		foreach ($answers as $answer) {
+                        			$column = 0;
+                        			$row++;
+                        			$mainworksheet->writeString($row, $column, ilExcelUtils::_convert_text($question['text'], "excel", $format_bold));
+                        			$column++;
+                        			$mainworksheet->writeString($row, $column, ilExcelUtils::_convert_text($question['type'], "excel", $format_bold));
+                        			$column++;
+                        			$mainworksheet->writeString($row, $column, ilExcelUtils::_convert_text($answer['value'], "excel", 0));
+                        			$column++;
+                        			$mainworksheet->writeString($row, $column, ilExcelUtils::_convert_text("-", "excel", 0));
+                        			$column++;
+                        			$mainworksheet->writeString($row, $column, ilExcelUtils::_convert_text("-", "excel", 0));
+                        		}
+                        		
+                        		break;
                         }
                         // write empty line after question
                         $row++;

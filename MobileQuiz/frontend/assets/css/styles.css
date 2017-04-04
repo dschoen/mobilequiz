@@ -85,3 +85,82 @@
 label.ui-btn {
     font-weight: normal;
 }
+
+.text-choice-textarea {
+	min-height: 100px;
+}
+
+
+/* -- Result Page ----------------------------------------------------------*/
+.optional-information-header {
+	text-decoration: underline;
+	color: #777777;
+	font-size: 0.9em;
+}
+
+
+.optional-information-text {	
+	margin: 5px;
+	padding: 5px;
+	border: 1px solid #999999;
+	border-radius: 4px;
+	background-color: #FAFAD2;
+	display: none;
+	
+	overflow: auto;
+    white-space: normal;
+}
+
+.optional-information-text a{
+	font-weight: normal;
+}
+
+.button-optional {
+	margin: 4px;
+	padding: 5px;
+	
+	font-size: 12.5px;
+	font-family: "Open Sans",sans-serif !important;
+	text-decoration: none !important;
+	font-weight: normal !important;
+    color: #3eb249 !important;  
+      
+    background-color: #f6f6f6;
+    border: 1px solid #ddd;
+    border-radius: 2px;;
+    vertical-align: middle;
+    text-align: center;
+    cursor: pointer;   
+}
+
+.result-textfield {
+	margin: 5px;
+	padding: 5px;
+	padding-left: 10px;
+	border: 1px solid #999999;
+	border-radius: 4px;
+	background-color: #FDFDFD;
+	
+	overflow: auto;
+    white-space: normal;
+    
+    font-size: 0.9em;
+}
+.solution-textfield {
+	font-size: 0.8em;
+	background-color: #FAFAD2;
+	color: #3eb249;
+}
+.answer-correct {
+	color: #3eb249;
+}
+.answer-wrong {
+	color: #FF3333;
+}
+
+
+/* -- HOME ------------------------------- */
+.home-error-message {
+	background-color: #fcf8e3 !important;
+	text-align: center !important;
+}

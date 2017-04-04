@@ -1,0 +1,90 @@
+@CHARSET "UTF-8";
+
+#formular fieldset,
+#formular_choice fieldset {
+    padding: 3px 3px 1px 3px;
+}
+
+.choice {
+    margin: 3px 0px 3px 0px;
+    border: 1px solid #c9c9c9;
+    background-color: #f9f9f9;   
+
+}
+.textfield_choice {
+}
+.choice_actions .right{
+	float: right;
+	margin: 2px;
+}
+.choice_actions_label {
+    font-size: 0.9em;
+    margin-right: 10px;
+    margin-top: 4px;
+    vertical-align: top;
+}
+
+#numeric_choice label {
+    display:inline-block;
+    width: 150px;
+    font-size: 10pt;
+    padding:5px;
+}
+
+#text_choice input {
+    width: 300px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    margin-left: 10px;
+}
+
+.ilFormValue{
+    padding-left: 10px;        
+    width: 700px;
+}
+
+/* --- SimpleMDE Editor --------------------------- */
+.editor-toolbar {
+	border-radius: 0px;
+}
+
+.editor-toolbar::before{
+    margin-bottom: 0px;
+}
+.editor-toolbar::after{
+    margin-top: 0px;    
+}
+.editor-toolbar a {
+	height: 20px;
+}
+.editor-toolbar a::before {
+	line-height: 20px;
+}
+
+.CodeMirror {
+	border-radius: 0px;
+}
+
+.CodeMirror, 
+.CodeMirror-scroll {
+    min-height: 10px;
+}
+.choice_area .CodeMirror, 
+.choice_area .CodeMirror-scroll {
+    min-height: 10px;
+}
+
+/* --- */
+
+.table-seperator {
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;	
+}
+
+/* little space between solution and furthermore*/
+.table-row-solution td {
+	padding-bottom: 0.3em;
+}
+
+.table-row-furthermore {
+}

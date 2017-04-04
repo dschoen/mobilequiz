@@ -44,11 +44,11 @@ class Answer{
 	* @param	string		user_string
 	* 
 	*/
-	function __construct($round_id,$choice_id,$value,$user_string) {
-		$this->round_id = $round_id;
-		$this->choice_id = $choice_id;
-		$this->value = $value;
-		$this->user_string = $user_string;
+	function __construct($round_id, $choice_id, $value, $user_string) {
+		$this->round_id 	= $round_id;
+		$this->choice_id 	= $choice_id;
+		$this->value 		= $value;
+		$this->user_string 	= $user_string;
 	}
 	
 	/**
@@ -67,13 +67,7 @@ class Answer{
 			// generate primary key using the sequence table (see getSequence())
 			$arr['answer_id'] = ANSWER::getSequence();
 			$st = $db->prepare("INSERT INTO rep_robj_xuiz_answers (answer_id, round_id, choice_id, value, user_string) VALUES (:answer_id, :round_id, :choice_id, :value, :user_string)");
-		}
-		// TODO: handle different types of answers
-		// not implemented yet
-		else if(isset($arr['bla'])){
-			//$st = $db->prepare("INSERT INTO rep_robj_xuiz_answers (round_id, choice_id, value, user_string) VALUES (:round_id, :choice_id, :value, :user_string)");
-		}
-		else{
+		} else{
 			throw new Exception("doCreate (answer): Unsupported property!");
 		}
 	

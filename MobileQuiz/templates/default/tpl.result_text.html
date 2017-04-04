@@ -1,0 +1,204 @@
+<link rel="stylesheet" href="./Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/templates/css/mq_result.css">
+
+<!-- Tag Cloud Plugin -->
+<script src="./Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/lib/jqcloud2/dist/jqcloud.min.js"></script>
+<link rel="stylesheet" href="./Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/lib/jqcloud2/dist/jqcloud.min.css">
+
+<!-- ----------------------------------------------------------------------- -->
+
+<div class="text-chart-div"> 
+	<div class="text-chart-top">
+		<div class="text-chart-title">
+	        {TITLE}
+	    </div>
+	    <div class="text-chart-buttons">	    
+	        <a href="#"
+	       	 	id="button-chart-type-list_{QUESTION_ID}"
+	        	class="btn btn-xs btn-minor button-chart-type button-chart-type_{QUESTION_ID} button-chart-type-active"
+	        	data-question-id="{QUESTION_ID}"
+	        	>List</a>
+	        <a href="#"
+	        	id="button-chart-type-cloud_{QUESTION_ID}"
+	        	class="btn btn-xs btn-minor button-chart-type button-chart-type_{QUESTION_ID}"
+	        	data-question-id="{QUESTION_ID}"
+	        	>Tag-Cloud</a>
+	    </div>
+	    <div style="clear:both"></div>
+	</div>
+    
+    <!-- List VIEW -->
+    <div id="text-chart-content_{QUESTION_ID}" class="text-chart-content">		
+		<div id="template-answer-list" class="text-chart-answer template"></div>
+    </div>
+    
+    <!-- Tag-Cloud VIEW -->
+    <div id="text-chart-cloud_{QUESTION_ID}" class="text-chart-cloud">
+    </div>
+    
+</div>
+
+<!-- ----------------------------------------------------------------------- -->
+
+<script type="text/javascript">
+
+$(document).ready(function() {
+
+	var answers = [{ANSWERS}];
+	var answer_ids = [{ANSWER_IDS}];
+	if (answers.length == 0) {
+		answers = ["..."];
+		answer_ids = ["0"];
+	}	
+	
+	//console.log(answers);
+	//console.log(answer_ids);
+	
+	for (i = 0; i < answers.length; ++i) {		
+		
+		$("#template-answer-list")
+		  .clone()
+		  .attr("id", "answer_list_"+answer_ids[i])
+		  .removeClass("template")
+		  .html(
+			answers[i]
+		  	+'<a id="remove_button_'+answer_ids[i]+'" href="#" class="btn btn-xs button-remove"><span class="glyphicon glyphicon-remove"></span></a>'
+		  	+'<div style="clear:both"></div>')
+		  .appendTo("#text-chart-content_{QUESTION_ID}");
+	}	
+});
+
+/* -- Remove this answer from list*/
+$(document).ready(function() {
+
+	$(".button-remove").click(function(event){
+			
+		var button_id = this.id;
+		var id = button_id.substring(14);
+		
+		$("#answer_list_"+id).hide();
+		
+		var url = "{AJAX_INTERFACE_URL}";
+		
+		// send delete Request to database
+        $.ajax({
+          type: "POST",
+          dataType: "json",
+          url: url,
+          data: {
+                'answer_id':id,
+                'action':"deleteAnswer",
+                'secret':"{AJAX_SECRET}",
+            },
+          success: function(response){
+          	  
+	        console.log("deleted");
+
+            },
+          error: function(){
+              console.log("AJAX Request failed: "+url);
+          },
+        });
+	});
+	
+});
+
+/* Buttonts Change Chart Type */
+$(document).ready(function() {
+
+	/* List Button */
+	$("#button-chart-type-list_{QUESTION_ID}").click(function(event){
+		
+		var question_id = $(this).data('question-id');
+		
+		$("#text-chart-cloud_"+question_id).hide();
+		$("#text-chart-content_"+question_id).show();
+		
+		$(".button-chart-type_"+question_id).removeClass("button-chart-type-active");
+		$(this).addClass("button-chart-type-active");
+		
+		return false;
+	});	
+	
+	/* Tag-Cloud Button*/
+	$("#button-chart-type-cloud_{QUESTION_ID}").click(function(event){
+		
+		var words = [{ANSWERS_WEIGHTED}];
+		
+		var question_id = $(this).data('question-id');
+		
+		$("#text-chart-cloud_"+question_id).show();
+		$("#text-chart-content_"+question_id).hide();
+		
+		$(".button-chart-type_"+question_id).removeClass("button-chart-type-active");
+		$(this).addClass("button-chart-type-active");		
+		
+		/* render Tag Cloud */
+		$("#text-chart-cloud_"+question_id).jQCloud(words);
+		
+		return false;
+	});	
+});
+	
+	
+/* -- Tag-Cloud Update Function -- */
+$( document ).ready(function() {
+
+    var url = "{AJAX_INTERFACE_URL}";   
+
+    // set timer for ajax request
+    setInterval(function() {
+
+    	// update chart if Tag-Cloud is visible
+        if ($('#text-chart-cloud_'+{QUESTION_ID}).is(':visible')) {
+    	
+	        // ajax call
+	        $.ajax({
+	          type: "POST",
+	          dataType: "json",
+	          url: url,
+	          data: {
+	                'question_id':"{QUESTION_ID}",
+	                'round_id':"{ROUND_ID}",
+	                'action':"updateText",
+	                'secret':"{AJAX_SECRET}",
+	            },
+	          success: function(response){
+	          	  
+		        $('#text-chart-cloud_'+{QUESTION_ID}).jQCloud('update', response);
+	
+	            },
+	          error: function(){
+	              console.log("AJAX Request failed: "+url);
+	          },
+	        });
+	        
+        } else {
+        	//do nothing
+        	//console.log("Nothing to update");
+        }
+
+    }, {AJAX_UPDATE_TIME});
+});
+</script>
+
+<!-- Enable LaTeX Support -------------------------------------------------- -->
+<script type="text/javascript">
+    if ( {latex} ) {
+        (function () {
+          var head = document.getElementsByTagName("head")[0], script;
+          script = document.createElement("script");
+          script.type = "text/x-mathjax-config";
+          script[(window.opera ? "innerHTML" : "text")] =
+            "MathJax.Hub.Config({\n"
+            + "tex2jax: { inlineMath:  [['$$$','$$$']],\n"
+            + "           displayMath: [['$$','$$']],\n"
+            + "     }\n"
+            + "});";
+          head.appendChild(script);
+          script = document.createElement("script");
+          script.type = "text/javascript";
+          script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+          head.appendChild(script);
+        })();
+    }
+</script>

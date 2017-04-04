@@ -187,23 +187,21 @@ class ilObjMobileQuiz extends ilObjectPlugin
     // -------------------------------------------------------------------------
     
     /**
-     * Create Question
-     *
-     * TODO change from prepared statement, as ILIAS guidlines don't like it.
+     * Write new question into database
      *
      * @param	text	question_text
      * @param	int		question_type
      */
-    function createQuestion($a_text, $a_type){
+    function createQuestion($a_text, $a_type, $a_solution, $a_furthermore){
         global $ilDB, $ilAccess, $ilUser;
 
         $question_id = $ilDB->nextID('rep_robj_xuiz_qs');
         $statement = $ilDB->prepare("
-        		INSERT INTO rep_robj_xuiz_qs (question_id, quiz_id, type, text, question_order) 
-        		VALUES (?, ?, ?, ?, ?)",
-            array("integer", "integer", "integer", "text", "integer")
+        		INSERT INTO rep_robj_xuiz_qs (question_id, quiz_id, type, text, question_order, solution, furthermore) 
+        		VALUES (?, ?, ?, ?, ?, ? , ?)",
+            array("integer", "integer", "integer", "text", "integer", "text", "text")
         );
-        $data = array($question_id, $this->getId(), $a_type, $a_text,$question_id);
+        $data = array($question_id, $this->getId(), $a_type, $a_text, $question_id, $a_solution, $a_furthermore);
         $statement->execute($data);
 
         return $question_id;
@@ -237,16 +235,20 @@ class ilObjMobileQuiz extends ilObjectPlugin
     // -------------------------------------------------------------------------
     
     /**
-     * Update a question
+     * Update a question in the database
      *
      * @param	int		question_id
      * @param	string	question_text
      * @param	int		question_type
      */
-    public function updateQuestion($question_id, $a_text, $a_type){
+    public function updateQuestion($question_id, $a_text, $a_type, $a_solution, $a_furthermore){
         global $ilDB, $ilAccess, $ilUser;
 
-        $ilDB->manipulate("UPDATE rep_robj_xuiz_qs SET text= ".$ilDB->quote($a_text, "text")." WHERE question_id = ".$ilDB->quote($question_id, "integer"));
+        $ilDB->manipulate("UPDATE rep_robj_xuiz_qs"
+        		." SET text= ".$ilDB->quote($a_text, "text")
+        		." ,solution= ".$ilDB->quote($a_solution, "text")
+        		." ,furthermore= ".$ilDB->quote($a_furthermore, "text")
+        		." WHERE question_id = ".$ilDB->quote($question_id, "integer"));
     }
 
     // -------------------------------------------------------------------------
@@ -274,12 +276,44 @@ class ilObjMobileQuiz extends ilObjectPlugin
             $question["quiz_id"] = $rec["quiz_id"];
             $question["type"] = $rec["type"];
             $question["text"] = $rec["text"];
+            $question["solution"] = $rec["solution"];
+            $question["furthermore"] = $rec["furthermore"];
             $question["question_order"] = $rec["question_order"];
             
             $questions[] = $question;
         }
 
         return $questions;
+    }
+    
+    // -------------------------------------------------------------------------
+    
+    /**
+     * Get Question of given id
+     *
+     * @param	int		question_id
+     * @return	array	question
+     */
+    public function getQuestion($question_id) {
+    	global $ilDB;
+    
+    	$set = $ilDB->query("
+			  SELECT *
+	          FROM rep_robj_xuiz_qs
+	          WHERE question_id = ".$ilDB->quote($question_id, "integer"));
+    
+    	$question = array();
+    
+    	while ($rec = $ilDB->fetchAssoc($set)){
+    		$question["question_id"] = $rec["question_id"];
+    		$question["quiz_id"] = $rec["quiz_id"];
+    		$question["type"] = $rec["type"];
+    		$question["text"] = $rec["text"];
+    		$question["solution"] = $rec["solution"];
+    		$question["furthermore"] = $rec["furthermore"];
+    
+    		return $question;
+    	}
     }
     
     // -------------------------------------------------------------------------
@@ -323,7 +357,7 @@ class ilObjMobileQuiz extends ilObjectPlugin
     // -------------------------------------------------------------------------    
     
     /**
-     * Switch questino one position down
+     * Switch question one position down
      *
      * @param	int		question_id
      */
@@ -346,34 +380,6 @@ class ilObjMobileQuiz extends ilObjectPlugin
     			}
     		}    	
     	}
-    }
-    
-    // -------------------------------------------------------------------------
-
-    /**
-     * Get Question
-     *
-     * @param	int		question_id
-     * @return	array	question
-     */
-    public function getQuestion($question_id) {
-        global $ilDB;
-
-        $set = $ilDB->query("
-			  SELECT *
-	          FROM rep_robj_xuiz_qs
-	          WHERE question_id = ".$ilDB->quote($question_id, "integer"));
-
-        $question = array();
-
-        while ($rec = $ilDB->fetchAssoc($set)){
-            $question["question_id"] = $rec["question_id"];
-            $question["quiz_id"] = $rec["quiz_id"];
-            $question["type"] = $rec["type"];
-            $question["text"] = $rec["text"];
-
-            return $question;
-        }
     }
 
     // -------------------------------------------------------------------------
@@ -422,7 +428,11 @@ class ilObjMobileQuiz extends ilObjectPlugin
     public function updateChoice($choice_id, $a_correct_value, $a_text, $choice_order){
         global $ilDB, $ilAccess, $ilUser;
 
-        $ilDB->manipulate("UPDATE rep_robj_xuiz_choices SET text= ".$ilDB->quote($a_text, "text").", correct_value= ".$ilDB->quote($a_correct_value, "text").", choice_order= ".$ilDB->quote($choice_order, "integer")." WHERE choice_id = ".$ilDB->quote($choice_id, "integer"));
+        $ilDB->manipulate("UPDATE rep_robj_xuiz_choices" 
+        		." SET text= ".$ilDB->quote($a_text, "text")
+        		.", correct_value= ".$ilDB->quote($a_correct_value, "text")
+        		.", choice_order= ".$ilDB->quote($choice_order, "integer")
+        		." WHERE choice_id = ".$ilDB->quote($choice_id, "integer"));
     }
 
     // -------------------------------------------------------------------------
@@ -613,8 +623,8 @@ class ilObjMobileQuiz extends ilObjectPlugin
 
         $set = $ilDB->query("
                     SELECT *
-		    FROM rep_robj_xuiz_rounds
-		    WHERE quiz_id = ".$ilDB->quote($this->getId(), "integer")." ORDER BY round_id DESC");
+		    		FROM rep_robj_xuiz_rounds
+		    		WHERE quiz_id = ".$ilDB->quote($this->getId(), "integer")." ORDER BY round_id DESC");
 
         $rounds = array();
         $round = array();
@@ -624,6 +634,7 @@ class ilObjMobileQuiz extends ilObjectPlugin
             $round["quiz_id"]       = $rec["quiz_id"];
             $round["start_date"]    = $rec["start_date"];
             $round["end_date"]      = $rec["end_date"];
+            $round["tiny_url"]      = $rec["tiny_url"];
             $round["type"]          = $rec["type"];
 
             $rounds[] = $round;

@@ -29,6 +29,10 @@ tabmenu_show_result#:#Runden & Auswertung
 tabmenu_edit_quiz#:#Fragen & Antworten
 tabmenu_info#:#Weitere Informationen
 
+<!-- Startpage -->
+startpage_fullscreen#:#Vollbild
+startpage_users#:#Teilnehmer
+
 <!-- Properties -->						
 edit_properties#:#Einstellungen bearbeiten
 properties_title#:#Name
@@ -38,7 +42,11 @@ properties_description#:#Beschreibung
 question_add_head#:#Fragen bearbeiten
 question_add_text#:#Frage
 question_add_type#:#Fragetyp
-question_obj_create#:#Frage wurde erfolgreich hinzugefügt
+question_message_created#:#Neue Frage erstellt.
+question_message_edited#:#Frage wurde geändert.
+
+<!-- Rounds -->
+rounds_open_quiz#:#Quizrunde öffnen
 
 <!-- Question table -->	
 question_table_text#:#Frage
@@ -49,7 +57,18 @@ question_table_delete#:#Löschen
 question_table_up#:#Hoch
 question_table_down#:#Runter
 
-<!-- Choice table Edit formular -------------------------------------------- -->	
+<!-- Choice formular -------------------------------------------- -->
+choice_form_headline#:#Fragen erstellen und bearbeiten
+choice_form_question#:#Frage
+choice_form_type#:#Typ
+choice_form_choices#:#Antwort
+choice_form_solution#:#Lösungserklärung
+choice_form_furthermore#:#Weitere Informationen
+choice_form_asterisk#:#Angabe erforderlich
+choice_form_button_add#:#Antwort hinzufügen
+choice_form_button_delete#:#Löschen
+choice_form_text_correct_label#:#Optionale richtige Lösung
+
 choice_table_text#:#Antwort
 choice_table_value#:#Wert
 choice_table_edit#:#Bearbeiten

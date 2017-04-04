@@ -1,128 +1,6 @@
-<style>
-#display_url a {
-	font-size: 3em;
-	color: #000;
-}
-#display_url1 a {
-	font-size: 2em;
-	color: #000;
-}
+<link rel="stylesheet" href="./Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/templates/css/mq_startpage.css">
 
-#btn_qr_fullscreen {	
-	font-size: 3em;
-	color: #000;
-	vertical-align: top;	
-}
-
-#backgroundPopup{
-	display:none;
-        z-index:1041;
-	position:fixed;
-	_position:absolute; /* hack for internet explorer 6*/        
-	height:100%;
-	width:100%;
-	top:0;
-	left:0;        
-	background:rgba(0,0,0,.7);        
-        text-align: center;        
-}
-
-/* Big QR-Code zoomed on click*/
-#qr_code_big{
-        display:inline-block;
-        z-index:1042;
-	position:relative;
-        top: 20px;                
-	padding:12px;
-	font-size:1.8em;
-	background:rgba(255,255,255,1);
-	border:2px solid #cecece;
-}
-
-#qr_code_image{
-	height:600px;
-}
-
-:-webkit-full-screen img {
-  width: auto;
-  height: 100%;
-}
-:-moz-full-screen img {
-  width: auto;
-  height: 100%;
-}
-
-a.increaseFont,a.decreaseFont {
-	border: 1px solid #000;
-	margin-top: 10px;
-	padding: 5px;
-	display: inline-block;
-	color: #000;
-	text-decoration: none;
-}
-
-a.increaseFont:hover,a.decreaseFont:hover {
-	border: 1px solid #fff;
-	color: #fff;
-	background-color: #000;
-	text-decoration: none;
-}
-
-.start_button {
-	font-family: Arial;
-	color: #ffffff ! important;
-	text-decoration: none ! important;
-	font-size: 18px;
-	padding: 10px;
-	text-decoration: none;
-	-webkit-border-radius: 9px;
-	-moz-border-radius: 9px;
-	-webkit-box-shadow: 0px 1px 3px #666666;
-	-moz-box-shadow: 0px 1px 3px #666666;
-	text-shadow: 1px 1px 3px #666666;
-	border: solid #003366 0px;
-	background: -webkit-gradient(linear, 0 0, 0 100%, from(#178feb),
-		to(#295a8a) );
-	background: -moz-linear-gradient(top, #178feb, #295a8a);
-	-ms-filter: progid:DXImageTransform.Microsoft.gradient(startColorStr=#178feb,
-		endColorStr=#295a8a );
-	filter: progid:DXImageTransform.Microsoft.gradient(startColorStr=#178feb,
-		endColorStr=#295a8a );
-	display: inline-block; /* IE is so silly */
-}
-
-.start_button:hover {
-	background: #325e80;
-}
-
-.stop_button {
-	font-family: Arial;
-	color: #ffffff ! important;
-	text-decoration: none ! important;
-	font-size: 18px;
-	padding: 10px;
-	text-decoration: none;
-	-webkit-border-radius: 9px;
-	-moz-border-radius: 9px;
-	-webkit-box-shadow: 0px 1px 3px #666666;
-	-moz-box-shadow: 0px 1px 3px #666666;
-	text-shadow: 1px 1px 3px #666666;
-	border: solid #003366 0px;
-	background: -webkit-gradient(linear, 0 0, 0 100%, from(#eb1717),
-		to(#7a1d1d) );
-	background: -moz-linear-gradient(top, #eb1717, #7a1d1d);
-	-ms-filter: progid:DXImageTransform.Microsoft.gradient(startColorStr=#eb1717,
-		endColorStr=#7a1d1d );
-	filter: progid:DXImageTransform.Microsoft.gradient(startColorStr=#eb1717,
-		endColorStr=#7a1d1d );
-	display: inline-block; /* IE is so silly */
-}
-
-.stop_button:hover {
-	background: #7d0f0f;
-}
-</style>
-<script type="text/javascript" language="javascript">
+<script type="text/javascript">
 	/**
 	 * Source: http://www.shopdev.co.uk/blog/text-resizing-with-jquery/
 	 **/
@@ -185,17 +63,17 @@ a.increaseFont:hover,a.decreaseFont:hover {
 		});
 		
 		// display QR Code in fullscreen
-                $("#btn_qr_fullscreen").click(function() {
+        $("#btn_qr_fullscreen").click(function() {
 
-                    //load popup
-                    loadPopup("#qr_code_big");		 
-                });
+            //load popup
+            loadPopup("#qr_code_big");		 
+        });
 		
 	
 		//Click out event!
-                $("#backgroundPopup").click(function(){
-                    disablePopup("#qr_code_big");		
-                });
+        $("#backgroundPopup").click(function(){
+            disablePopup("#qr_code_big");		
+        });
                 
 		//Press Escape event!
 		$(document).keypress(function(e){
@@ -204,39 +82,106 @@ a.increaseFont:hover,a.decreaseFont:hover {
 			}
 		});
 	});
+	
+	
+<!-- AJAX UPDATE of PARTICIPANTS -->
+$( document ).ready(function() {
+
+    var url = "{AJAX_INTERFACE_URL}";
+
+    // set timer for ajax request
+    setInterval(function() {
+
+        // ajax call
+        $.ajax({
+          type: "POST",
+          dataType: "json",
+          url: url,
+          data: {
+                'round_id':"{ROUND_ID}",
+                'action':"updateNumberOfParticipants",
+                'secret':"{AJAX_SECRET}",
+            },
+          success: function(response){
+              console.log("AJAX Request sucess: "+ response);
+
+              // update chart
+        	  $(".user-counter").html(response);
+
+            },
+          error: function(){
+              console.log("AJAX Request failed: "+url);
+          },
+        });
+
+    }, {AJAX_UPDATE_TIME});
+});
 </script>
 
-<center>
-	{STOP_LINK}
-	
-	<div  id="qr_code">            
-		<img  src='{IMAGE_URL}' alt='QR-Code' /> 
-            <div id="display_url">
-                <a href="#" title="For full view" id="btn_qr_fullscreen" class="cool_button" >
-                    <img src="./Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/templates/images/zoom.png"  width="50" height="50"/>                
-                </a>
-                <br />
-                <a href="{QUIZ_URL}">{QUIZ_URL}</a> <br />
-            </div>		
-	</div>
-        
-	
-        <div id="backgroundPopup">
-            <div  id="qr_code_big"> 
-                <img  id="qr_code_image" src='{IMAGE_URL}' alt='QR-Code' /> 
-                <div id="display_url1">
-                    <a href="{QUIZ_URL}">{QUIZ_URL}</a>      
-                </div>
+<!-- PAGE ------------------------------------------------------ -->
 
-                <div id="zoom">
-                    <a href="#" title="Increase QR-code size" class="increaseFont">
-                        <img src="./Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/templates/images/max.png"  width="25" height="25"/>
-                    </a>
-                    &nbsp;
-                    <a href="#" title="Decrease QR-code size." class="decreaseFont">
-                        <img src="./Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/templates/images/min.png"  width="25" height="25"/>
-                    </a>
-                </div>                
-            </div>            
-        </div>	
+<center>
+	<table>
+		<tr>
+			<td>
+				<a class="btn btn-lg btn-warning start-button"
+					href="{STOP_BUTTON_LINK}"
+				>
+					{STOP_BUTTON_TEXT}
+				</a>
+				<br />
+				<br />
+				<a href="#" title="For full view" 
+					id="btn_qr_fullscreen" 
+					class="btn btn-lg button-fullscreen" >
+                   <img src="./Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/templates/images/zoom.png"  width="50" height="50"/>                
+               		{LNG_FULLSCREEN}
+               </a>
+               <br />
+			   <br />
+			   <div class="startpage-counter">
+			   		{LNG_USERS}:&nbsp;&nbsp;&nbsp;<span class="user-counter">{DATA_USERS}</span>
+			   </div>
+               		
+			</td>
+			<td>
+				<div  class="qr-code">
+					<a href="{QUIZ_URL}"
+						target="_blank"
+					>         
+						<img  src='{IMAGE_URL}' alt='QR-Code' />
+						<div class="quiz-url">
+							{QUIZ_URL}
+						</div>
+					</a>
+				</div>	
+			</td>
+		</tr>	
+	</table>	
+
+        
+	<!-- full screen overlay -->
+    <div id="backgroundPopup">
+        <div  id="qr_code_big"> 
+            <img  id="qr_code_image" src='{IMAGE_URL}' alt='QR-Code' /> 
+            <div id="quiz-url-overlay">
+                <a href="{QUIZ_URL}"
+                	target="_blank"                
+                >{QUIZ_URL}</a>      
+            </div>
+
+            <div id="zoom">
+                <a href="#" title="Increase QR-code size" class="increaseFont">
+                    <img src="./Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/templates/images/max.png"  width="25" height="25"/>
+                </a>
+                &nbsp;
+                <a href="#" title="Decrease QR-code size." class="decreaseFont">
+                    <img src="./Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/templates/images/min.png"  width="25" height="25"/>
+                </a>
+            </div>                
+        </div> 
+        <div class="startpage-counter-fullscreen">
+			{LNG_USERS}:&nbsp;&nbsp;&nbsp;<span class="user-counter">{DATA_USERS}</span>
+		</div>          
+    </div>	
 </center>

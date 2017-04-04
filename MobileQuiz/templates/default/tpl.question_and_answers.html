@@ -1,6 +1,9 @@
 <link rel="stylesheet" href="./Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/lib/simplemde/simplemde.min.css">
+<link rel="stylesheet" href="./Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/templates/css/mq_choice_editor.css">
+
 <script src="./Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/lib/simplemde/simplemde.min.js"></script>
 
+<!-- JAVASCRIPT ----------------------------------------------------------------- -->
 <script>
 
     function next(elem) {
@@ -21,9 +24,17 @@
 
     // -------------------------------------------------------------------------
 
+    /**
+    * Is called by a delete button.
+    * Hides (and therefore removes a choice.
+    */    
     function removeThis(field) {
             $(field).siblings(".deleted_hidden").val("true");
             $(field).parent().slideUp();
+            
+            // hide fieldset with all elements
+            $("#"+field.getAttribute("data-choice-id")).hide();
+            
             return false;
     }
 
@@ -52,27 +63,29 @@
    
     // -------------------------------------------------------------------------
     /**
-    Event Listener for "Nach unten" und "Nach oben" Buttons
+    Event Listener for Up and Down Buttons
     */
     function moveChoiceDown(field) {
-        // Fuer Button "Nach unten"
-        // Eigene ID und naechste ID ermitteln
-        ownElement = field.parentNode;
+    	
+    	//get fieldset of whole choice
+        ownElement = field.parentNode.parentNode;    	
+    	ownID = field.getAttribute("data-row-id");
+
         ownChildRowElements = ownElement.getElementsByClassName("rowID");
         if(ownChildRowElements.length == 0) return false;
-        ownID = ownChildRowElements[0].getAttribute("value");
-        nextElement = next(field.parentNode);
+        
+ 		nextElement = next(ownElement);
         if(!nextElement) return false;
+        
         nextChildRowElements = nextElement.getElementsByClassName("rowID");
         if(nextChildRowElements.length == 0) return false;
         nextID = nextChildRowElements[0].getAttribute("value");
-        /* nextID = nextElement.getAttribute("rowID"); */
 
-        //Eigene ID und n�chste ID vertauschen
+        //Switch IDs
         ownChildRowElements[0].setAttribute("value", nextID);
         nextChildRowElements[0].setAttribute("value", ownID);
 
-        //Reihenfolge vertauschen
+        //Switch order
         ownElement.parentNode.insertBefore(nextElement, ownElement);
         return false;
     }
@@ -80,55 +93,52 @@
     // -------------------------------------------------------------------------
 	    
     function moveChoiceUp(field) {
-        // Fuer Button "Nach unten"
-        // Eigene ID und naechste ID ermitteln
-        ownElement = field.parentNode;
+    	
+    	//get fieldset of whole choice
+        ownElement = field.parentNode.parentNode;    	
+    	ownID = field.getAttribute("data-row-id");
+    	
         ownChildRowElements = ownElement.getElementsByClassName("rowID");
         if(ownChildRowElements.length == 0) return false;
-        ownID = ownChildRowElements[0].getAttribute("value");
-        nextElement = previous(field.parentNode);
+        
+        nextElement = previous(ownElement);
         if(!nextElement) return false;
+        
         nextChildRowElements = nextElement.getElementsByClassName("rowID");
         if(nextChildRowElements.length == 0) return false;
         nextID = nextChildRowElements[0].getAttribute("value");
-        /* nextID = nextElement.getAttribute("rowID"); */
 
         //Switch this and next ID
         ownChildRowElements[0].setAttribute("value", nextID);
         nextChildRowElements[0].setAttribute("value", ownID);
 
-        //Reihenfolge vertauschen
+        //Switch order
         ownElement.parentNode.insertBefore(ownElement, nextElement);
         return false;
     }
 
     // -------------------------------------------------------------------------
 
+    /**
+    * Add a new Choice from Template
+    */
     $(document).ready(function() {
             // use this to reset several forms at once
-            $("#add_choice_multiple").click(function() {
-                var $newElem = $('#fieldset_multiple_choice_999').clone().show();
-                $("#formular_multiple").append($newElem);
-                var a = $("#formular_multiple fieldset").index($newElem) + 1;
+            $("#add_choice").click(function() {
+                var $newElem = $('#fieldset_choice_999').clone().show();
+                $("#formular_choice").append($newElem);
+                var a = $("#formular_choice fieldset").index($newElem) + 1;
 
-                $newElem.attr("id", "fieldset_multiple_choice_" + a);
+                $newElem.attr("id", "fieldset_choice_" + a);
                 $newElem.html($newElem.html().replace(/999/g, a));
 
-                var b = $("#formular_multiple fieldset")[a-2];
+                var b = $("#formular_choice fieldset")[a-2];
                 if (b == null) {
                     lastID=0;
                 } else {
                     ownChildRowElements = b.getElementsByClassName("rowID");
                     lastID = ownChildRowElements[0].getAttribute("value");
                 }
-                
-                //TODO if this is not necessary any more delete
-                /*
-                newRowIdElement = $newElem.getElementsByClassName("rowID");
-                if(newRowIdElement.length == 0) return false;
-            
-                newRowIdElement[0].setAttribute("value", lastID+1);
-                */
 
                 // render the new Textarea as Editor
                 renderNewChoiceTextArea();
@@ -137,107 +147,87 @@
             });
     });
 
+ 	// -----------------------------------------------------------------------------
+    
     $(document).ready(function() {
-            // use this to reset several forms at once
-            $("#add_choice_single").click(function() {
-                
-                // Create new Choice by cloning the template
-                var $newElem = $('#fieldset_single_choice_999').clone().show();
-                $("#formular_single").append($newElem);
-                var a = $("#formular_single fieldset").index($newElem) + 1;
-                $newElem.attr("id", "fieldset_single_choice_" + a);
-                $newElem.html($newElem.html().replace(/999/g, a));
-
-                var b = $("#formular_single fieldset")[a-2];
-                if (b == null) {
-                    lastID=0;
-                } else {
-                    ownChildRowElements = b.getElementsByClassName("rowID");
-                    lastID = ownChildRowElements[0].getAttribute("value");
-                }
-                
-                //TODO if this is not necessary any more delete
-                /*
-                newRowIdElement = $newElem.getElementsByClassName("rowID");
-                
-                if(newRowIdElement.length == 0) return false;
-                
-                newRowIdElement[0].setAttribute("value", lastID+1);
-                */
-               
-                // render the new Textarea as Editor
-                renderNewChoiceTextArea();
-
-                return false;
-            });
-    });
-
-    $(document).ready(function() {
-            $("#type").change(function() {
-                    var src = $(this).val();
-                    if (src == '1') {
-                            $("#multiple_choice").show();
-                            $("#single_choice").hide();
-                            $("#numeric_choice").hide();
-                    }
-                    if (src == '2') {
-                            $("#single_choice").show();
-                            $("#multiple_choice").hide();
-                            $("#numeric_choice").hide();
-                    }
-                    if (src == '3') {
-                            $("#multiple_choice").hide();
-                            $("#single_choice").hide();
-                            $("#numeric_choice").show();
-                    }
-                    return false;
-            });
+		$("#type").change(function() {
+				
+			//hide all
+			$("#numeric_choice").hide();
+			$("#choice").hide();
+			$("#text_choice").hide();            	
+			
+			// show chosen one
+		    var src = $(this).val();
+		    if (src == '1') {
+		            $("#choice").show();
+		    }
+		    if (src == '2') {
+		            $("#choice").show();
+		    }
+		    if (src == '3') {
+		            $("#numeric_choice").show();
+		    }
+		    if (src == '4') {
+		        $("#text_choice").show();
+			}
+		    return false;
+		});
 
     });
     
+ 	// -----------------------------------------------------------------------------
+    
     // simpleMDE - Editor
     $(document).ready(function() {
-        var question = new SimpleMDE({ 
-                    element: $("#text")[0],
-                    placeholder: "Type here...",
-                    toolbar: ["bold", "italic", "code", "|",
-                        {
-                        name: "latex",
-                        action: latexAction,
-                        className: "fa fa-bolt",
-                        title: "LaTeX",
-                        },
-                        {
-                        name: "latexInline",
-                        action: latexInlineAction,
-                        className: "fa fa-bolt",
-                        title: "Inline LaTeX",
-                        }, "|",
-                        "link", "image", "|",
-                        "preview"],
-                    spellChecker: false,
-                    status: false,
-        });
-        
-        function latexAction(){
-            cm = question.codemirror;
-            var output = '';
-            var selectedText = cm.getSelection();
-            var text = selectedText || 'LaTeX';
-
-            output = '$$' + text + '$$';
-            cm.replaceSelection(output);
-        }
-        
-        function latexInlineAction(){
-            cm = question.codemirror;
-            var output = '';
-            var selectedText = cm.getSelection();
-            var text = selectedText || 'LaTeX';
-
-            output = '$$$' + text + '$$$';
-            cm.replaceSelection(output);
-        }
+    	
+    	// render simpleMDE Editor on ever textfield with this class
+    	$('.textfield-mark-full').each(function() {    	
+	       var textfield = new SimpleMDE({ 
+	                   element: this,
+	                   placeholder: "Type here...",
+	                   toolbar: ["bold", "italic", "code", "|",
+	                       {
+	                       name: "latex",
+	                       action: latexAction,
+	                       className: "fa fa-bolt",
+	                       title: "LaTeX",
+	                       },
+	                       {
+	                       name: "latexInline",
+	                       action: latexInlineAction,
+	                       className: "fa fa-bolt",
+	                       title: "Inline LaTeX",
+	                       }, "|",
+	                       "link", "image", "|",
+	                       "preview"],
+	                   spellChecker: false,
+	                   status: false,
+	       });
+	       textfield.render();
+	       
+	       // wrap $$ $$ around text when LaTeX is clicked
+			function latexAction(){	        	
+			     cm = textfield.codemirror;
+			     var output = '';
+			     var selectedText = cm.getSelection();
+			     var text = selectedText || 'LaTeX';
+			
+			     output = '$$' + text + '$$';
+			     cm.replaceSelection(output);
+			 }
+	        
+			// wrap $$$ $$$ around text when LaTeX is clicked
+	        function latexInlineAction(){	        	
+	            cm = textfield.codemirror;
+	            var output = '';
+	            var selectedText = cm.getSelection();
+	            var text = selectedText || 'LaTeX';
+	
+	            output = '$$$' + text + '$$$';
+	            cm.replaceSelection(output);
+	        }        
+    	});
                 
         // render every choice field
         $(".textfield_choice").each(function() {
@@ -254,169 +244,8 @@
         });
         
     });
-    
-    function latexAction(){
-        cm = question.codemirror;
-        var output = '';
-        var selectedText = cm.getSelection();
-        var text = selectedText || 'placeholder';
-
-        output = '$$' + text + '$$';
-        cm.replaceSelection(output);
-    }
 
 </script>
-
-<style>    
-
-    #text {
-        
-    }
-    #formular fieldset,
-    #formular_single fieldset,
-    #formular_multiple fieldset {
-        padding: 5px;
-    }
-
-    .choice {
-        margin: 3px 0px 3px 0px;
-        border: 1px solid #c9c9c9;
-        background-color: #f9f9f9;   
-
-    }
-    .textfield_choice {
-        /*width: 487px;*/
-    }
-    .choice_actions{
-    }
-    .choice_actions_label {
-        font-size: 0.9em;
-        margin-right: 10px;
-    }
-
-    #numeric_choice label {
-        display:inline-block;
-        width: 150px;
-        font-size: 10pt;
-        padding:5px;
-    }
-
-    #numeric_choice input {
-        width: 220px;
-        margin-top:5px;
-    }
-
-    .ilFormValue{
-        padding-left: 10px;        
-        width: 700px;
-    }
-    
-    a.add_button, a.add_button:hover {
-        -moz-border-radius:4px;
-        -webkit-border-radius:4px;
-        border-radius:4px;
-        background:#04c904; background: -moz-linear-gradient(top, #04c904 0%, #3d8f0e 100%);background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#04c904), color-stop(100%,#3d8f0e));;
-        filter:progid:DXImageTransform.Microsoft.gradient( startColorstr='#04c904', endColorstr='#3d8f0e',GradientType=0 );
-        border:1px solid #656565;    
-        text-shadow:0 -1px 1px rgba(0,0,0,0.3);
-        color:#FFFFFF;
-        padding:0px;
-        font-weight:bold;
-        font-family:'Helvetica Neue', Helvetica, Arial, sans-serif;
-        font-size:13px;
-        cursor:pointer;
-        width:90px;
-        height:20px;
-        text-align:center;
-        display:inline-block;
-        font-size:11px;
-        text-decoration: none;
-    }
-
-    a.delete_button, a.delete_button:hover {
-        -moz-border-radius:4px;
-        -webkit-border-radius:4px;
-        border-radius:4px;
-        background:#e61919; background: -moz-linear-gradient(top, #e61919 0%, #ad1a26 100%);background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#e61919), color-stop(100%,#ad1a26));;
-        filter:progid:DXImageTransform.Microsoft.gradient( startColorstr='#e61919', endColorstr='#ad1a26',GradientType=0 );
-        border:1px solid #656565;
-        text-shadow:0 -1px 1px rgba(0,0,0,0.3);
-        color:#FFFFFF;
-        padding:0px;
-        font-weight:bold;
-        font-family:'Helvetica Neue', Helvetica, Arial, sans-serif;
-        font-size:11px;
-        cursor:pointer;
-        width:60px;
-        height:20px;
-        text-align:center;
-        display:inline-block;
-        text-decoration: none;
-        float:right;
-        margin: 5px;    
-    }
-
-
-    a.upBTN, a.upBTN:hover, a.downBTN, a.downBTN:hover {
-        -moz-border-radius:4px;
-        -webkit-border-radius:4px;
-        border-radius:4px;
-        background:#1980E6; background: -moz-linear-gradient(top, #1980E6 0%, #1259A1 100%);background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#1259A1), color-stop(100%,#1259A1));;
-        filter:progid:DXImageTransform.Microsoft.gradient( startColorstr='#1980E6', endColorstr='#1259A1',GradientType=0 );
-        border:1px solid #656565;
-        text-shadow:0 -1px 1px rgba(0,0,0,0.3);
-        color:#FFFFFF;
-        padding:0px;
-        font-weight:bold;
-        font-family:'Helvetica Neue', Helvetica, Arial, sans-serif;
-        font-size:13px;
-        cursor:pointer;
-        width:30px;
-        height:20px;
-        text-align:center;
-        display:inline-block;
-        text-decoration: none;
-
-        float:right;
-        margin: 5px;
-    }
-
-    a.upBTN:hover,a.downBTN:hover {
-        background:#39A0E6; background: -moz-linear-gradient(top, #39A0E6 0%, #3279C1 100%);background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#3279C1), color-stop(100%,#3279C1));;
-        box-shadow:1px 1px 1px rgba(0,0,0,0.6);
-        -moz-box-shadow:1px 1px 1px rgba(0,0,0,0.6);
-        -webkit-box-shadow:1px 1px 1px rgba(0,0,0,0.6);
-    }
-    a.delete_button:hover {
-        background:#F63939; background: -moz-linear-gradient(top, #F63939 0%, #Cd3a56 100%);background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#Cd3a56), color-stop(100%,#Cd3a56));;
-        box-shadow:1px 1px 1px rgba(0,0,0,0.6);
-        -moz-box-shadow:1px 1px 1px rgba(0,0,0,0.6);
-        -webkit-box-shadow:1px 1px 1px rgba(0,0,0,0.6);
-    }
-    a.add_button:hover {
-        /*background:#24E924; background: -moz-linear-gradient(top, #24E924 0%, #5dAf2e 100%);background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#5dAf2e), color-stop(100%,#5dAf2e));;*/
-        box-shadow:1px 1px 1px rgba(0,0,0,0.6);
-        -moz-box-shadow:1px 1px 1px rgba(0,0,0,0.6);
-        -webkit-box-shadow:1px 1px 1px rgba(0,0,0,0.6);
-    }
-
-    /* SimpleMDE*/
-    .editor-toolbar::before{
-        margin-bottom: 0px;
-    }
-    .editor-toolbar::after{
-        margin-top: 0px;    
-    }
-    .CodeMirror, 
-    .CodeMirror-scroll {
-        min-height: 100px;
-    }
-    .choice_area .CodeMirror, 
-    .choice_area .CodeMirror-scroll {
-        min-height: 50px;
-    }
-
-</style>
 
 <!-- HTML page structure ------------------------------------------------------>
 
@@ -425,182 +254,238 @@
 	method="post">
 	<!-- Please note the usage of datatable attribute which is non-standard
 	but ensures that JAWS treats this table as a layout table -->
-	<table class="ilForm" width="" datatable="0" style="text-align: left;">
+	<table class="ilForm" datatable="0" style="text-align: left;">
 		<tbody>
+			<!-- Headline and Save Button ------------------------------------------------------------- -->
 			<tr class="ilFormHeader">
-                                <td class="ilFormHeader" colspan="2">
-                                        <div style="float: right; margin-left: 20px;">
-                                                <input class="submit" type="SUBMIT" name="{COMMAND}"
-                                                        value="{SUBMIT_BUTTON}">
-                                                <input type="hidden" name="question_id" value="{QUESTION_ID}">
-                                        </div>
-                                        <h3 class="ilFormHeader ilHeader ilTableHeaderTitle">
-                                                {NEW_QUESTION}
-                                        </h3>
-                                        <div class="ilFormInfo" style="margin-left: 0px;"></div>
-                                </td>
+	            <td class="ilFormHeader" colspan="2">
+	                <div style="float: right; margin-left: 20px;">
+	                        <input class="btn btn-default" type="SUBMIT" name="{COMMAND}" value="{SUBMIT_BUTTON}">
+	                        <input type="hidden" name="question_id" value="{QUESTION_ID}">
+	                </div>
+	                <h3 class="ilFormHeader ilHeader ilTableHeaderTitle">
+	                        {CHOICES_HEADLINE}
+	                </h3>
+	                <div class="ilFormInfo" style="margin-left: 0px;"></div>
+	            </td>
 			</tr>
-                        <!-- Question Formular -->
+			
+            <!-- Question Formular -------------------------------------------------------------------------- -->
 			<tr>
 				<td class="ilFormOption" id="il_prop_cont_text">
-                                    <label for="text">{QUESTION}<span class="asterisk">*</span></label>
-                                </td>
+                	<label for="text">{QUESTION}<span class="asterisk">*</span></label>
+                </td>
 				<td class="ilFormValue">
-                                    <textarea name="text" id="text" class="textfield_question" rows="3">{QUESTION_TEXT}</textarea>
-                                </td>
+                	<textarea name="text" id="text" class="textfield_question textfield-mark-full" rows="3">{QUESTION_TEXT}</textarea>
+               	</td>
 			</tr>
+			
+			<!-- Horizontal line -->
+            <tr>
+          		<td colspan="2"><hr class="table-seperator"/></td>
+    		</tr>
+			
+			<!-- Question Type -------------------------------------------------------------------------- -->
 			<tr {HIDE_QUESTION_TYPE}>
 				<td class="ilFormOption" id="il_prop_cont_type"><label
 					for="type">{QUESTION_TYPE} <span class="asterisk">*</span></label></td>
-				<td class="ilFormValue"><select id="type" name="type" {DISABLE_OPTION_FORM}>
+				<td class="ilFormValue">
+					<select id="type" name="type" {DISABLE_OPTION_FORM}>
 						<option value="1" {SELECTED_MULTIPLE} >Multiple Choice</option>
 						<option value="2" {SELECTED_SINGLE} >Single Choice</option>
 						<option value="3" {SELECTED_NUMERIC} >Numeric</option>
-				</select></td>
-			</tr>
-                        
-                        <!-- Choice Formular -->
-			<tr>
-				<td class="ilFormOption" id="il_prop_cont_type">{CHOICES}<span class="asterisk">*</span></td>
-				<td class="ilFormValue">
-
-					<!--  Multiple Choice BEGIN -->
-					<div id="multiple_choice" class="choice_area" {HIDE_MULTIPLE_CHOICE_BLOCK}>
-						<div id="formular_multiple">
-						<!-- BEGIN multiple_choice_block -->
-						<fieldset id="fieldset_multiple_choice_{MUL_COU}" class="choice" style="display: {MUL_SHOW};">
-							<input type="hidden" name="rowID[{MUL_COU}]" value="{ROW_ID}" class="rowID">
-							<textarea name="choice_multiple_text[{MUL_COU}]" class="textfield_choice" rows="3">{MUL_TEXT}</textarea>
-                                                        <div class="choice_actions">
-                                                            <input type="hidden" name="choice_multiple_id[{MUL_COU}]" value="{MUL_ID}">
-                                                            <input type="hidden" name="choice_multiple_deleted[{MUL_COU}]" value="{MUL_DEL}" class="deleted_hidden">
-                                                            <input type="radio" name="choice_multiple_type[{MUL_COU}]" value="1" id="correct[{MUL_COU}]" {MUL_TYPE_C}> 
-                                                                <label for="correct[{MUL_COU}]" class="choice_actions_label">correct</label>
-                                                            <input type="radio" name="choice_multiple_type[{MUL_COU}]" value="2" id="neutral[{MUL_COU}]" {MUL_TYPE_N}> 
-                                                                <label for="neutral[{MUL_COU}]" class="choice_actions_label">neutral</label>
-                                                            <input type="radio" name="choice_multiple_type[{MUL_COU}]" value="0" id="incorrect[{MUL_COU}]" {MUL_TYPE_I}> 
-                                                                <label for="incorrect[{MUL_COU}]" class="choice_actions_label">incorrect</label>
-
-                                                            <a href="#" id="delete_choice[{MUL_COU}]" class="delete_choice delete_button" onclick="removeThis(this);" title="{DELETE_INFO}">Delete</a>
-                                                            <a href="#" class="downBTN" onclick="moveChoiceDown(this);  return false;" title="{MOVE_DOWN_INFO}">&#9660;</a>
-                                                            <a href="#" class="upBTN"   onclick="moveChoiceUp(this);    return false;" title="{MOVE_UP_INFO}">&#9650;</a>		
-                                                        <div>
-						</fieldset>
-						<!-- END multiple_choice_block -->
-						</div>
-						<div style="display:block; text-align:right;">
-							<a href="#" id="add_choice_multiple" class="add_button">Add Antwort</a>
-						</div>
-                                                            
-                                                <!-- Template for adding-->
-						<fieldset id="fieldset_multiple_choice_999" class="choice" style="display: none;">
-							<input type="hidden" name="rowID[999]" value="" class="rowID">
-							<textarea name="choice_multiple_text[999]" class="textfield_choice" rows="3">{MUL_TEXT}</textarea>
-                                                        <div class="choice_actions">
-                                                            <input type="hidden" name="choice_multiple_id[999]" value="">
-                                                            <input type="hidden" name="choice_multiple_deleted[999]" value="0" class="deleted_hidden">
-                                                            <input type="radio" name="choice_multiple_type[999]" value="1" id="correct[999]"> 
-                                                                <label for="correct[999]" class="choice_actions_label">correct</label>
-                                                            <input type="radio" name="choice_multiple_type[999]" value="2" id="neutral[999]" checked> 
-                                                                <label for="neutral[999]" class="choice_actions_label">neutral</label>
-                                                            <input type="radio" name="choice_multiple_type[999]" value="0" id="incorrect[999]"> 
-                                                                <label for="incorrect[999]" class="choice_actions_label">incorrect</label>
-
-                                                            <a href="#" id="delete_choice[999]" class="delete_choice delete_button" onclick="removeThis(this);" title="{DELETE_INFO}">Delete</a>
-                                                            <a href="#" class="downBTN" onclick="moveChoiceDown(this);  return false;" title="{MOVE_DOWN_INFO}">&#9660;</a>
-                                                            <a href="#" class="upBTN"   onclick="moveChoiceUp(this);    return false;" title="{MOVE_UP_INFO}">&#9650;</a>		
-                                                        <div>
-						</fieldset>
-                                                <!-- End Template -->
-					</div>
-
-					<!--  Single Choice BEGIN -->
-					<div id="single_choice" class="choice_area" {HIDE_SINGLE_CHOICE_BLOCK}>
-                                            <div id="formular_single">
-						<!-- BEGIN single_choice_block -->
-						<fieldset id="fieldset_single_choice_{MUL_COU}" class="choice" style="display: {MUL_SHOW};">
-							<input type="hidden" name="rowID[{MUL_COU}]" value="{ROW_ID}" class="rowID">
-							<textarea name="choice_single_text[{MUL_COU}]" class="textfield_choice" rows="3">{MUL_TEXT}</textarea>
-							<input type="hidden" name="choice_single_id[{MUL_COU}]" value="{MUL_ID}">
-							<input type="hidden" name="choice_single_deleted[{MUL_COU}]" value="{MUL_DEL}" class="deleted_hidden">
-							<input type="radio" name="choice_single_type[{MUL_COU}]" value="1" id="correct[{MUL_COU}]" {MUL_TYPE_C}> 
-                                                            <label for="correct[{MUL_COU}]" class="choice_actions_label">correct</label>
-							<input type="radio" name="choice_single_type[{MUL_COU}]" value="2" id="neutral[{MUL_COU}]" {MUL_TYPE_N}>
-                                                            <label for="neutral[{MUL_COU}]" class="choice_actions_label">neutral</label>
-							<input type="radio" name="choice_single_type[{MUL_COU}]" value="0" id="incorrect[{MUL_COU}]" {MUL_TYPE_I}> 
-                                                            <label for="incorrect[{MUL_COU}]" class="choice_actions_label">incorrect</label>
-							
-							<a href="#" id="delete_choice_{MUL_COU}" class="delete_choice delete_button" onclick="removeThis(this);" title="{DELETE_INFO}">Delete</a>
-                                                        <a href="#" class="downBTN" onclick="moveChoiceDown(this);  return false;" title="{MOVE_DOWN_INFO}">&#9660;</a>
-                                                        <a href="#" class="upBTN"   onclick="moveChoiceUp(this);    return false;" title="{MOVE_UP_INFO}">&#9650;</a>							
-						</fieldset>
-						<!-- END single_choice_block -->
-                                            </div>
-                                            <div style="display:block; text-align:right;">
-                                                    <a href="#" id="add_choice_single" class="add_button">Add Choice</a>
-                                            </div>
-                                            
-                                            <!-- Template for adding-->
-                                            <fieldset id="fieldset_single_choice_999" class="choice" style="display: none;">
-                                                    <input type="hidden" name="rowID[999]" value="" class="rowID">
-                                                    <textarea name="choice_single_text[999]" class="textfield_choice" rows="3">{MUL_TEXT}</textarea>
-                                                    <input type="hidden" name="choice_single_id[999]" value="">
-                                                    <input type="hidden" name="choice_single_deleted[999]" value="0" class="deleted_hidden">
-                                                    <input type="radio" name="choice_single_type[999]" value="1" id="correct[999]">
-                                                        <label for="correct[999]" class="choice_actions_label">correct</label>
-                                                    <input type="radio" name="choice_single_type[999]" value="2" id="neutral[999]" checked>
-                                                        <label for="neutral[999]" class="choice_actions_label">neutral</label>
-                                                    <input type="radio" name="choice_single_type[999]" value="0" id="incorrect[999]">
-                                                        <label for="incorrect[999]" class="choice_actions_label">incorrect</label>
-
-                                                    <a href="#" id="delete_choice[999]" class="delete_choice delete_button"  onclick="removeThis(this);" title="{DELETE_INFO}">Delete</a>
-                                                    <a href="#" class="downBTN" onclick="moveChoiceDown(this);  return false;" title="{MOVE_DOWN_INFO}">&#9660;</a>
-                                                    <a href="#" class="upBTN"   onclick="moveChoiceUp(this);    return false;" title="{MOVE_UP_INFO}">&#9650;</a>							
-                                            </fieldset>
-                                            <!-- End Template -->
-					</div>
-					<!--  Single Choice END -->
-
-
-					<!--  Numeric Choice BEGIN -->
-					<div id="numeric_choice" {HIDE_NUMERIC_BLOCK}>
-						<div id="formular">
-							<fieldset id="fieldset_multiple_choice_1" class="choice" >
-								<input type="hidden" name="choice_numeric_id" value="{CHOICE_ID}">
-
-								<label for="choice_numeric_minimum">{MINIMUM}<span class="asterisk">*</span></label>
-									<input type="Text" name="choice_numeric_minimum"
-														id="choice_numeric_minimum" value="{MINIMUM_VAL}"/><br />
-								<label for="choice_numeric_maximum">{MAXIMUM}<span class="asterisk">*</span></label>
-								<input type="Text" name="choice_numeric_maximum"
-														id="choice_numeric_maximum" value="{MAXIMUM_VAL}"/><br />
-								<label for="choice_numeric_step">{STEP}<span class="asterisk">*</span></label>
-								<input type="Text" name="choice_numeric_step"
-														id="choice_numeric_step" value="{STEP_VAL}"/><br />
-								<label for="">{CORRECT_VALUE}</label>
-								<input type="Text" name="choice_numeric_correct_value"
-														id="choice_numeric_correct_value" value="{CORRECT_VALUE_VAL}"/><br />
-								<label for="choice_numeric_tol_range">{TOLERANCE_RANGE}</label>
-								<input type="Text" name="choice_numeric_tol_range"
-														id="choice_numeric_tol_range" value="{TOLERANCE_RANGE_VAL}"/><br />
-							</fieldset>
-						</div>
-					</div>
-					<!--  Numeric Choice END -->
-
+						<option value="4" {SELECTED_TEXT} >Text</option>
+					</select>
 				</td>
 			</tr>
                         
-                        <!-- Footer -->
+            <!-- Choice Formular ------------------------------------------------------------------------ -->
+			<tr>
+				<td class="ilFormOption" id="il_prop_cont_type">{CHOICES}<span
+					class="asterisk">*</span></td>
+				<td class="ilFormValue">
+				
+					<!-- Choice Start ----------------------------------------------------------- -->
+					<div id="choice" class="choice_area" {HIDE_CHOICE_BLOCK}>
+						<div id="formular_choice">
+							
+							<!-- !! do not change the next comment, it is necessary for ILIAS ilTemplate -->
+							<!-- BEGIN choice_block -->
+							<fieldset id="fieldset_choice_{MUL_COU}" class="choice" style="display: {MUL_SHOW};">
+								<input id="rowID[{MUL_COU}]" type="hidden" name="rowID[{MUL_COU}]" value="{ROW_ID}" class="rowID">
+								<textarea name="choice_text[{MUL_COU}]" class="textfield_choice" rows="3">{MUL_TEXT}</textarea>
+								<div class="choice_actions">
+									<input type="hidden" name="choice_id[{MUL_COU}]" value="{MUL_ID}"> 
+									<input type="hidden" name="choice_deleted[{MUL_COU}]" value="{MUL_DEL}"	class="deleted_hidden"> 
+									
+									<input type="radio"	name="choice_type[{MUL_COU}]" value="1"	id="correct[{MUL_COU}]"{MUL_TYPE_C}> 
+									<label for="correct[{MUL_COU}]" class="choice_actions_label">correct</label>
+									<input type="radio" name="choice_type[{MUL_COU}]" value="2" id="neutral[{MUL_COU}]"{MUL_TYPE_N}> 
+									<label for="neutral[{MUL_COU}]" class="choice_actions_label">neutral</label>
+									<input type="radio" name="choice_type[{MUL_COU}]" value="0" id="incorrect[{MUL_COU}]"{MUL_TYPE_I}> 
+									<label for="incorrect[{MUL_COU}]" class="choice_actions_label">incorrect</label>
+
+									<a href="#" id="delete_choice[{MUL_COU}]"
+										data-choice-id="fieldset_choice_{MUL_COU}"
+										class="btn btn-danger btn-xs right"
+										onclick="removeThis(this); return false;" 
+										title="{DELETE_INFO}"><span class="glyphicon glyphicon-remove"></span></a> 
+									<a	href="#" 
+										class="btn btn-default btn-xs right"
+										data-row-id="{ROW_ID}"
+										onclick="moveChoiceDown(this); return false;"
+										title="{MOVE_DOWN_INFO}"><span class="glyphicon glyphicon-chevron-down"></span></a> 
+									<a href="#" 
+										class="btn btn-default btn-xs right"
+										data-row-id="{ROW_ID}"
+										onclick="moveChoiceUp(this); return false;"
+										title="{MOVE_UP_INFO}"><span class="glyphicon glyphicon-chevron-up"></span></a>
+								</div>
+							</fieldset>
+							<!-- END choice_block -->
+						</div>
+						
+						<!-- Add Multiple Choice Button -->
+						<div style="display: block; text-align: right;">
+							<a href="#" 
+								id="add_choice" 
+								class="btn btn-success btn-xs"
+								>{BUTTON_CHOICE_ADD}</a>
+						</div>
+
+						<!-- Multiple Choice TEMPLATE --------------------------------------------- -->
+						<fieldset id="fieldset_choice_999" class="choice" style="display: none;">
+							<input id="rowID[999]" type="hidden" name="rowID[999]" value="" class="rowID" />
+							<textarea name="choice_text[999]"
+								class="textfield_choice" rows="3">{MUL_TEXT}</textarea>
+							<div class="choice_actions">
+								<input type="hidden" name="choice_id[999]" value="">
+								<input type="hidden" name="choice_deleted[999]"
+									value="0" class="deleted_hidden"> 
+								<input type="radio"
+									name="choice_type[999]" value="1" id="correct[999]">
+								<label for="correct[999]" class="choice_actions_label">correct</label>
+								<input type="radio" name="choice_type[999]" value="2"
+									id="neutral[999]" checked /> 
+								<label for="neutral[999]"
+									class="choice_actions_label">neutral</label> 
+								<input type="radio" name="choice_type[999]" value="0"
+									id="incorrect[999]" /> 
+								<label for="incorrect[999]"
+									class="choice_actions_label">incorrect</label> 
+								<a href="#"	id="delete_choice[999]" 
+									data-choice-id="fieldset_choice_999"
+									class="btn btn-danger btn-xs right"
+									onclick="removeThis(this);  return false;" 
+									title="{DELETE_INFO}"><span class="glyphicon glyphicon-remove"></span></a> 
+								<a	href="#" 
+									class="btn btn-default btn-xs right"
+									data-row-id="{ROW_ID}"
+									onclick="moveChoiceDown(this);  return false;"
+									title="{MOVE_DOWN_INFO}"><span class="glyphicon glyphicon-chevron-down"></span></a> 
+								<a href="#" 
+									class="btn btn-default btn-xs right"
+									data-row-id="{ROW_ID}"
+									onclick="moveChoiceUp(this);    return false;"
+									title="{MOVE_UP_INFO}"><span class="glyphicon glyphicon-chevron-up"></span></a>
+							</div>
+						</fieldset>
+						<!-- End Template -->
+					</div> 				
+					
+					<!--  Numeric Choice BEGIN ------------------------------------------------------------- -->
+					<div id="numeric_choice" {HIDE_NUMERIC_BLOCK}>
+						<div id="formular">
+							<fieldset id="fieldset_numeric" class="choice">
+								<input type="hidden" name="choice_numeric_id"
+									value="{CHOICE_ID}"> 
+								<label for="choice_numeric_minimum">{MINIMUM}<span
+									class="asterisk">*</span></label> 
+								<input type="Text"
+									name="choice_numeric_minimum" id="choice_numeric_minimum"
+									value="{MINIMUM_VAL}" /><br /> 
+								<label for="choice_numeric_maximum">{MAXIMUM}<span
+									class="asterisk">*</span></label> 
+								<input type="Text"
+									name="choice_numeric_maximum" id="choice_numeric_maximum"
+									value="{MAXIMUM_VAL}" /><br /> 
+								<label for="choice_numeric_step">{STEP}<span class="asterisk">*</span></label>
+								<input type="Text" name="choice_numeric_step"
+									id="choice_numeric_step" value="{STEP_VAL}" /><br /> 
+								<label for="">{CORRECT_VALUE}</label> 
+								<input type="Text"
+									name="choice_numeric_correct_value"
+									id="choice_numeric_correct_value" value="{CORRECT_VALUE_VAL}" /><br />
+								<label for="choice_numeric_tol_range">{TOLERANCE_RANGE}</label>
+								<input type="Text" name="choice_numeric_tol_range"
+									id="choice_numeric_tol_range" value="{TOLERANCE_RANGE_VAL}" /><br />
+							</fieldset>
+						</div>
+					</div> 
+					<!--  Numeric Choice END -->
+
+					<!--  Text Choice Start ------------------------------------------------------------- -->
+					<div id="text_choice" {HIDE_TEXT_BLOCK}>
+						<div id="formular">
+							<fieldset id="fieldset_text" class="choice">
+								<input type="hidden" name="choice_text_id"
+									value="{CHOICE_ID}"> 
+								<label for="choice_text_value">{TEXT_CORRECT_LABEL}: </label>
+								<input type="text"
+									name="choice_text_value" 
+									id="choice_text_value"
+									class="choice_text_input"
+									value="{TEXT_CORRECT_VALUE}" /><br /> 
+							</fieldset>
+						</div>
+					</div> 
+					<!--  Text Choice END -->
+
+				</td>
+			</tr>
+
+			<!-- Horizontal line -->
+            <tr>
+          		<td colspan="2"><hr class="table-seperator" /></td>
+    		</tr>
+            
+            <!-- Solution Formular -------------------------------------------------------------------- -->
+			<tr class="table-row-solution">
+				<td class="ilFormOption" id="il_prop_cont_text">
+                	<label for="solution">{SOLUTION}</label>
+                </td>
+				<td class="ilFormValue">
+                	<textarea name="solution" id="solution" class="textfield_solution textfield-mark-full" rows="2">{SOLUTION_TEXT}</textarea>
+               	</td>
+			</tr>
+			
+			<!-- Further Information Formular -------------------------------------------------------------------- -->
+			<tr class="table-row-furthermore">
+				<td class="ilFormOption" id="il_prop_cont_text">
+                	<label for="furthermore">{FURTHERMORE}</label>
+                </td>
+				<td class="ilFormValue">
+                	<textarea name="furthermore" id="furthermore" class="textfield_furthermore textfield-mark-full" rows="2">{FURTHERMORE_TEXT}</textarea>
+               	</td>
+			</tr>
+                    
+                    
+            <!-- Horizontal line -->
+            <tr>
+          		<td colspan="2"><hr class="table-seperator" /></td>
+    		</tr>
+    		    
+            <!-- Footer -->
 			<tr>
 				<td class="ilFormFooter" colspan="2">
 					<div style="float: left;">
-						<span class="asterisk">*</span><span class="small">
-							Erforderliche Angabe</span>
+						<span class="asterisk">*</span>
+						<span class="small">
+							{ASTERISK_TEXT}
+						</span>
 					</div>
 					<div align="right">
-						<input class="submit" type="SUBMIT" name="{COMMAND}"
-							value="{SUBMIT_BUTTON}">
+						<input class="btn btn-default" type="SUBMIT" name="{COMMAND}" value="{SUBMIT_BUTTON}">
 					</div>
 				</td>
 			</tr>

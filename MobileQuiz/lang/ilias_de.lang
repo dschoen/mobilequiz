@@ -143,8 +143,8 @@ no#:#Nein
 question_delete#:#Löschen
 question_edit#:#Bearbeiten
 question_table_head#:#Fragen
-round_start#:#Neue Runde starten
-round_stop#:#Aktuelle Runde beenden
+round_start#:#Runde starten
+round_stop#:#Runde beenden
 round#:#Runde
 open_quiz#:#Quiz starten
 msg_obj_create#:#Erfolgreich

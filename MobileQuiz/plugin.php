@@ -25,7 +25,7 @@
 $id = "xuiz";
  
 // code version; must be changed for all code changes
-$version = "1.2.0";
+$version = "1.2.1";
  
 // ILIAS min and max version; must always reflect the versions that should
 // run with the plugin

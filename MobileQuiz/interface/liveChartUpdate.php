@@ -81,7 +81,7 @@ function getDataChoice($question_id, $round_id){
     $return= array();
     
     // get all choices
-    $choices = getChoices($question_id);
+    $choices = getChoicesOfQuestion($question_id);
 
     if(!count($choices) == 0) {
         $return = array();
@@ -102,7 +102,7 @@ function getDataNumeric($question_id, $round_id){
     $return= array();
     
     // get all choices
-    $choices    = getChoices($question_id);
+    $choices    = getChoicesOfQuestion($question_id);
     $choice     = $choices[0];
    
     $numeric_values     = (explode(';',$choices[0]['text']));
@@ -147,7 +147,7 @@ function getDataText($question_id, $round_id){
 	$return= array();
 
 	// get the choice
-	$choices = getChoices($question_id);
+	$choices = getChoicesOfQuestion($question_id);
 
 	if(count($choices) == 0) {
 		return $return;	
@@ -191,7 +191,7 @@ function getDataText($question_id, $round_id){
 
 // -----------------------------------------------------------------------------
 
-function getChoices($question_id) {
+function getChoicesOfQuestion($question_id) {
     $db = getDB();
 
     $st = $db->prepare("SELECT * FROM rep_robj_xuiz_choices WHERE question_id = :question_id ORDER BY choice_order");

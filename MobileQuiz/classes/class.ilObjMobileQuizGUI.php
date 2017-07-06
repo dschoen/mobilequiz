@@ -509,12 +509,12 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
                 $mainworksheet->writeString(0, $column, ilExcelUtils::_convert_text("Anzahl", "excel", $format_bold));
 
                 $round_id   = $round['round_id'];                
-                $questions  = $this->object->getQuestions($this->object->getId());
+                $questions  = $this->object->getQuestionsOfQuiz($this->object->getId());
 
                 if(!count($questions) == 0) {
                     foreach ($questions as $question){
 
-                        $choices = $this->object->getChoices($question['question_id']);
+                        $choices = $this->object->getChoicesOfQuestion($question['question_id']);
                         $answers = $this->object->getAnswers($round_id);
 
                         switch ($question['type']) {
@@ -757,7 +757,7 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
         $html;
         $answers        = $this->object->getAnswers($round_id);
         $answer_count   = count($this->object->getDistinctAnswers($round_id));
-        $questions      = $this->object->getQuestions($this->object->getId());
+        $questions      = $this->object->getQuestionsOfQuiz($this->object->getId());
 
         
         // For every question render the answers and add them
@@ -881,7 +881,7 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
         $datas = $this->getResultDataForNumeric($question, $answers, $answer_count, $round_id);
 
         // Get the questions parameters from the database
-        $parameters	= $this->object->getChoices($question['question_id']);
+        $parameters	= $this->object->getChoicesOfQuestion($question['question_id']);
         $numeric_values     = (explode(';',$parameters[0]['text']));
         $numeric_min        = $numeric_values[0];
         $numeric_max        = $numeric_values[1];
@@ -1046,7 +1046,7 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
      */
     public function getResultDataForMultipleChoice($question, $answers, $answer_count, $round_id) {
         // Get the questions' choices from the database
-        $choices = $this->object->getChoices($question['question_id']);
+        $choices = $this->object->getChoicesOfQuestion($question['question_id']);
 
         if(!count($choices) == 0) {
             $return = array();
@@ -1083,7 +1083,7 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
     public function getResultDataForNumeric($question, $answers, $answer_count, $round_id) {
         // Get the questions' choice from the database
         $answers	= $this->object->getAnswers($round_id);
-        $parameters	= $this->object->getChoices($question['question_id']);
+        $parameters	= $this->object->getChoicesOfQuestion($question['question_id']);
 
         $numeric_values     = (explode(';',$parameters[0]['text']));
         $numeric_min        = $numeric_values[0];
@@ -1150,7 +1150,7 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
      */
     public function getResultDataForText($question, $answers, $answer_count, $round_id) {
     	// Get the questions' choices from the database
-    	$choices = $this->object->getChoices($question['question_id']);
+    	$choices = $this->object->getChoicesOfQuestion($question['question_id']);
     	
     	// there should only be one choice
     	$choice = $choices[0];
@@ -1247,7 +1247,7 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
         // get the choice of the numeric answer and read out the correct number and the tolerance range
         // both are necessary to count the correct answers
         // there is only one choice for a numeric question
-        $choices	= $this->object->getChoices($question_id);
+        $choices	= $this->object->getChoicesOfQuestion($question_id);
         // extract the variables from the text-field
         $numeric_values		= (explode(';',$choices[0]['text']));
         $correct_number		= $numeric_values[3];
@@ -1329,9 +1329,7 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
         $tbl->addColumn($this->txt("question_table_down"),"downArrow", '3%');
         
         // write two columns with arrows
-
-        // Get the questions from the database
-        $questions = $this->object->getQuestions();
+        $questions = $this->object->getQuestionsOfQuiz($this->object->getId());
         $result = array();
 
         if(!count($questions) == 0) {

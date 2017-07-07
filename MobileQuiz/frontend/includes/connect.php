@@ -23,15 +23,16 @@
 
 /*
 	This file creates a new MySQL connection using the PDO class.
-	The login details are taken from config.php.
 */
 
-try {
-    $db = new PDO(
-	"mysql:host=".FRONTEND_DB_HOST.";dbname=".FRONTEND_DB_NAME.";charset=utf8",
-	FRONTEND_DB_USER,
-	FRONTEND_DB_PASS
-	);
+try {	
+	$dbConfig = new ilDBConnector();
+	
+	$db = new PDO(
+			"mysql:host=".$dbConfig->HOST.";dbname=".$dbConfig->NAME.";charset=utf8",
+			$dbConfig->USER,
+			$dbConfig->PASS
+		);
 	
     $db->query("SET NAMES 'utf8'");
     

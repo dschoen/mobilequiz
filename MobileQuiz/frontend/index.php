@@ -26,10 +26,8 @@
  * It will route requests to the appropriate controllers
 */
 
-// load local configurations from Plugin environment
-// Comment this if you outsource the Frontend out from the Plugin
-require_once(__DIR__."/../configuration.local.php");
-require_once(__DIR__."/../configuration.php");
+// Change this to the path of the ilDBConnector, if you change the Frontendends position
+require_once(__DIR__."/../interface/ilDBConnector.php");
 
 require_once "includes/config.php";
 require_once "includes/connect.php";
@@ -41,7 +39,6 @@ require_once "includes/models/answer.model.php";
 require_once "includes/models/round.model.php";
 require_once "includes/controllers/home.controller.php";
 require_once "includes/controllers/quiz.controller.php";
-
 require_once "assets/markdown/Markdown.inc.php";
 
 try {

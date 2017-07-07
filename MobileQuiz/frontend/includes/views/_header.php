@@ -1,3 +1,6 @@
+<?php 
+	$ilDBCon = new ilDBConnector();
+?>
 <!DOCTYPE html> 
 <html> 
 	<head> 
@@ -17,7 +20,7 @@
     <!-- Enable LaTeX Support -------------------------------------------------- -->
     <script type="text/javascript">
                 
-        if ( <?php echo LATEX_TRANSFORMATION ?> ) {
+        if ( <?php echo $ilDBCon->LATEX_ACTIVE ?> ) {
             (function () {
               var head = document.getElementsByTagName("head")[0], script;
               script = document.createElement("script");
@@ -45,5 +48,4 @@
 	<div data-role="header" data-theme="a">
 		<h1><?php echo $title ?></h1>
 	</div>
-
 	<div data-role="content">

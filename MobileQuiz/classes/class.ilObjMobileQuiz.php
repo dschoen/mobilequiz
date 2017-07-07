@@ -23,6 +23,8 @@
 
 include_once("./Services/Object/classes/class.ilObject.php");
 include_once("./Services/Repository/classes/class.ilObjectPlugin.php");
+include_once("./Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/configuration.php");
+require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/classes/class.ilMobileQuizConfigDAO.php');
 include_once("./Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/lib/phpqrcode/phpqrcode.php");
 
 /**
@@ -35,11 +37,14 @@ include_once("./Customizing/global/plugins/Services/Repository/RepositoryObject/
 class ilObjMobileQuiz extends ilObjectPlugin
 {
     
+	var $config;
+	
     /**
      * Constructor
      */
     function __construct($a_ref_id = 0){
         parent::__construct($a_ref_id);
+        $this->config = new ilMobileQuizConfigDAO();
     }
 
     // -------------------------------------------------------------------------
@@ -401,7 +406,8 @@ class ilObjMobileQuiz extends ilObjectPlugin
         // get next id first
         $choice_id = $ilDB->nextID('rep_robj_xuiz_choices');
 
-        $statement = $ilDB->prepare("INSERT INTO rep_robj_xuiz_choices (choice_id, question_id, correct_value, text, choice_order) VALUES (?, ?, ?, ?,?)",
+        $statement = $ilDB->prepare("INSERT INTO rep_robj_xuiz_choices (choice_id, question_id, correct_value, text, choice_order) 
+        		VALUES (?, ?, ?, ?,?)",
             array("integer", "integer", "integer", "text", "integer")
         );
         $data = array($choice_id, $a_question_id, $a_correct_value, $a_text, $choice_id);
@@ -533,9 +539,6 @@ class ilObjMobileQuiz extends ilObjectPlugin
             array("integer", "integer", "timestamp"),
             array($round_id,$this->getId(),$now->get(IL_CAL_DATETIME)));
 
-        // please change this if you move your frontend installation out of your ILIAS plugin directory:
-        $frontend_url = "Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/frontend/";
-
         // Get relevant IDs
         $quiz_id = $this->getId();
         $currentRound = $this->getCurrentRound($quiz_id);
@@ -549,13 +552,13 @@ class ilObjMobileQuiz extends ilObjectPlugin
         $tmp = explode('/',$url);
         $dmy = array_pop($tmp);
         $server_url = (implode('/',$tmp) . '/');
-        $quiz_url = $server_url.$frontend_url."index.php?quiz_id=".$quiz_id."&round_id=".$round_id;
+        $quiz_url = $server_url.FRONTEND_PATH."index.php?quiz_id=".$quiz_id."&round_id=".$round_id;
         
         // Create forlder for QR-Code
         mkdir(ilUtil::getWebspaceDir()."/MobileQuiz_data/".$round_id, 0755, true);
         
         // if shortener is active use shortened URL
-        if (SHORTENER) {
+        if ($this->config->getConfigItem("SHORTENER_ACTIVE")) {
             
             // shorten ULR
             include_once('class.ilObjMobileQuizUrlShorter.php');
@@ -721,10 +724,7 @@ class ilObjMobileQuiz extends ilObjectPlugin
     	$answer = array();
     
     	$rec = $ilDB->fetchAssoc($set);
-    	$count = $rec["answers"];
-    	    	
-//     	ilLoggerFactory::getLogger('xuiz')->info('ANSWERS COUNT: '.$count);
-    	
+    	$count = $rec["answers"];    	
     	return $count;
     }
     

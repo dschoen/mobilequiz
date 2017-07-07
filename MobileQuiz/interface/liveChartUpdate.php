@@ -25,8 +25,7 @@
  * This is a helper file to get the information for a live and dynamic update of 
  * the charts 
 */
-
-require_once(__DIR__."/../configuration.local.php");
+require_once 'ilDBConnector.php';
 
 try {
    
@@ -272,11 +271,14 @@ function deleteAnswer($answer_id){
 // -----------------------------------------------------------------------------
 
 function getDB(){
+	
+	$dbConfig = new ilDBConnector();
+	
     try {
         $db = new PDO(
-            "mysql:host=".FRONTEND_DB_HOST.";dbname=".FRONTEND_DB_NAME.";charset=utf8",
-            FRONTEND_DB_USER,
-            FRONTEND_DB_PASS
+            "mysql:host=".$dbConfig->HOST.";dbname=".$dbConfig->NAME.";charset=utf8",
+        		$dbConfig->USER,
+        		$dbConfig->PASS
             );
 
         $db->query("SET NAMES 'utf8'");

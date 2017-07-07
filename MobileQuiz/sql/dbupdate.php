@@ -136,3 +136,17 @@ ALTER TABLE rep_robj_xuiz_qs ADD COLUMN furthermore VARCHAR(2000);
 ALTER TABLE rep_robj_xuiz_answers MODIFY value VARCHAR(500);
 <#4>
 ALTER TABLE rep_robj_xuiz_answers ADD INDEX (user_string);
+<#5>
+<?php
+$definition_config = array(
+    'item' => array(
+            'type'      => 'text',
+            'length'    => 40,
+		),
+    'value' => array(
+            'type'      => 'text',
+            'length'    => 100,
+		),
+);
+$ilDB->createTable("rep_robj_xuiz_config", $definition_config);
+?>

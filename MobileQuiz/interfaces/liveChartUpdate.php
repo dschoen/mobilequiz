@@ -27,10 +27,9 @@
 */
 require_once 'ilDBConnector.php';
 
-try {
-   
-    $action         = $_POST['action'];
-    $secret         = $_POST['secret'];
+try {   
+    $action = $_POST['action'];
+    $secret = $_POST['secret'];
     
     if ($secret != "1238dhsh27egkdad8w") {
         die(json_encode("Wrong secret"));
@@ -272,14 +271,15 @@ function deleteAnswer($answer_id){
 
 function getDB(){
 	
-	$dbConfig = new ilDBConnector();
-	
     try {
-        $db = new PDO(
-            "mysql:host=".$dbConfig->HOST.";dbname=".$dbConfig->NAME.";charset=utf8",
-        		$dbConfig->USER,
-        		$dbConfig->PASS
-            );
+    	$ilDBConnector = new ilDBConnector();
+    	$dbConfig = $ilDBConnector->getDatabaseCredentials();
+    	
+    	$db = new PDO(
+    			"mysql:host=".$dbConfig['host'].";dbname=".$dbConfig['name'].";charset=utf8",
+    			$dbConfig['user'],
+    			$dbConfig['pass']
+    			);
 
         $db->query("SET NAMES 'utf8'");
 

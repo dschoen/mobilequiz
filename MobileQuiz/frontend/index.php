@@ -27,7 +27,7 @@
 */
 
 // Change this to the path of the ilDBConnector, if you change the Frontendends position
-require_once(__DIR__."/../interface/ilDBConnector.php");
+require_once(__DIR__."/../interfaces/ilDBConnector.php");
 
 require_once "includes/config.php";
 require_once "includes/connect.php";
@@ -37,36 +37,22 @@ require_once "includes/models/choice.model.php";
 require_once "includes/models/quiz.model.php";
 require_once "includes/models/answer.model.php";
 require_once "includes/models/round.model.php";
-require_once "includes/controllers/home.controller.php";
 require_once "includes/controllers/quiz.controller.php";
 require_once "assets/markdown/Markdown.inc.php";
 
+
 try {
-
 	if($_GET['quiz_id'] && $_GET['round_id']){
-		$c = new QuizController();
-		$c->handleRequest();
-	}
-	else if(isset($_POST['submit']) && !empty($_POST['submit'])) {
-		$c = new QuizController();
-		$action = $_POST['submit'];
-		switch($action) {
-			case 'submitAnswers' : $c->submitAnswers();break;
-			// case 'doSomethingElse' : doSomethingElse();break;
-			// ...etc...
-		}
-	}
-	// fall back to home controller. Here could be something listed like public quizzes
-	// if that is ever wanted.
-	else if(empty($_GET)){
-		$c = new HomeController();
-		$c->handleRequest();
-	}
-	else throw new Exception('Sorry, there is no such page.');
-
+		$ctrl = new QuizController();
+		$ctrl->handleRequest();
+	
+	} else if(isset($_POST['submit']) && !empty($_POST['submit'])) {
+		$ctrl = new QuizController();
+		$ctrl->submitAnswers();
+	
+	} else throw new Exception('Sorry, there is no such quiz or page.');
 }
 catch(Exception $e) {
-	// Display the error page using the "render()" helper function:
 	render('error',array('message'=>$e->getMessage()));
 }
 

@@ -548,11 +548,14 @@ class ilObjMobileQuiz extends ilObjectPlugin
 		$hostname = (!empty($_SERVER['HTTP_X_FORWARDED_HOST'])) ? $_SERVER['HTTP_X_FORWARDED_HOST'] : $_SERVER['SERVER_NAME'];
         $url = (!empty($_SERVER['HTTPS'])) ? "https://".$hostname.$_SERVER['REQUEST_URI'] : "http://".$hostname.$_SERVER['REQUEST_URI'];
         
+        // get client_id
+        $client_id = CLIENT_ID; //Client_id is system constant
+        
         // crafting quiz url:
         $tmp = explode('/',$url);
         $dmy = array_pop($tmp);
         $server_url = (implode('/',$tmp) . '/');
-        $quiz_url = $server_url.FRONTEND_PATH."index.php?quiz_id=".$quiz_id."&round_id=".$round_id;
+        $quiz_url = $server_url.FRONTEND_PATH."index.php?client_id=".$client_id."&quiz_id=".$quiz_id."&round_id=".$round_id;
         
         // Create forlder for QR-Code
         mkdir(ilUtil::getWebspaceDir()."/MobileQuiz_data/".$round_id, 0755, true);

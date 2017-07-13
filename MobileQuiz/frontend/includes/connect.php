@@ -26,12 +26,13 @@
 */
 
 try {	
-	$dbConfig = new ilDBConnector();
+	$ilDBConnector = new ilDBConnector();
+	$dbConfig = $ilDBConnector->getDatabaseCredentials($_GET['client_id']);
 	
 	$db = new PDO(
-			"mysql:host=".$dbConfig->HOST.";dbname=".$dbConfig->NAME.";charset=utf8",
-			$dbConfig->USER,
-			$dbConfig->PASS
+			"mysql:host=".$dbConfig['host'].";dbname=".$dbConfig['name'].";charset=utf8",
+			$dbConfig['user'],
+			$dbConfig['pass']
 		);
 	
     $db->query("SET NAMES 'utf8'");

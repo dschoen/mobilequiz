@@ -88,22 +88,6 @@ function getGuid(){
 	return sprintf('%04X%04X-%04X-%04X-%04X-%04X%04X%04X', mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(16384, 20479), mt_rand(32768, 49151), mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(0, 65535));
 }
 
-/**
-* Helper function to find out if a round is still active
-* 
-* @param	int		round_id
-* @return	boolean
-*/
-function isRoundActive($round_id){
-	$round = Round::find(array('round_id'=>$round_id));
-	if (empty($round[0]->end_date)){
-		return true;
-	}
-	else{
-		return false;
-	}
-}
-
 // -----------------------------------------------------------------------------
 
 function polishText($text) {

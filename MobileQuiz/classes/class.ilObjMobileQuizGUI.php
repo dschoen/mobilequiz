@@ -343,7 +343,7 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI {
             $my_tpl->setVariable("QUIZ_URL",$shorted_url);
 
             // Ajax Update Information
-            $my_tpl->setVariable("AJAX_INTERFACE_URL", ilObjMobileQuizHelper::getPluginUrl()."interface/liveChartUpdate.php");
+            $my_tpl->setVariable("AJAX_INTERFACE_URL", ilObjMobileQuizHelper::getPluginUrl()."interfaces/liveChartUpdate.php");
             $my_tpl->setVariable("AJAX_SECRET", AJAX_INTERFACE_SECRET);
             $my_tpl->setVariable("AJAX_UPDATE_TIME", AJAX_CHART_UPDATE_TIME);
             $my_tpl->setVariable("ROUND_ID", $round_id);
@@ -835,7 +835,7 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI {
         $chart_tpl->setVariable("labels", $chart_label_string);
         $chart_tpl->setVariable("colors", $chart_color_string);
         $chart_tpl->setVariable("colors_border", $chart_color_border_string);
-        $chart_tpl->setVariable("ajax_interface_url", ilObjMobileQuizHelper::getPluginUrl()."interface/liveChartUpdate.php");
+        $chart_tpl->setVariable("ajax_interface_url", ilObjMobileQuizHelper::getPluginUrl()."interfaces/liveChartUpdate.php");
         $chart_tpl->setVariable("secret", AJAX_INTERFACE_SECRET);
         $chart_tpl->setVariable("ajax_update_time", AJAX_CHART_UPDATE_TIME);
         $chart_tpl->setVariable("latex", $this->config->getConfigItem("LATEX_ACTIVE"));
@@ -923,7 +923,7 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI {
         $chart_tpl->setVariable("labels", $chart_label_string);
         $chart_tpl->setVariable("colors", $chart_color_string);
         $chart_tpl->setVariable("colors_border", $chart_color_border_string);
-        $chart_tpl->setVariable("ajax_interface_url", ilObjMobileQuizHelper::getPluginUrl()."interface/liveChartUpdate.php");
+        $chart_tpl->setVariable("ajax_interface_url", ilObjMobileQuizHelper::getPluginUrl()."interfaces/liveChartUpdate.php");
         $chart_tpl->setVariable("secret", AJAX_INTERFACE_SECRET);
         $chart_tpl->setVariable("ajax_update_time", AJAX_CHART_UPDATE_TIME);
         $chart_tpl->setVariable("latex", $this->config->getConfigItem("LATEX_ACTIVE"));
@@ -1017,7 +1017,7 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI {
     	$chart_tpl->setVariable("ANSWERS_WEIGHTED", $data_weight_string);    	
     	$chart_tpl->setVariable("ROUND_ID", $round_id);    	
     	
-    	$chart_tpl->setVariable("AJAX_INTERFACE_URL", ilObjMobileQuizHelper::getPluginUrl()."interface/liveChartUpdate.php");
+    	$chart_tpl->setVariable("AJAX_INTERFACE_URL", ilObjMobileQuizHelper::getPluginUrl()."interfaces/liveChartUpdate.php");
     	$chart_tpl->setVariable("AJAX_SECRET", AJAX_INTERFACE_SECRET);
     	$chart_tpl->setVariable("AJAX_UPDATE_TIME", AJAX_CHART_UPDATE_TIME);
     

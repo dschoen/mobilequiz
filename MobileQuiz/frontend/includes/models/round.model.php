@@ -59,6 +59,60 @@ class Round{
 		
 		return $result;
 	}
+	
+	
+	/**
+	 * Returns true if round exists and is active:
+	 * Round is active if it has no ending date
+	 *
+	 * @param	int		round_id
+	 * @return	boolean
+	 */
+	public static function isActive($round_id) {
+		$round = Round::find(array('round_id'=>$round_id));
+		
+		// check if round exists
+		if (empty($round[0])) {
+			return false;
+			
+		// check if round is active
+		} else if (empty($round[0]->end_date)) {
+			return true;
+			
+		} else{
+			return false;
+		}
+	}
+	
+	
+	/**
+	 * Returns true if this round was not already submitted by this user or
+	 * round is from type passive.
+	 * Passive rounds can be submitted unlimited times.
+	 *
+	 * @param	int		round_id
+	 * @return	boolean
+	 */
+	public static function isSubmitable($round_id){
+		$round = Round::find(array('round_id'=>$round_id));
+		$type = $round[0]->type;
+		if ($type == "passive") {
+			return true;
+		
+		} else if (isset($_COOKIE["round-".$round_id])) {
+			return false;
+		
+		} else {
+			return true;
+		}		
+	}
+	
+	public static function setSubmitCookie($round_id) {
+		$user_string = getGuid();
+		$expire=time()+60*60*24*365; // valid for a year
+		setcookie("round-".$_POST['round_id'], $user_string, $expire);
+		return $user_string;
+	}
 }
 
 ?>

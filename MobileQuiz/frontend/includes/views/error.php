@@ -1,10 +1,7 @@
 <?php
-
-header("HTTP/1.0 404 Not Found");
-render('_header',array('title'=>'Error'))
-
+render('_header',array('title'=>$message))
 ?>
 
-<p><?php echo $message?></p>
+<center><img src="assets/img/abuse.png" /></center>
 
 <?php render('_footer')?>

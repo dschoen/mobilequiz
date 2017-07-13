@@ -10,9 +10,9 @@ class ilDBConnector {
 	// ------------------------------------------------------------------
 	
 	function __construct() {
-//  		$this->currentScript 	= dirname(__FILE__);
-// 		$this->iliasRoot 		= $this->currentScript . "/../../../../../../../..";
-		$this->iliasRoot 		= "/var/opt/ILIAS-5.2.5";
+ 		$this->currentScript 	= dirname(__FILE__);
+		$this->iliasRoot 		= $this->currentScript . "/../../../../../../../..";
+// 		$this->iliasRoot 		= "/var/opt/ILIAS-5.2.5"; // for Developement reasons, as symlinks are not supported
  		$this->iliasIniFile		= "ilias.ini.php";
  		$this->iliasIniPath 	= $this->iliasRoot."/".$this->iliasIniFile;
 	}

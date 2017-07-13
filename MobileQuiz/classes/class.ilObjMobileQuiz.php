@@ -557,7 +557,7 @@ class ilObjMobileQuiz extends ilObjectPlugin
         $server_url = (implode('/',$tmp) . '/');
         $quiz_url = $server_url.FRONTEND_PATH."index.php?client_id=".$client_id."&quiz_id=".$quiz_id."&round_id=".$round_id;
         
-        // Create forlder for QR-Code
+        // Create folder for QR-Code
         mkdir(ilUtil::getWebspaceDir()."/MobileQuiz_data/".$round_id, 0755, true);
         
         // if shortener is active use shortened URL
@@ -571,10 +571,12 @@ class ilObjMobileQuiz extends ilObjectPlugin
             // write short URL in database
             $ilDB->manipulate("UPDATE rep_robj_xuiz_rounds SET tiny_url = '".$shorted_url."' WHERE ".
                                 " round_id = ".$ilDB->quote($round_id, "integer")
-                        );
-            
+                        );            
             QRcode::png($shorted_url,ilUtil::getWebspaceDir()."/MobileQuiz_data/".$round_id."/qrcode.png", 'L', 15, 2);
         } else {
+        	$ilDB->manipulate("UPDATE rep_robj_xuiz_rounds SET tiny_url = '".$quiz_url."' WHERE ".
+        			" round_id = ".$ilDB->quote($round_id, "integer")
+        			);
             QRcode::png($quiz_url,ilUtil::getWebspaceDir()."/MobileQuiz_data/".$round_id."/qrcode.png", 'L', 15, 2);
         }
     }

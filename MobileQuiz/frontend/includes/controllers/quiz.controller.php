@@ -34,7 +34,7 @@ class QuizController{
     	// check if quiz exists
     	$quiz = Quiz::find(array('quiz_id'=>$_GET['quiz_id']));
     	if(empty($quiz)){
-    		throw new Exception("There is no such quiz!");
+    		throw new Exception("404 Error - Sorry, quiz not found!");
     	}
     	
         // check if the quiz round exists and is still active, if not break

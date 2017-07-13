@@ -6,40 +6,40 @@ It can be added as an ILIAS Repository Object, so that lecturers can create Ques
 
 ## Features
 
-* Three Question Types
+* Four Question Types
     * Single Choice Questions
     * Multiple Choice Questions
     * Numeric Slider Questions
+    * Text Questions with Feedback on right or wrong answer
 * Full web application, no installation by students or lecturers required.
 * No authentication required by students.
-* Quiz round can be activ, closed and be in "direct feedback.
-* Quizzes in direct feedback can be performed several times and give a direkt feedback on the given answers.
-* Dynamic live Charts with green, red and blue bars
-* Excel Export of Results
-* QR-Code view for faster access
-* Option to use a URL-Shortener for better readability or URL and QR-Code
+* Quiz round can be activ, inactiv and "direct feedback".
+* Quizzes in direct feedback can be performed several times and give a immidiate feedback on the given answers.
+* Dynamic live charts with green, red and blue bars.
+* Excel Export of Results.
+* QR-Code view for faster access.
+* Option to use a URL-Shortener for better readability or URL and QR-Code.
 * Markdown and LaTeX support for questions.
+* Quizzes can be copied to other courses.
+* Multi-Client Support
 
 
 ## Installation
 
 * Copy MobileQuiz folder to `../ilias/Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz`
-* open configuration `/MobileQuiz/configuration.local.php` and set database information as this is neccessary for the Studnets view, which is not handled in the ILIAS framework.
-   * Enter login data for the used URL-shortener service or disable the service
-   * Deactivate MathJax LaTex support if not desired
-* Activate Plugin in ILIAS Administrator Plugin View
-* ILIAS administrator has to activate the right to use this object for lecturers
+* URL-Shortener and LaTeX Support are activated via Settings of the Plugin in the Plugin menu of the administrator.
+* If included as symlink, connection of the Frontend (Student-View) to the database may not work. Then the ILIAS-Root directory has to be configured manually at `../MobileQuiz/interfaces/ilDBConnector.php´ line 15. (iliasRoot)
 
 
 ## User Documentation
 
 ### Lecturer
 
-* Lecturer can create a new MobileQuiz object like any other learning object
-* The MobileQuiz has mainly three tabs which are described next.
+* Lecturers can create a new MobileQuiz object like other repository objects via add object.
 * A quiz can be build of several questions, which further can have several answer choices.
-* Whenever a quiz is started, a new round is created. Every quiz can have many rounds.
+* Whenever a quiz is started, a new round is created. Every quiz can have multiple rounds.
 * Each round can be activ, closed or "direct feedback" 
+* Several rounds of the same quiz can be active at once.
 
 #### Current Quiz Round
 
@@ -74,8 +74,8 @@ It can be added as an ILIAS Repository Object, so that lecturers can create Ques
 ## Used Technologies
 
 * MathJax is used for LaTeX Transformation
-* jQuery and iQueryMobile for Students fronted
-* Markdown.php for Markdown translation
-* simpleMDE as markdown editor
+* jQuery and iQueryMobile for student fronted
+* Markdown.php for PHP-Markdown translation
+* simpleMDE as Javascript-markdown editor
 * phpQrCode for QR-Code generation
 * chart.js for charts in the Result view

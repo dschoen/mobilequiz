@@ -22,9 +22,9 @@
 */
 
 $id = "xuiz";
-$version = "1.2.3";
-$ilias_min_version = "5.0.0";
-$ilias_max_version = "5.2.99";
+$version = "1.3.0";
+$ilias_min_version = "5.2.0";
+$ilias_max_version = "5.3.99";
 $responsible        = "Daniel Schoen";
 $responsible_mail   = "mobilequiz@uni-mannheim.de";
 ?>

@@ -150,3 +150,6 @@ $definition_config = array(
 );
 $ilDB->createTable("rep_robj_xuiz_config", $definition_config);
 ?>
+<#6>
+ALTER TABLE rep_robj_xuiz_rounds MODIFY tiny_url VARCHAR(255);
+ALTER TABLE rep_robj_xuiz_rounds MODIFY type VARCHAR(20);

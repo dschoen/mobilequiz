@@ -39,10 +39,7 @@ class ilMobileQuizConfigGUI extends ilPluginConfigGUI {
 		global $tpl;
 		$form = $this->initConfigurationForm($plugin);		
 		$formValues = array();
-		$formValues["SHORTENER_ACTIVE"] 	= $this->configDAO->getConfigItem("SHORTENER_ACTIVE");
-		
-		error_log("AAAA ".$this->configDAO->getConfigItem("SHORTENER_ACTIVE"));
-		
+		$formValues["SHORTENER_ACTIVE"] 	= $this->configDAO->getConfigItem("SHORTENER_ACTIVE");		
 		$formValues["SHORTENER_USERNAME"] 	= $this->configDAO->getConfigItem("SHORTENER_USERNAME");
 		$formValues["SHORTENER_PASSWORD"] 	= $this->configDAO->getConfigItem("SHORTENER_PASSWORD");
 		$formValues["SHORTENER_URL"] 		= $this->configDAO->getConfigItem("SHORTENER_URL");

@@ -48,7 +48,7 @@ class ilObjMobileQuizWizard {
 	
 	public function loadAnswerChoice($question_id, $tpl, $model, $type) {
 		// Get the questions' choices from the database
-		$choices = $model->getChoices($question_id);
+		$choices = $model->getChoicesOfQuestion($question_id);
 		$result = array();
 		$i = "1";
 	
@@ -110,7 +110,7 @@ class ilObjMobileQuizWizard {
 	
 	public function loadAnswerNumericChoice($question_id, $tpl, $model) {
 		// Get the questions' choices from the database
-		$choices = $model->getChoices($question_id);
+		$choices = $model->getChoicesOfQuestion($question_id);
 		
 		$numeric_values		= (explode(';',$choices[0]['text']));
 		$minimum 			= $numeric_values[0];
@@ -135,7 +135,7 @@ class ilObjMobileQuizWizard {
 	
 	public function loadAnswerTextChoice($question_id, $tpl, $model) {
 		// Get the questions' choices from the database
-		$choices = $model->getChoices($question_id);
+		$choices = $model->getChoicesOfQuestion($question_id);
 	
 		$correct_value = $choices[0]['text'];
 	
@@ -215,7 +215,6 @@ class ilObjMobileQuizWizard {
 			} else {
 				// do nothing
 			}
-			// increment counter
 			$i++;
 		}
 	}

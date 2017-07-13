@@ -21,7 +21,10 @@
 +-----------------------------------------------------------------------------+
 */
 
+include_once("./Services/Object/classes/class.ilObject.php");
 include_once("./Services/Repository/classes/class.ilObjectPlugin.php");
+include_once("./Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/configuration.php");
+require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/classes/class.ilMobileQuizConfigDAO.php');
 include_once("./Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/lib/phpqrcode/phpqrcode.php");
 
 /**
@@ -33,13 +36,15 @@ include_once("./Customizing/global/plugins/Services/Repository/RepositoryObject/
  */
 class ilObjMobileQuiz extends ilObjectPlugin
 {
+    
+	var $config;
+	
     /**
      * Constructor
-     *
-     * @access	public
      */
     function __construct($a_ref_id = 0){
         parent::__construct($a_ref_id);
+        $this->config = new ilMobileQuizConfigDAO();
     }
 
     // -------------------------------------------------------------------------
@@ -56,7 +61,7 @@ class ilObjMobileQuiz extends ilObjectPlugin
     /**
      * Create object
      */
-    function doCreate(){
+    protected function doCreate(){
         global $ilDB;
 
         $affected_rows = $ilDB->manipulate("INSERT INTO rep_robj_xuiz_quizzes (quiz_id, name) VALUES (".$ilDB->quote($this->getId(), "integer").",".$ilDB->quote($this->getTitle(), "text").")");
@@ -67,7 +72,7 @@ class ilObjMobileQuiz extends ilObjectPlugin
     /**
      * Read data from db
      */
-    function doRead(){
+    protected function doRead(){
         global $ilDB;
 
         $set = $ilDB->query("SELECT * FROM rep_robj_xuiz_quizzes ".
@@ -84,7 +89,7 @@ class ilObjMobileQuiz extends ilObjectPlugin
      * Update data
      *
      */
-    function doUpdate(){
+    protected function doUpdate(){
         global $ilDB;
 
         $ilDB->manipulate($up = "UPDATE rep_robj_xuiz_quizzes SET ".
@@ -100,7 +105,7 @@ class ilObjMobileQuiz extends ilObjectPlugin
      * This will also delete everything in the database,
      * that is related to this quiz: questions, choices, rounds and answers
      */
-    function doDelete(){
+    protected function doDelete(){
         global $ilDB;
 
         // Delete all answers for rounds that correspond to this quiz
@@ -134,77 +139,78 @@ class ilObjMobileQuiz extends ilObjectPlugin
     // -------------------------------------------------------------------------
     
     /**
-     * Do Cloning. This is still not implemented.
-     *
+     * Function is called when RepositoryObject is copied within ilias.
+     * Copies the Quiz with Questions but without Answers.
      */
-    function doCloneObject($a_target_id, $a_copy_id, $new_obj) {
-        global $ilDB;
-        // Get IDs
-        $toID = $a_target_id->id."";
-        $fromReference = $new_obj;
-        $row = $ilDB->fetchAssoc( $ilDB->query("
-                    SELECT options
-                    FROM copy_wizard_options
-                    WHERE source_id = '-5' and copy_id = ".$ilDB->quote($fromReference, "integer") ) );
-        $options2 = unserialize($row["options"]);
-        $fromIDReference = implode("", $options2);
-        $row = $ilDB->fetchAssoc( $ilDB->query("
-                    SELECT obj_id
-                    FROM  object_reference
-                    WHERE ref_id = ".$ilDB->quote($fromIDReference, "integer") ) );
-        $fromID = $row["obj_id"];
+    protected function doCloneObject($new_obj, $target_ref_id, $a_copy_id = null, $a_omit_tree = false)
+    {
+    	global $ilDB;
 
+    	parent::doCloneObject($new_obj, $target_ref_id, $a_copy_id);
 
-        // Copy Questions
-        $set = $ilDB->query("
-                    SELECT *
-                    FROM rep_robj_xuiz_qs
-                    WHERE quiz_id = ".$ilDB->quote($fromID, "integer"));
-        while ($rec = $ilDB->fetchAssoc($set)){
-            $question_id = $ilDB->nextID('rep_robj_xuiz_qs');
-            $statement = $ilDB->prepare("INSERT INTO rep_robj_xuiz_qs (question_id, quiz_id, type, text) VALUES (?, ?, ?, ?)",
-                array("integer", "integer", "integer", "text")
-            );
-            $data = array($question_id, $toID, $rec["type"], $rec["text"]);
-            $statement->execute($data);
-
-            // Antworten
-            $set2 = $ilDB->query("
-                        SELECT *
-        	        FROM  rep_robj_xuiz_choices
-        	        WHERE question_id = ".$ilDB->quote($rec["question_id"], "integer"));
-            while ($rec2 = $ilDB->fetchAssoc($set2)){
-                $choice_id = $ilDB->nextID('rep_robj_xuiz_choices');
-                $statement2 = $ilDB->prepare("INSERT INTO rep_robj_xuiz_choices (choice_id, question_id, correct_value, text) VALUES (?, ?, ?, ?)",
-                    array("integer", "integer", "integer", "text")
-                );
-                $data2 = array($choice_id, $question_id, $rec2["correct_value"], $rec2["text"]);
-                $statement2->execute($data2);
-            }
-        }
+    	$source_obj_id 	= $this->getId();
+    	$new_obj_id 	= $new_obj->getId();
+    	
+    	
+    	// clone Questions
+    	$sourceQuestions = $this->getQuestionsOfQuiz($source_obj_id);    	
+    	foreach($sourceQuestions as $sourceQuestion) {
+    		$new_question_id = $this->createQuestionOfQuiz(
+    					$new_obj_id,
+    					$sourceQuestion['text'],
+    					$sourceQuestion['type'],
+    					$sourceQuestion['solution'],
+    					$sourceQuestion['furthermore']
+    				);
+    		
+    		// clone Choices
+    		$sourceChoices = $this->getChoicesOfQuestion($sourceQuestion['question_id']);
+    		foreach($sourceChoices as $sourceChoice) {
+    			$this->createChoice(
+    					$new_question_id,
+    					$sourceChoice['correct_value'],
+    					$sourceChoice['text']
+    					);
+    		}
+    	}
     }
 
     // -------------------------------------------------------------------------
     
     /**
-     * Write new question into database
-     *
+     * Write new question into database  
      * @param	text	question_text
      * @param	int		question_type
      */
     function createQuestion($a_text, $a_type, $a_solution, $a_furthermore){
-        global $ilDB, $ilAccess, $ilUser;
-
-        $question_id = $ilDB->nextID('rep_robj_xuiz_qs');
-        $statement = $ilDB->prepare("
-        		INSERT INTO rep_robj_xuiz_qs (question_id, quiz_id, type, text, question_order, solution, furthermore) 
+        return $this->createQuestionOfQuiz(
+        			$this->getId(), 
+        			$a_text, 
+        			$a_type, 
+        			$a_solution, 
+        			$a_furthermore);
+    }
+    
+    // -------------------------------------------------------------------------
+    
+    /**
+     * Create Question for given quiz_obj_id    
+     * 
+     * @param	text	question_text
+     * @param	int		question_type
+     */
+    function createQuestionOfQuiz($quiz_obj_id, $a_text, $a_type, $a_solution, $a_furthermore){
+    	global $ilDB, $ilAccess, $ilUser;
+    
+    	$question_id = $ilDB->nextID('rep_robj_xuiz_qs');
+    	$statement = $ilDB->prepare("
+        		INSERT INTO rep_robj_xuiz_qs (question_id, quiz_id, type, text, question_order, solution, furthermore)
         		VALUES (?, ?, ?, ?, ?, ? , ?)",
-            array("integer", "integer", "integer", "text", "integer", "text", "text")
-        );
-        $data = array($question_id, $this->getId(), $a_type, $a_text, $question_id, $a_solution, $a_furthermore);
-        $statement->execute($data);
-
-        return $question_id;
+    			array("integer", "integer", "integer", "text", "integer", "text", "text")
+    			);
+    	$data = array($question_id, $quiz_obj_id, $a_type, $a_text, $question_id, $a_solution, $a_furthermore);
+    	$statement->execute($data);    
+    	return $question_id;
     }
 
     // -------------------------------------------------------------------------
@@ -250,40 +256,29 @@ class ilObjMobileQuiz extends ilObjectPlugin
         		." ,furthermore= ".$ilDB->quote($a_furthermore, "text")
         		." WHERE question_id = ".$ilDB->quote($question_id, "integer"));
     }
-
+    
     // -------------------------------------------------------------------------
     
     /**
-     * Get Questions from database
-     *
+     * Gather questions of given quizId
      * @return	array	questions
      */
-    public function getQuestions() {
-        global $ilDB;
-
-        $set = $ilDB->query("
-		SELECT *
+    public function getQuestionsOfQuiz($quizId) {
+    	global $ilDB;
+    
+    	$set = $ilDB->query("
+				SELECT *
                 FROM rep_robj_xuiz_qs
-                WHERE quiz_id = ".$ilDB->quote($this->getId(), "integer")
-                ." ORDER BY question_order asc"
-        	);
-
-        $question = array();
-        $questions = array();
-
-        while ($rec = $ilDB->fetchAssoc($set)){
-            $question["question_id"] = $rec["question_id"];
-            $question["quiz_id"] = $rec["quiz_id"];
-            $question["type"] = $rec["type"];
-            $question["text"] = $rec["text"];
-            $question["solution"] = $rec["solution"];
-            $question["furthermore"] = $rec["furthermore"];
-            $question["question_order"] = $rec["question_order"];
-            
-            $questions[] = $question;
-        }
-
-        return $questions;
+                WHERE quiz_id = ".$ilDB->quote($quizId, "integer")
+    			." ORDER BY question_order asc"
+    			);
+    
+    	$questions = array();    
+    	while ($rec = $ilDB->fetchAssoc($set))
+    	{
+    		$questions[] = $this->fetchQuestionFromResult($rec);
+    	}
+    	return $questions;
     }
     
     // -------------------------------------------------------------------------
@@ -302,18 +297,24 @@ class ilObjMobileQuiz extends ilObjectPlugin
 	          FROM rep_robj_xuiz_qs
 	          WHERE question_id = ".$ilDB->quote($question_id, "integer"));
     
-    	$question = array();
-    
     	while ($rec = $ilDB->fetchAssoc($set)){
-    		$question["question_id"] = $rec["question_id"];
-    		$question["quiz_id"] = $rec["quiz_id"];
-    		$question["type"] = $rec["type"];
-    		$question["text"] = $rec["text"];
-    		$question["solution"] = $rec["solution"];
-    		$question["furthermore"] = $rec["furthermore"];
-    
+    		$question = $this->fetchQuestionFromResult($rec);    
     		return $question;
     	}
+    }
+    
+    // -------------------------------------------------------------------------
+    
+    private function fetchQuestionFromResult($rec) {
+    	$question = array();
+    	$question["question_id"] 	= $rec["question_id"];
+    	$question["quiz_id"] 		= $rec["quiz_id"];
+    	$question["type"] 			= $rec["type"];
+    	$question["text"] 			= $rec["text"];
+    	$question["solution"] 		= $rec["solution"];
+    	$question["furthermore"] 	= $rec["furthermore"];
+    	$question["question_order"] = $rec["question_order"];
+    	return $question;
     }
     
     // -------------------------------------------------------------------------
@@ -334,7 +335,7 @@ class ilObjMobileQuiz extends ilObjectPlugin
      * @param	int		question_id
         */
     public function switchUp($question_id){
-    	$qs = $this->getQuestions();
+    	$qs = $this->getQuestionsOfQuiz($this->getId());
     	for($i = 0; $i < count($qs); ++$i) {
     		$question1 = $qs[$i];
     		if ($question1['question_id'] == $question_id) {
@@ -362,7 +363,7 @@ class ilObjMobileQuiz extends ilObjectPlugin
      * @param	int		question_id
      */
     public function switchDown($question_id){
-    	$qs = $this->getQuestions();
+    	$qs = $this->getQuestionsOfQuiz($this->getId());
     	for($i = 0; $i < count($qs); ++$i) {
     		$question1 = $qs[$i];
     		if ($question1['question_id'] == $question_id) {
@@ -405,7 +406,8 @@ class ilObjMobileQuiz extends ilObjectPlugin
         // get next id first
         $choice_id = $ilDB->nextID('rep_robj_xuiz_choices');
 
-        $statement = $ilDB->prepare("INSERT INTO rep_robj_xuiz_choices (choice_id, question_id, correct_value, text, choice_order) VALUES (?, ?, ?, ?,?)",
+        $statement = $ilDB->prepare("INSERT INTO rep_robj_xuiz_choices (choice_id, question_id, correct_value, text, choice_order) 
+        		VALUES (?, ?, ?, ?,?)",
             array("integer", "integer", "integer", "text", "integer")
         );
         $data = array($choice_id, $a_question_id, $a_correct_value, $a_text, $choice_id);
@@ -461,7 +463,7 @@ class ilObjMobileQuiz extends ilObjectPlugin
      * @param	int			question_id
      * @return	array 		choices
      */
-    public function getChoices($question_id) {
+    public function getChoicesOfQuestion($question_id) {
         global $ilDB;
 
         $set = $ilDB->query("
@@ -475,11 +477,11 @@ class ilObjMobileQuiz extends ilObjectPlugin
         $choices = array();
 
         while ($rec = $ilDB->fetchAssoc($set)){
-            $choice["choice_id"] = $rec["choice_id"];
-            $choice["question_id"] = $rec["question_id"];
-            $choice["correct_value"] = $rec["correct_value"];
-            $choice["text"] = $rec["text"];
-            $choice["choice_order"] = $rec["choice_order"];
+            $choice["choice_id"] 		= $rec["choice_id"];
+            $choice["question_id"] 		= $rec["question_id"];
+            $choice["correct_value"] 	= $rec["correct_value"];
+            $choice["text"] 			= $rec["text"];
+            $choice["choice_order"] 	= $rec["choice_order"];
             $choices[] = $choice;
         }
         return $choices;
@@ -537,9 +539,6 @@ class ilObjMobileQuiz extends ilObjectPlugin
             array("integer", "integer", "timestamp"),
             array($round_id,$this->getId(),$now->get(IL_CAL_DATETIME)));
 
-        // please change this if you move your frontend installation out of your ILIAS plugin directory:
-        $frontend_url = "Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/frontend/";
-
         // Get relevant IDs
         $quiz_id = $this->getId();
         $currentRound = $this->getCurrentRound($quiz_id);
@@ -549,17 +548,20 @@ class ilObjMobileQuiz extends ilObjectPlugin
 		$hostname = (!empty($_SERVER['HTTP_X_FORWARDED_HOST'])) ? $_SERVER['HTTP_X_FORWARDED_HOST'] : $_SERVER['SERVER_NAME'];
         $url = (!empty($_SERVER['HTTPS'])) ? "https://".$hostname.$_SERVER['REQUEST_URI'] : "http://".$hostname.$_SERVER['REQUEST_URI'];
         
+        // get client_id
+        $client_id = CLIENT_ID; //Client_id is system constant
+        
         // crafting quiz url:
         $tmp = explode('/',$url);
         $dmy = array_pop($tmp);
         $server_url = (implode('/',$tmp) . '/');
-        $quiz_url = $server_url.$frontend_url."index.php?quiz_id=".$quiz_id."&round_id=".$round_id;
+        $quiz_url = $server_url.FRONTEND_PATH."index.php?client_id=".$client_id."&quiz_id=".$quiz_id."&round_id=".$round_id;
         
         // Create forlder for QR-Code
         mkdir(ilUtil::getWebspaceDir()."/MobileQuiz_data/".$round_id, 0755, true);
         
         // if shortener is active use shortened URL
-        if (SHORTENER) {
+        if ($this->config->getConfigItem("SHORTENER_ACTIVE")) {
             
             // shorten ULR
             include_once('class.ilObjMobileQuizUrlShorter.php');
@@ -596,20 +598,24 @@ class ilObjMobileQuiz extends ilObjectPlugin
 	          FROM rep_robj_xuiz_rounds
 	          WHERE quiz_id = ".$ilDB->quote($quiz_id, "integer")." ORDER BY round_id DESC");
 
-        $round = array();
-
         while ($rec = $ilDB->fetchAssoc($set)){
-            $round["round_id"]      = $rec["round_id"];
-            $round["quiz_id"]       = $rec["quiz_id"];
-            $round["start_date"]    = $rec["start_date"];
-            $round["end_date"]      = $rec["end_date"];
-            $round["tiny_url"]      = $rec["tiny_url"];
-            $round["type"]          = $rec["type"];
-
-            return $round;
+            return $this->fetchRoundFromResult($rec);
         }
     }
 
+    // -------------------------------------------------------------------------
+    
+    private function fetchRoundFromResult($rec) {
+    	$round = array();
+    	$round["round_id"]      = $rec["round_id"];
+    	$round["quiz_id"]       = $rec["quiz_id"];
+    	$round["start_date"]    = $rec["start_date"];
+    	$round["end_date"]      = $rec["end_date"];
+    	$round["tiny_url"]      = $rec["tiny_url"];
+    	$round["type"]          = $rec["type"];
+    	return $round;
+    }    
+    
     // -------------------------------------------------------------------------
     
     /**
@@ -627,17 +633,8 @@ class ilObjMobileQuiz extends ilObjectPlugin
 		    		WHERE quiz_id = ".$ilDB->quote($this->getId(), "integer")." ORDER BY round_id DESC");
 
         $rounds = array();
-        $round = array();
-
         while ($rec = $ilDB->fetchAssoc($set)){
-            $round["round_id"]      = $rec["round_id"];
-            $round["quiz_id"]       = $rec["quiz_id"];
-            $round["start_date"]    = $rec["start_date"];
-            $round["end_date"]      = $rec["end_date"];
-            $round["tiny_url"]      = $rec["tiny_url"];
-            $round["type"]          = $rec["type"];
-
-            $rounds[] = $round;
+            $rounds[] = $this->fetchRoundFromResult($rec);
         }
         return $rounds;
     }
@@ -654,24 +651,30 @@ class ilObjMobileQuiz extends ilObjectPlugin
         global $ilDB;
 
         $set = $ilDB->query("
-		SELECT *
-		FROM rep_robj_xuiz_answers
-		WHERE round_id = ".$ilDB->quote($round_id, "integer")
-        );
+			SELECT *
+			FROM rep_robj_xuiz_answers
+			WHERE round_id = ".$ilDB->quote($round_id, "integer")
+        	);
 
-        $answer = array();
+        
         $answers = array();
-
-        while ($rec = $ilDB->fetchAssoc($set)){
-            $answer["answer_id"]    = $rec["answer_id"];
-            $answer["round_id"]     = $rec["round_id"];
-            $answer["choice_id"]    = $rec["choice_id"];
-            $answer["value"]        = $rec["value"];
-            $answer["user_string"]  = $rec["user_string"];
-
-            $answers[] = $answer;
+        while ($rec = $ilDB->fetchAssoc($set))
+        {
+            $answers[] = $this->fetchAnswersFromResult($rec);
         }
         return $answers;
+    }
+    
+    // -------------------------------------------------------------------------
+    
+    private function fetchAnswersFromResult($rec) {
+    	$answer = array();
+    	$answer["answer_id"]    = $rec["answer_id"];
+    	$answer["round_id"]     = $rec["round_id"];
+    	$answer["choice_id"]    = $rec["choice_id"];
+    	$answer["value"]        = $rec["value"];
+    	$answer["user_string"]  = $rec["user_string"];
+    	return $answer;
     }
     
     // -------------------------------------------------------------------------
@@ -687,23 +690,16 @@ class ilObjMobileQuiz extends ilObjectPlugin
         global $ilDB;
 
         $set = $ilDB->query("
-		Select *
-		FROM rep_robj_xuiz_answers
-		WHERE round_id = ".$ilDB->quote($round_id, "integer")
-                ." AND choice_id = ".$ilDB->quote($choice_id, "integer")                
-        );
+			Select *
+			FROM rep_robj_xuiz_answers
+			WHERE round_id = ".$ilDB->quote($round_id, "integer")
+            	." AND choice_id = ".$ilDB->quote($choice_id, "integer")                
+        	);
 
-        $answer = array();
         $answers = array();
-
-        while ($rec = $ilDB->fetchAssoc($set)){
-            $answer["answer_id"]    = $rec["answer_id"];
-            $answer["round_id"]     = $rec["round_id"];
-            $answer["choice_id"]    = $rec["choice_id"];
-            $answer["value"]        = $rec["value"];
-            $answer["user_string"]  = $rec["user_string"];
-
-            $answers[] = $answer;
+        while ($rec = $ilDB->fetchAssoc($set))
+        {
+            $answers[] = $this->fetchAnswersFromResult($rec);
         }
         return $answers;
     }
@@ -721,9 +717,9 @@ class ilObjMobileQuiz extends ilObjectPlugin
     	global $ilDB;
     	
     	$set = $ilDB->query("
-		Select COUNT(answer_id) as answers
-		FROM rep_robj_xuiz_answers
-		WHERE round_id = ".$ilDB->quote($round_id, "integer")
+			Select COUNT(answer_id) as answers
+			FROM rep_robj_xuiz_answers
+			WHERE round_id = ".$ilDB->quote($round_id, "integer")
     			." AND choice_id = ".$ilDB->quote($choice_id, "integer")
     			." AND value > 0"
     			.";");
@@ -731,10 +727,7 @@ class ilObjMobileQuiz extends ilObjectPlugin
     	$answer = array();
     
     	$rec = $ilDB->fetchAssoc($set);
-    	$count = $rec["answers"];
-    	    	
-//     	ilLoggerFactory::getLogger('xuiz')->info('ANSWERS COUNT: '.$count);
-    	
+    	$count = $rec["answers"];    	
     	return $count;
     }
     

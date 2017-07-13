@@ -1,3 +1,6 @@
+<?php 
+	$ilDBCon = new ilDBConnector();
+?>
 <!DOCTYPE html> 
 <html> 
 	<head> 
@@ -15,9 +18,8 @@
 	<script src="assets/jquery.mobile/jquery.mobile.min.js"></script>
         
     <!-- Enable LaTeX Support -------------------------------------------------- -->
-    <script type="text/javascript">
-                
-        if ( <?php echo LATEX_TRANSFORMATION ?> ) {
+    <script type="text/javascript">                
+        if ( <?php echo $latex_active ?> ) {
             (function () {
               var head = document.getElementsByTagName("head")[0], script;
               script = document.createElement("script");
@@ -31,7 +33,7 @@
               head.appendChild(script);
               script = document.createElement("script");
               script.type = "text/javascript";
-              script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+              script.src  = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
               head.appendChild(script);
             })();
         }
@@ -45,5 +47,4 @@
 	<div data-role="header" data-theme="a">
 		<h1><?php echo $title ?></h1>
 	</div>
-
 	<div data-role="content">

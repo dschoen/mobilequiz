@@ -1,24 +1,6 @@
 # MobileQuiz FrontEnd
 
-This folder is only about the frontend. It does not use ILIAS in any way, 
-therefore it could be even moved to a different host. The main reason it is located 
-here is to make deployment easier.
+This folder is only about the frontend, which renderes the smartphone views of the quiz. It does not use the ILIAS Framework and therefore could be moved somewhere else.
+But as it needs access to the ILIAS database, the configuration has to be changed, if the frontend is moved. 
 
 For licenses please refer to top level location of this software and its documentation.
-
-
-## INSTALLATION INSTRUCTIONS FOR THE FRONTEND:
-
-The frontend is deployed automatically with the backend. You will have to adjust
-the database access configuration though. Therefore please change the settings in the
-following file to your needs:
-
-frontend/includes/config.php
-
-If you wish you can move the frontend directory somewhere else, even to a different
-host. But keep in mind that it needs access to ILIAS’s database. Also change the
-variable frontend url in the file
-
-classes/class.ilObjMobileQuizGUI.php
-
-to reflect the new location.

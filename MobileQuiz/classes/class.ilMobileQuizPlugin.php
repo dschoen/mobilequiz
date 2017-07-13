@@ -31,15 +31,18 @@ include_once("./Services/Repository/classes/class.ilRepositoryObjectPlugin.php")
 * @version $Id$
 *
 */
-class ilMobileQuizPlugin extends ilRepositoryObjectPlugin{
-	function getPluginName(){
+class ilMobileQuizPlugin extends ilRepositoryObjectPlugin
+{
+	function getPluginName()
+	{
 		return "MobileQuiz";
 	}	
         
-        function uninstallCustom(){
-            //TODO hier was machen
-            return null;
-        }
+    function uninstallCustom()
+    {
+        //TODO function not implemeted
+    	return null;
     }
+}
 
 ?>

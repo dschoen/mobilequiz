@@ -149,3 +149,17 @@ open_quiz#:#Go to quiz
 msg_obj_create#:#Successful
 successful#:#Successful
 successful_delete#:#Successfully deleted
+
+
+<!-- Settings / Config -->
+config_label#:#MobileQuiz Settings
+config_shortener_active#:#Activate URL Shortener
+config_shortener_active_info#:#Activates an URL-shortener. This makes the QR-codes smaller.
+config_shortener_url#:#URL
+config_shortener_url_info#:#URL-Address to URL-shortener service (e.g. http://myshortener.de)
+config_shortener_username#:#Username
+config_shortener_password#:#Password
+config_shortener_format#:#Format
+config_shortener_format_info#:#Format of shortener (z.B. 'simple').
+config_latex_active#:#Activate LaTeX
+config_latex_active_info#:#Activates LaTeX transformation of all quiz texts with MathJax.

@@ -20,24 +20,19 @@
 | along with MobileQuiz.  If not, see <http://www.gnu.org/licenses/>.         |
 +-----------------------------------------------------------------------------+
 */
-
-
 include_once("./Services/Repository/classes/class.ilObjectPluginGUI.php");
 include_once("./Services/jQuery/classes/class.iljQueryUtil.php");
 include_once("./Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/classes/class.ilObjMobileQuizHelper.php");
+include_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/classes/class.ilMobileQuizConfigDAO.php');
 include_once("./Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/configuration.php");
-include_once("./Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/configuration.local.php");
+
 
 /**
- * User Interface class for MobileQuiz repository object.
- *
- * User interface classes process GET and POST parameter and call
- * application classes to fulfill certain tasks.
+
  *
  * @author Stephan Schulz
  * @author Daniel Schoen <schoen@uni-mannheim.de>
  *
- * $Id$
  *
  * Integration into control structure:
  * - The GUI class is called by ilRepositoryGUI
@@ -48,30 +43,30 @@ include_once("./Customizing/global/plugins/Services/Repository/RepositoryObject/
  * @ilCtrl_Calls ilObjMobileQuizGUI: ilPermissionGUI, ilInfoScreenGUI, ilObjectCopyGUI, ilCommonActionDispatcherGUI
  *
  */
-class ilObjMobileQuizGUI extends ilObjectPluginGUI{
+class ilObjMobileQuizGUI extends ilObjectPluginGUI {
 
+	var $config;
+	
     /**
      * Initialisation
      */
     protected function afterConstructor(){
-        // anything needed after object has been constructed
-        // - MobileQuiz: append my_id GET parameter to each request
-        //   $ilCtrl->saveParameter($this, array("my_id"));
+        $this->config = new ilMobileQuizConfigDAO();
     }
 
-    /**
-     * Get type.
-     */
-    final function getType(){
+
+    final function getType()
+    {
         return "xuiz";
     }
 
     /**
      * Handles all commmands of this class, centralizes permission checks
      */
-    function performCommand($cmd){
+    function performCommand($cmd)
+    {
         switch ($cmd){
-            // list all commands that need write permission here
+            // write Permissions
             case "editProperties":		
             case "editQuiz":
             case "getPropertiesValues":
@@ -122,11 +117,8 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
                 $this->$cmd();
                 break;
 
-            case "showCurrentRound":			
-                // list all commands that need read permission here
-                
-                //no commands so far
-                
+            // read Permission
+            case "showCurrentRound":    
                 $this->checkPermission("read");
                 $this->$cmd();
                 break;
@@ -351,7 +343,7 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
             $my_tpl->setVariable("QUIZ_URL",$shorted_url);
 
             // Ajax Update Information
-            $my_tpl->setVariable("AJAX_INTERFACE_URL", ilObjMobileQuizHelper::getPluginUrl()."interface/liveChartUpdate.php");
+            $my_tpl->setVariable("AJAX_INTERFACE_URL", ilObjMobileQuizHelper::getPluginUrl()."interfaces/liveChartUpdate.php");
             $my_tpl->setVariable("AJAX_SECRET", AJAX_INTERFACE_SECRET);
             $my_tpl->setVariable("AJAX_UPDATE_TIME", AJAX_CHART_UPDATE_TIME);
             $my_tpl->setVariable("ROUND_ID", $round_id);
@@ -509,12 +501,12 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
                 $mainworksheet->writeString(0, $column, ilExcelUtils::_convert_text("Anzahl", "excel", $format_bold));
 
                 $round_id   = $round['round_id'];                
-                $questions  = $this->object->getQuestions($this->object->getId());
+                $questions  = $this->object->getQuestionsOfQuiz($this->object->getId());
 
                 if(!count($questions) == 0) {
                     foreach ($questions as $question){
 
-                        $choices = $this->object->getChoices($question['question_id']);
+                        $choices = $this->object->getChoicesOfQuestion($question['question_id']);
                         $answers = $this->object->getAnswers($round_id);
 
                         switch ($question['type']) {
@@ -757,7 +749,7 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
         $html;
         $answers        = $this->object->getAnswers($round_id);
         $answer_count   = count($this->object->getDistinctAnswers($round_id));
-        $questions      = $this->object->getQuestions($this->object->getId());
+        $questions      = $this->object->getQuestionsOfQuiz($this->object->getId());
 
         
         // For every question render the answers and add them
@@ -843,10 +835,10 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
         $chart_tpl->setVariable("labels", $chart_label_string);
         $chart_tpl->setVariable("colors", $chart_color_string);
         $chart_tpl->setVariable("colors_border", $chart_color_border_string);
-        $chart_tpl->setVariable("ajax_interface_url", ilObjMobileQuizHelper::getPluginUrl()."interface/liveChartUpdate.php");
+        $chart_tpl->setVariable("ajax_interface_url", ilObjMobileQuizHelper::getPluginUrl()."interfaces/liveChartUpdate.php");
         $chart_tpl->setVariable("secret", AJAX_INTERFACE_SECRET);
         $chart_tpl->setVariable("ajax_update_time", AJAX_CHART_UPDATE_TIME);
-        $chart_tpl->setVariable("latex", LATEX_TRANSFORMATION);
+        $chart_tpl->setVariable("latex", $this->config->getConfigItem("LATEX_ACTIVE"));
         
         
         // Get number of correct answers
@@ -881,7 +873,7 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
         $datas = $this->getResultDataForNumeric($question, $answers, $answer_count, $round_id);
 
         // Get the questions parameters from the database
-        $parameters	= $this->object->getChoices($question['question_id']);
+        $parameters	= $this->object->getChoicesOfQuestion($question['question_id']);
         $numeric_values     = (explode(';',$parameters[0]['text']));
         $numeric_min        = $numeric_values[0];
         $numeric_max        = $numeric_values[1];
@@ -931,10 +923,10 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
         $chart_tpl->setVariable("labels", $chart_label_string);
         $chart_tpl->setVariable("colors", $chart_color_string);
         $chart_tpl->setVariable("colors_border", $chart_color_border_string);
-        $chart_tpl->setVariable("ajax_interface_url", ilObjMobileQuizHelper::getPluginUrl()."interface/liveChartUpdate.php");
+        $chart_tpl->setVariable("ajax_interface_url", ilObjMobileQuizHelper::getPluginUrl()."interfaces/liveChartUpdate.php");
         $chart_tpl->setVariable("secret", AJAX_INTERFACE_SECRET);
         $chart_tpl->setVariable("ajax_update_time", AJAX_CHART_UPDATE_TIME);
-        $chart_tpl->setVariable("latex", LATEX_TRANSFORMATION);
+        $chart_tpl->setVariable("latex", $this->config->getConfigItem("LATEX_ACTIVE"));
         
         // Correct answer Text
         $correct_answer_text = "-";
@@ -1025,14 +1017,13 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
     	$chart_tpl->setVariable("ANSWERS_WEIGHTED", $data_weight_string);    	
     	$chart_tpl->setVariable("ROUND_ID", $round_id);    	
     	
-    	$chart_tpl->setVariable("AJAX_INTERFACE_URL", ilObjMobileQuizHelper::getPluginUrl()."interface/liveChartUpdate.php");
+    	$chart_tpl->setVariable("AJAX_INTERFACE_URL", ilObjMobileQuizHelper::getPluginUrl()."interfaces/liveChartUpdate.php");
     	$chart_tpl->setVariable("AJAX_SECRET", AJAX_INTERFACE_SECRET);
     	$chart_tpl->setVariable("AJAX_UPDATE_TIME", AJAX_CHART_UPDATE_TIME);
     
-    	$chart_tpl->setVariable("latex", LATEX_TRANSFORMATION);
+    	$chart_tpl->setVariable("latex", $this->config->getConfigItem("LATEX_ACTIVE"));
     	
-    	$html = $chart_tpl->get();
-    
+    	$html = $chart_tpl->get();    
     	return $html;
     }
     
@@ -1046,7 +1037,7 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
      */
     public function getResultDataForMultipleChoice($question, $answers, $answer_count, $round_id) {
         // Get the questions' choices from the database
-        $choices = $this->object->getChoices($question['question_id']);
+        $choices = $this->object->getChoicesOfQuestion($question['question_id']);
 
         if(!count($choices) == 0) {
             $return = array();
@@ -1083,7 +1074,7 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
     public function getResultDataForNumeric($question, $answers, $answer_count, $round_id) {
         // Get the questions' choice from the database
         $answers	= $this->object->getAnswers($round_id);
-        $parameters	= $this->object->getChoices($question['question_id']);
+        $parameters	= $this->object->getChoicesOfQuestion($question['question_id']);
 
         $numeric_values     = (explode(';',$parameters[0]['text']));
         $numeric_min        = $numeric_values[0];
@@ -1150,7 +1141,7 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
      */
     public function getResultDataForText($question, $answers, $answer_count, $round_id) {
     	// Get the questions' choices from the database
-    	$choices = $this->object->getChoices($question['question_id']);
+    	$choices = $this->object->getChoicesOfQuestion($question['question_id']);
     	
     	// there should only be one choice
     	$choice = $choices[0];
@@ -1222,9 +1213,7 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
 //             if ($choice['correct_value'] == 1 && $choice['value'] == 1){
 //                 $correct_answers_count++;
 //             }
-        }
-        
-
+        }    
         return $correct_answers_count;
     }
 
@@ -1247,7 +1236,7 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
         // get the choice of the numeric answer and read out the correct number and the tolerance range
         // both are necessary to count the correct answers
         // there is only one choice for a numeric question
-        $choices	= $this->object->getChoices($question_id);
+        $choices	= $this->object->getChoicesOfQuestion($question_id);
         // extract the variables from the text-field
         $numeric_values		= (explode(';',$choices[0]['text']));
         $correct_number		= $numeric_values[3];
@@ -1274,10 +1263,11 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
     //--------------------------------------------------------------------------
 
     /**
-     * Edit Quiz
+     * Open Edit Page
      * 
      */
-    public function editQuiz() {
+    public function editQuiz() 
+    {
         global $tpl, $ilTabs;
         $ilTabs->activateTab("editQuiz");
         iljQueryUtil::initjQuery();
@@ -1288,9 +1278,11 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
     // -------------------------------------------------------------------------
     
     /**
-     * Add Question ansd Answers. This creates the question form by calling the initAddQuestionAndAnswersForm() method.
+     * Add Question and Answers. 
+     * This creates the question form by calling the initAddQuestionAndAnswersForm() method.
      */
-    public function addQuestionAndAnswers () {
+    public function addQuestionAndAnswers() 
+    {
         global $tpl, $ilTabs;
         $ilTabs->activateTab("editQuiz");
         $this->openQuestionAndAnswersForm();
@@ -1329,9 +1321,7 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
         $tbl->addColumn($this->txt("question_table_down"),"downArrow", '3%');
         
         // write two columns with arrows
-
-        // Get the questions from the database
-        $questions = $this->object->getQuestions();
+        $questions = $this->object->getQuestionsOfQuiz($this->object->getId());
         $result = array();
 
         if(!count($questions) == 0) {
@@ -1402,7 +1392,7 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
                 
                 // This is quite ugly, but this way the information can be given
                 // to the template for using LaTeX transformation.
-                $question["latex"] = LATEX_TRANSFORMATION;
+                $question["latex"] = $this->config->getConfigItem("LATEX_ACTIVE");
                 
                 $this->ctrl->setParameter($this,'type',$question['type']);
                 $this->ctrl->clearParameters($this);
@@ -1594,6 +1584,5 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI{
             $ilCtrl->redirect($this, "editQuiz");
         }
     }
-
 }
 ?>

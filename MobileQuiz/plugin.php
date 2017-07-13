@@ -21,18 +21,10 @@
 +-----------------------------------------------------------------------------+
 */
 
-// alphanumerical ID of the plugin; never change this
 $id = "xuiz";
- 
-// code version; must be changed for all code changes
-$version = "1.1.0";
- 
-// ILIAS min and max version; must always reflect the versions that should
-// run with the plugin
+$version = "1.2.3";
 $ilias_min_version = "5.0.0";
-$ilias_max_version = "5.1.13";
-
-// optional, but useful: Add one or more responsible persons and a contact email
+$ilias_max_version = "5.2.99";
 $responsible        = "Daniel Schoen";
 $responsible_mail   = "mobilequiz@uni-mannheim.de";
 ?>

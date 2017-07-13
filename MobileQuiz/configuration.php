@@ -35,8 +35,8 @@ define("AJAX_CHART_UPDATE_TIME", "5000");
 // |   Configuration of the Students Frontend part                            |
 // +--------------------------------------------------------------------------+
 
-define("FRONTEND_DEFAULT_TITLE", "MobileQuiz");
-define("FRONTEND_DEFAULT_FOOTER", date("Y")." MobileQuiz Plug-In for ILIAS");
+// Change path when frontend is located somewhere else
+define("FRONTEND_PATH", "Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/frontend/");
 
 // +--------------------------------------------------------------------------+
 // |   Quiz Constants - DO NOT TOUCH - unless you know what you do            |

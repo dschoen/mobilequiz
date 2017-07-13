@@ -1,6 +1,5 @@
 <#1>
 <?php
-
 $definition_quizzes = array(
     'quiz_id' => array(
             'type'      => 'integer',
@@ -20,7 +19,6 @@ $definition_quizzes = array(
 $ilDB->createTable("rep_robj_xuiz_quizzes", $definition_quizzes);
 $ilDB->addPrimaryKey("rep_robj_xuiz_quizzes", array("quiz_id"));
 $ilDB->createSequence("rep_robj_xuiz_quizzes");
-
 
 $definition_questions = array(
     'question_id' => array(
@@ -75,7 +73,6 @@ $ilDB->createTable("rep_robj_xuiz_choices", $definition_choices);
 $ilDB->addPrimaryKey("rep_robj_xuiz_choices", array("choice_id"));
 $ilDB->createSequence("rep_robj_xuiz_choices");
 
-
 $definition_rounds = array(
     'round_id' => array(
             'type'     => 'integer',
@@ -105,7 +102,6 @@ $ilDB->createTable("rep_robj_xuiz_rounds", $definition_rounds);
 $ilDB->addPrimaryKey("rep_robj_xuiz_rounds", array("round_id"));
 $ilDB->createSequence("rep_robj_xuiz_rounds");
 
-
 $definition_answers = array(
     'answer_id' => array(
             'type'     => 'integer',
@@ -133,9 +129,24 @@ $ilDB->addPrimaryKey("rep_robj_xuiz_answers", array("answer_id"));
 $ilDB->createSequence("rep_robj_xuiz_answers");
 ?>
 
-
 <#2>
 ALTER TABLE rep_robj_xuiz_qs ADD COLUMN solution VARCHAR(4000);
 ALTER TABLE rep_robj_xuiz_qs ADD COLUMN furthermore VARCHAR(2000);
 <#3>
 ALTER TABLE rep_robj_xuiz_answers MODIFY value VARCHAR(500);
+<#4>
+ALTER TABLE rep_robj_xuiz_answers ADD INDEX (user_string);
+<#5>
+<?php
+$definition_config = array(
+    'item' => array(
+            'type'      => 'text',
+            'length'    => 40,
+		),
+    'value' => array(
+            'type'      => 'text',
+            'length'    => 100,
+		),
+);
+$ilDB->createTable("rep_robj_xuiz_config", $definition_config);
+?>

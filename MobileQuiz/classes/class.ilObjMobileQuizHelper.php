@@ -30,7 +30,7 @@ class ilObjMobileQuizHelper {
      * @param Integer $length
      * @return String $text
      */
-    public function cutText($text, $length=100) {
+    public static function cutText($text, $length=100) {
         return (strlen($text) > $length) ? substr($text,0,$length).'...' : $text;
     }
     
@@ -42,7 +42,7 @@ class ilObjMobileQuizHelper {
      * @author dschoen 
      * @param String $text
      */
-    public function polishText($text) {
+    public static function polishText($text) {
                 
         include_once './Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/lib/markdown/Markdown.inc.php';
         
@@ -69,7 +69,7 @@ class ilObjMobileQuizHelper {
      * @author dschoen
      * @param String $text
      */
-    public function polishTextTagCloud($text) {
+    public static function polishTextTagCloud($text) {
         
     	// remove critical charackters
     	$text = htmlspecialchars($text);
@@ -95,7 +95,7 @@ class ilObjMobileQuizHelper {
      * @author dschoen
      * @param String $text
      */
-    public function escapeCurvyBrackets($text) {
+    public static function escapeCurvyBrackets($text) {
         
         // escape "{"
         $text = str_replace("{", "{&nbsp;", $text);
@@ -114,7 +114,7 @@ class ilObjMobileQuizHelper {
      * @author dschoen
      * @param String $text
      */
-    public function escapeBackslashesForJavaScript($text) {
+    public static function escapeBackslashesForJavaScript($text) {
     
     	// replace "\" with "\\" so that JavaScript later reads an escaped "\"
     	$text = str_replace("\\", "\\\\", $text);
@@ -130,7 +130,7 @@ class ilObjMobileQuizHelper {
      * 
      * @return string
      */
-    public function getPluginUrl(){
+    public static function getPluginUrl(){
         
         $protocol = (!empty($_SERVER['HTTPS'])) ? "https://" : "http://";
         $hostname = (!empty($_SERVER['HTTP_X_FORWARDED_HOST'])) ? $_SERVER['HTTP_X_FORWARDED_HOST'] : $_SERVER['SERVER_NAME'];

@@ -23,35 +23,35 @@
 
 /**
  * This controller handles the quiz.
- *
  */
 class QuizController{
 
     /**
-     * This is the main method to display the quiz
+     * This is the main method to display the quiz.
      */
     public function handleRequest(){
 
-        // check if the quiz round is still active, if not break
-        if(!isRoundActive($_GET['round_id'])){
+    	// check if quiz exists
+    	$quiz = Quiz::find(array('quiz_id'=>$_GET['quiz_id']));
+    	if(empty($quiz)){
+    		throw new Exception("There is no such quiz!");
+    	}
+    	
+        // check if the quiz round exists and is still active, if not break
+        if(!Round::isActive($_GET['round_id'])){
             render('abuse',array(
-                'title'     => 'Quiz is inactive'
+                'title'     => 'Quiz round is not active!!'
             ));
         }
-
-        $quiz = Quiz::find(array('quiz_id'=>$_GET['quiz_id']));
-
-        if(empty($quiz)){
-            throw new Exception("There is no such quiz!");
-        }
-
+        
         // Fetch all the questions in this quiz:
         $questions = Question::find(array('quiz_id'=>$_GET['quiz_id']));
 
         // $questions are arrays with objects
         render('quiz',array(
-            'title'		=> 'Quiz: '.$quiz[0]->name,
+            'title'			=> 'Quiz: '.$quiz[0]->name,
             'questions'		=> $questions,
+        	'latex_active' 	=> $this->isLatexActive(),
         ));
     }
 
@@ -64,28 +64,24 @@ class QuizController{
         global $db;
         $sql = $db->prepare("SELECT type FROM rep_robj_xuiz_rounds WHERE round_id = :id" );
         $sql->execute(array(":id" => $_POST['round_id']));
-        $row = $sql->fetchAll(PDO::FETCH_CLASS, "Round");
-
-        // check if there is a cookie for this round already, then break
-        if(isset($_COOKIE["round".$_POST['round_id']]) && $row[0]->type != "passive"){
-            //if(false){
+        $row = $sql->fetchAll(PDO::FETCH_CLASS, "Round");        
+        
+        // check if the quiz round is still active
+        if ( !Round::isActive($_POST['round_id']) ) {
+        	render('abuse',array(
+        			'title'	=> 'Quiz round is closed!'
+        	));
+        
+        // check if round of this quiz was submitted already, by checking the cookie
+        } else if( !Round::isSubmitable($_POST['round_id']) ){
             render('abuse',array(
-                'title'			=> 'Quiz already submitted'
-            ));
-
-            // check if the quiz round is still active, if not break
-        } elseif (!isRoundActive($_POST['round_id']) && $row[0]->type != "passive"){
-            render('abuse',array(
-                'title'			=> 'Quiz round already closed'
+                'title'	=> 'Quiz has already been submitted!'
             ));
 
             // if we get to this, we assume it is the first time that user submits
             // for this round and the quiz ist still active
         } else {
-            // store cookie
-            $user_string = getGuid();
-            $expire=time()+60*60*24*365; // valid for a year
-            setcookie("round".$_POST['round_id'], $user_string, $expire);
+        	$user_string = Round::setSubmitCookie($_POST['round_id']);
 
             // first create answer objects for every choice of all questions of a quiz having 0 as value.
             $answers;
@@ -158,9 +154,20 @@ class QuizController{
                 'result'    	=> $answers
             ));
         }
-
     }
-
+    
+    private function isLatexActive() {    
+	    global $db;
+	    
+	    $statement = $db->prepare("SELECT * FROM rep_robj_xuiz_config WHERE item LIKE 'LATEX_ACTIVE'");	    
+	    $statement->execute($arr);
+	    
+	    $rows = $statement->fetchAll();
+	    $row = $rows[0];
+	    $value = $row['value'];
+	    
+	    return $value;
+    }
 }
 
 ?>

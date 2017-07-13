@@ -1,4 +1,4 @@
-<?php render('_header',array('title'=>$title))?>
+<?php render('_header',array('title'=>$title, 'latex_active'=>$latex_active))?>
 
 <form id="form1" action="index.php" method="post">
 	<fieldset>

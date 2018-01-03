@@ -65,6 +65,7 @@ choice_form_choices#:#Choices
 choice_form_solution#:#Explanation <br /> of Solution
 choice_form_furthermore#:#Further information
 choice_form_asterisk#:#required
+choice_form_asterisk_numeric#:#Minimum has to be smaller than maximum. Step has to be positive and bigger than 0.
 choice_form_button_add#:#Add new Answer
 choice_form_button_delete#:#Delete
 choice_form_text_correct_label#:#Optional correct Answer

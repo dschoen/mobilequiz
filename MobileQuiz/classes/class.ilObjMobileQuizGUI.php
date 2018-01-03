@@ -455,9 +455,9 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI {
         $format_title       = "";
         $surveyname = "mobilequiz_data_export";
 
-        include_once "./Services/Excel/classes/class.ilExcelWriterAdapter.php";
+        include_once("./Services/Excel/classes/class.ilExcel.php");
         $excelfile  = ilUtil::ilTempnam();
-        $adapter    = new ilExcelWriterAdapter($excelfile, FALSE);
+        $adapter    = new ilExcel($excelfile, FALSE);
         $workbook   = $adapter->getWorkbook();
         $workbook->setVersion(8); // Use Excel97/2000 Format
         //
@@ -1461,7 +1461,8 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI {
     	$my_tpl->setVariable("SUBMIT_BUTTON", 		$this->txt("save"));
     	$my_tpl->setVariable("BUTTON_CHOICE_ADD",	$this->txt("choice_form_button_add"));
     	$my_tpl->setVariable("BUTTON_CHOICE_DELETE",$this->txt("choice_form_button_delete"));
-    	$my_tpl->setVariable("ASTERISK_TEXT",$this->txt("choice_form_asterisk"));    	
+    	$my_tpl->setVariable("ASTERISK_TEXT",       $this->txt("choice_form_asterisk"));
+    	$my_tpl->setVariable("ASTERISK_TEXT_NUMERIC",$this->txt("choice_form_asterisk_numeric"));  
     	$my_tpl->setVariable("QUESTION", 			$this->txt("question_add_text"));
     	$my_tpl->setVariable("QUESTION_TYPE", 		$this->txt("question_add_type"));
     	$my_tpl->setVariable("CHOICES", 			$this->txt("choice_add_texts"));
@@ -1521,8 +1522,8 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI {
     //--------------------------------------------------------------------------
     
     /**
-     * Create Question and Answers. This is called after the form was filled out. From here
-     * the function in the Model is called to insert the question to the database
+     * Create Question and Answers. This is called after the form was filled out. 
+     * From here the function in the Model is called to insert the question to the database.
      */
     public function createQuestionAndAnswers () {
     	global $tpl, $ilCtrl, $ilTabs, $lng;

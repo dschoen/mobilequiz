@@ -400,16 +400,16 @@
 								<input type="hidden" name="choice_numeric_id"
 									value="{CHOICE_ID}"> 
 								<label for="choice_numeric_minimum">{MINIMUM}<span
-									class="asterisk">*</span></label> 
+									class="asterisk">**</span></label> 
 								<input type="Text"
 									name="choice_numeric_minimum" id="choice_numeric_minimum"
 									value="{MINIMUM_VAL}" /><br /> 
 								<label for="choice_numeric_maximum">{MAXIMUM}<span
-									class="asterisk">*</span></label> 
+									class="asterisk">**</span></label> 
 								<input type="Text"
 									name="choice_numeric_maximum" id="choice_numeric_maximum"
 									value="{MAXIMUM_VAL}" /><br /> 
-								<label for="choice_numeric_step">{STEP}<span class="asterisk">*</span></label>
+								<label for="choice_numeric_step">{STEP}<span class="asterisk">**</span></label>
 								<input type="Text" name="choice_numeric_step"
 									id="choice_numeric_step" value="{STEP_VAL}" /><br /> 
 								<label for="">{CORRECT_VALUE}</label> 
@@ -420,6 +420,12 @@
 								<input type="Text" name="choice_numeric_tol_range"
 									id="choice_numeric_tol_range" value="{TOLERANCE_RANGE_VAL}" /><br />
 							</fieldset>
+							<div style="float: left;">
+								<span class="asterisk">**</span>
+								<span class="small">
+									{ASTERISK_TEXT_NUMERIC}
+								</span>
+							</div>
 						</div>
 					</div> 
 					<!--  Numeric Choice END -->

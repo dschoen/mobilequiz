@@ -65,6 +65,7 @@ choice_form_choices#:#Antwort
 choice_form_solution#:#Lösungserklärung
 choice_form_furthermore#:#Weitere Informationen
 choice_form_asterisk#:#Angabe erforderlich
+choice_form_asterisk_numeric#:#Das Minimum ist kleiner als das Maximum. Die Schrittweite muss positiv und größer als 0 sein.
 choice_form_button_add#:#Antwort hinzufügen
 choice_form_button_delete#:#Löschen
 choice_form_text_correct_label#:#Optionale richtige Lösung

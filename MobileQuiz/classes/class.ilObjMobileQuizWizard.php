@@ -222,24 +222,31 @@ class ilObjMobileQuizWizard {
 	// -------------------------------------------------------------------------
 	
 	private function updateNumeric($model, $question_id) {
-		$text = $_POST['choice_numeric_minimum'].";".
-			$_POST['choice_numeric_maximum'].";".
-			$_POST['choice_numeric_step'].";".
-			$_POST['choice_numeric_correct_value'].";".
-			$_POST['choice_numeric_tol_range'];
+	    $min       = $_POST['choice_numeric_minimum'];
+	    $max       = $_POST['choice_numeric_maximum'];
+	    $step      = $_POST['choice_numeric_step'];
+	    $solution  = $_POST['choice_numeric_correct_value'];
+	    $tolerance = $_POST['choice_numeric_tol_range'];
+	    
+	    //verify and correct values
+	    if($step == 0) $step = 1;
+	    if($step < 0) $step *= -1;
+	    if($min > $max) { $tmp = $min; $min = $max; $max = $tmp; } // switch min and max
+	    
+	    $text = $min.";".$max.";".$step.";".$solution.";".$tolerance;
 		
 		// replace comma (',') by dot ('.')
 		$text = str_replace(',','.',$text);
 		
 		// if a correct number exists, then the quesition is a correct/not correct one
-		if($_POST['correct_number']) {
+		if($solution) {
 			$correct_value = "1";
 		} else {
 			$correct_value = "2";
 		}
 		
-		if (!empty($_POST['choice_numeric_id'])) {
-			// if choice exists, then update, else create
+		// if choice exists, then update, else create
+		if (!empty($_POST['choice_numeric_id'])) {			
 			$model->updateChoice($_POST['choice_numeric_id'],$correct_value, $text, -1);
 		} else {			
 			$model->createChoice($question_id, $correct_value, $text);

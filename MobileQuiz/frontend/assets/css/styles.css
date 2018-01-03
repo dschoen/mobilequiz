@@ -90,6 +90,15 @@ label.ui-btn {
 	min-height: 100px;
 }
 
+/* -- Slider -------------------------------------------------------------- */
+input[type=number] {
+    width: 90px;
+}
+.ui-slider-track {
+    margin-left: 120px;
+}
+
+
 
 /* -- Result Page ----------------------------------------------------------*/
 .optional-information-header {

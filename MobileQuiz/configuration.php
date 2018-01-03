@@ -47,7 +47,7 @@ define("QUESTION_TYPE_SINGLE",  "2");   // Single Choice
 define("QUESTION_TYPE_NUM",     "3");   // Numeric
 define("QUESTION_TYPE_TEXT",    "4");   // Text Question
 
-define("CHOICE_TYPE_INCORRECT", "0");   //	Wrong Choice
+define("CHOICE_TYPE_INCORRECT", "0");   // Wrong Choice
 define("CHOICE_TYPE_CORRECT",   "1");   // Correct Choice
 define("CHOICE_TYPE_NEUTRAL",   "2");   // Neutral Choice
 

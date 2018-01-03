@@ -22,10 +22,11 @@
 */
 include_once("./Services/Repository/classes/class.ilObjectPluginGUI.php");
 include_once("./Services/jQuery/classes/class.iljQueryUtil.php");
+include_once("./Services/Excel/classes/class.ilExcel.php");
+
 include_once("./Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/classes/class.ilObjMobileQuizHelper.php");
 include_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/classes/class.ilMobileQuizConfigDAO.php');
 include_once("./Customizing/global/plugins/Services/Repository/RepositoryObject/MobileQuiz/configuration.php");
-
 
 /**
 
@@ -425,11 +426,8 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI {
 
     /**
      * Is called when the "Export Result" Button is pressed.
-     * The function calles the Export Function.
      */
-    public function exportResultData() {
-        
-        // get rounds
+    public function exportResultData() {        
         $rounds = $this->object->getRounds();
         
         // Check if rounds exist, write a message if not
@@ -437,181 +435,121 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI {
             $this->exportResults();
         } else {
             ilUtil::sendFailure($this->txt("results_export_failure"), true);
-        }
-        
+        }        
         $this->ctrl->redirect($this, 'showResults');
     }
 
     //--------------------------------------------------------------------------
     
-    /*
+    /**
      * Exports the data
-     * Function is called by public function exportResultData
+     * Writes the all Quiz Results into an Excel file.
      */
-    function exportResults() {
-        $format_bold        = "";
-        $format_percent     = "";
-        $format_datetime    = "";
-        $format_title       = "";
-        $surveyname = "mobilequiz_data_export";
-
-        include_once("./Services/Excel/classes/class.ilExcel.php");
-        $excelfile  = ilUtil::ilTempnam();
-        $adapter    = new ilExcel($excelfile, FALSE);
-        $workbook   = $adapter->getWorkbook();
-        $workbook->setVersion(8); // Use Excel97/2000 Format
-        //
-        // Create a worksheet
-        $format_bold =& $workbook->addFormat();
-        $format_bold->setBold();
-        $format_percent =& $workbook->addFormat();
-        $format_percent->setNumFormat("0.00%");
-        $format_datetime =& $workbook->addFormat();
-        $format_datetime->setNumFormat("DD/MM/YYYY hh:mm:ss");
-        $format_title =& $workbook->addFormat();
-        $format_title->setBold();
-        $format_title->setColor('black');
-        $format_title->setPattern(1);
-        $format_title->setFgColor('silver');
-        $format_title->setAlign('center');
-
-        // Create a worksheet
-        include_once ("./Services/Excel/classes/class.ilExcelUtils.php");
+    private function exportResults() {   
+        $export_file_name = "MobileQuiz_Export.xls";
+        
+        $excel = new ilExcel();
 
         // Get rounds from the Database
         $rounds = $this->object->getRounds();
 
-        if(!count($rounds) == 0) {
-            foreach($rounds as $round){
+        // each round a new sheet
+        foreach($rounds as $round){
+            
+            $excel->addSheet('round_'.$round['round_id']);  // create sheet            
+            $excel->setCellArray(["question", "type", "choice", "correctness", "quantity"], 'A1');  // add titles
+            
+            $rows = array();
+            
+            $questions  = $this->object->getQuestionsOfQuiz($this->object->getId());            
+            if(!count($questions) == 0) {
+                foreach ($questions as $question){            
+                    $choices = $this->object->getChoicesOfQuestion($question['question_id']);
+                    $answers = $this->object->getAnswers($round['round_id']);
 
-                // Add a seperate worksheet for every Round
-                $mainworksheet =& $workbook->addWorksheet("Runde ".$round['round_id']);
-                $column = 0;
-                $row    = 0;
-
-                // Write first line with titles
-                $mainworksheet->writeString(0, $column, ilExcelUtils::_convert_text("Frage", "excel", $format_bold));
-                $column++;
-                $mainworksheet->writeString(0, $column, ilExcelUtils::_convert_text("Fragentyp", "excel", $format_bold));
-                $column++;
-                $mainworksheet->writeString(0, $column, ilExcelUtils::_convert_text("Antwort", "excel", $format_bold));
-                $column++;
-                $mainworksheet->writeString(0, $column, ilExcelUtils::_convert_text("Antworttyp", "excel", $format_bold));
-                $column++;
-                $mainworksheet->writeString(0, $column, ilExcelUtils::_convert_text("Anzahl", "excel", $format_bold));
-
-                $round_id   = $round['round_id'];                
-                $questions  = $this->object->getQuestionsOfQuiz($this->object->getId());
-
-                if(!count($questions) == 0) {
-                    foreach ($questions as $question){
-
-                        $choices = $this->object->getChoicesOfQuestion($question['question_id']);
-                        $answers = $this->object->getAnswers($round_id);
-
-                        switch ($question['type']) {
-                            case QUESTION_TYPE_SINGLE :
-                            case QUESTION_TYPE_MULTI:
-                                if(!count($choices) == 0) {
-                                    foreach($choices as $choice){
-                                        $count = 0;
-
-                                        foreach ($answers as $answer){
-                                            if (($answer['choice_id'] == $choice['choice_id'])&&($answer['value'] != 0)){
-                                                $count++;
-                                            }
-                                        }
-                                        // write into sheet
-                                        $column = 0;
-                                        $row++;
-                                        $mainworksheet->writeString($row, $column, ilExcelUtils::_convert_text($question['text'], "excel", $format_bold));
-                                        $column++;
-                                        $mainworksheet->writeString($row, $column, ilExcelUtils::_convert_text($question['type'], "excel", $format_bold));
-                                        $column++;
-                                        $mainworksheet->writeString($row, $column, ilExcelUtils::_convert_text($choice['text'], "excel", $format_bold));
-                                        $column++;
-                                        $mainworksheet->writeString($row, $column, ilExcelUtils::_convert_text($choice['correct_value'], "excel", $format_bold));
-                                        $column++;
-                                        $mainworksheet->writeNumber($row, $column, ilExcelUtils::_convert_text($count, "excel", 0));
-                                    }
-                                }
-                                break;
-                            case QUESTION_TYPE_NUM:
-                                if(!count($choices) == 0) {
-                                    foreach($choices as $choice){ // Theres always only one Choice with numeric questions
-                                        
-                                        // get Answers to this choice
-                                        $answers = $this->object->getAnswersToChoice($round_id, $choice['choice_id']);                                        
-                                        
-                                        // Summarize the answers
-                                        $values = array();
-                                        foreach ($answers as $answer){
-                                            $value = $answer['value'];
-                                            if (key_exists($value, $values)){
-                                                $values[$value] += 1;
-                                            } else {
-                                                $values[$value] = 1;
-                                            }                                            
-                                        }
-                                           
-                                        // Sort values from low to high
-                                        ksort($values);
-                                        
-                                        // Write values in Sheet
-                                        foreach ($values as $value => $count){
-                                            // write into sheet
-                                            $column = 0;
-                                            $row++;
-                                            $mainworksheet->writeString($row, $column, ilExcelUtils::_convert_text($question['text'], "excel", $format_bold));
-                                            $column++;
-                                            $mainworksheet->writeString($row, $column, ilExcelUtils::_convert_text($question['type'], "excel", $format_bold));
-                                            $column++;
-                                            $mainworksheet->writeNumber($row, $column, ilExcelUtils::_convert_text($value, "excel", 0));
-                                            $column++;
-                                            $mainworksheet->writeString($row, $column, ilExcelUtils::_convert_text('', "excel", 0));
-                                            $column++;
-                                            $mainworksheet->writeNumber($row, $column, ilExcelUtils::_convert_text($count, "excel", 0));
+                    switch ($question['type']) {
+                        case QUESTION_TYPE_SINGLE:
+                        case QUESTION_TYPE_MULTI:
+                            if(!count($choices) == 0) {
+                                foreach($choices as $choice){
+                                    $count = 0;
+                                    foreach ($answers as $answer){
+                                        if (($answer['choice_id'] == $choice['choice_id'])&&($answer['value'] != 0)){
+                                            $count++;
                                         }
                                     }
+                                    // write into sheet-template
+                                    $rows[] = array(
+                                            $question['text'], 
+                                            $this->questionTypeToText($question['type']), 
+                                            $choice['text'], 
+                                            $this->choiceCorrectnessToText($choice['correct_value']),
+                                            $count);
                                 }
-                                break;
-                        	case QUESTION_TYPE_TEXT:
-                        		if(count($choices) == 0) {
-                        			// do nothing
-                        			break;
-                        		}
-                        		$choice = $choices[0];
-                        		$answers = $this->object->getAnswersToChoice($round_id, $choice['choice_id']);
-                        		
-                        		error_log("---------------");
-                        		
-                        		
-                        		// write into sheet
-                        		foreach ($answers as $answer) {
-                        			$column = 0;
-                        			$row++;
-                        			$mainworksheet->writeString($row, $column, ilExcelUtils::_convert_text($question['text'], "excel", $format_bold));
-                        			$column++;
-                        			$mainworksheet->writeString($row, $column, ilExcelUtils::_convert_text($question['type'], "excel", $format_bold));
-                        			$column++;
-                        			$mainworksheet->writeString($row, $column, ilExcelUtils::_convert_text($answer['value'], "excel", 0));
-                        			$column++;
-                        			$mainworksheet->writeString($row, $column, ilExcelUtils::_convert_text("-", "excel", 0));
-                        			$column++;
-                        			$mainworksheet->writeString($row, $column, ilExcelUtils::_convert_text("-", "excel", 0));
-                        		}
-                        		
-                        		break;
-                        }
-                        // write empty line after question
-                        $row++;
+                            }
+                            break;
+                        case QUESTION_TYPE_NUM:                            
+                            if(!count($choices) == 0) {
+                                foreach($choices as $choice){ // Theres always only one Choice with numeric questions
+                                    
+                                    // get Answers to this choice
+                                    $answers = $this->object->getAnswersToChoice($round['round_id'], $choice['choice_id']);                                        
+                                    
+                                    // Summarize the answers
+                                    $values = array();
+                                    foreach ($answers as $answer){
+                                        $value = $answer['value'];
+                                        if (key_exists($value, $values)){
+                                            $values[$value] += 1;
+                                        } else {
+                                            $values[$value] = 1;
+                                        }                                            
+                                    }
+                                       
+                                    // Sort values from low to high
+                                    ksort($values);
+                                    
+                                    // Write values in Sheet
+                                    foreach ($values as $value => $count) {
+                                        // write into sheet-template
+                                        $rows[] = array(
+                                                $question['text'], 
+                                                $this->questionTypeToText($question['type']), 
+                                                $value, 
+                                                '', 
+                                                $count);   
+                                    }
+                                }
+                            }
+                            break;
+                    	case QUESTION_TYPE_TEXT:                    	    
+                    		if(count($choices) == 0) {                    			
+                    		    break; // do nothing
+                    		}
+                    		
+                    		$choice = $choices[0];
+                    		$answers = $this->object->getAnswersToChoice($round['round_id'], $choice['choice_id']);                    		
+                    		
+                    		// write into sheet
+                    		foreach ($answers as $answer) {
+                    		    //write into sheet-template
+                    		    $rows[] = array(
+                    		          $question['text'], 
+                    		          $this->questionTypeToText($question['type']),
+                    		          $answer['value'], 
+                    		          '-',                    		          
+                    		          '-');
+                    		}                    		
+                    		break;
                     }
+                    // write empty line after question
+                    $rows[] = array('', '', '', '', '');
                 }
             }
+            // Write sheet-template of this round into current sheet
+            $excel->setCellArray($rows, 'A2');            
         }
-        // Send file to client
-        $workbook->close();
-        ilUtil::deliverFile($excelfile, "$surveyname.xls", "application/vnd.ms-excel");
+        $excel->sendToClient($export_file_name); // return file to client
         exit();
     }
 
@@ -782,7 +720,6 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI {
      * This method displays the results of a multiple choice question.
      * It is used by showRoundResults().
      * 
-     * @param unknown_type $question
      */
     public function showRoundResultsForMultipleChoice($question, $answers, $answer_count, $round_id) {
     	
@@ -956,7 +893,6 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI {
      * This method displays the results of a multiple choice question.
      * It is used by showRoundResults().
      *
-     * @param unknown_type $question
      */
     public function showRoundResultsForText($question, $answers, $answer_count, $round_id) {
     	 
@@ -1033,7 +969,6 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI {
      * Get result data for multiple choice
      * This method us for a multiple choice question.
      * It is used by showRoundResultsForMultipleChoice().
-     * @param unknown_type $question
      */
     public function getResultDataForMultipleChoice($question, $answers, $answer_count, $round_id) {
         // Get the questions' choices from the database
@@ -1137,7 +1072,6 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI {
      * Get result data for multiple choice
      * This method us for a multiple choice question.
      * It is used by showRoundResultsForMultipleChoice().
-     * @param unknown_type $question
      */
     public function getResultDataForText($question, $answers, $answer_count, $round_id) {
     	// Get the questions' choices from the database
@@ -1164,7 +1098,6 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI {
      * It is used by showRoundResults().
      * It does the same as Multiple Choice.
      * 
-     * @param unknown_type $question
      */
     public function showRoundResultsForSingleChoice($question, $answers, $answer_count, $round_id) {
         return $this->showRoundResultsForMultipleChoice($question, $answers, $answer_count, $round_id);
@@ -1583,6 +1516,39 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI {
             ilUtil::sendSuccess($this->txt("successful_delete"), true);
             // Forwarding
             $ilCtrl->redirect($this, "editQuiz");
+        }
+    }
+    
+    //--------------------------------------------------------------------------
+    //--------------------------------------------------------------------------
+    
+    private function choiceCorrectnessToText($number) {
+        switch ($number) {
+            case CHOICE_TYPE_INCORRECT:
+                return "true";
+            case CHOICE_TYPE_CORRECT: 
+                return "false";
+            case CHOICE_TYPE_NEUTRAL:
+                return "neutral";
+            default:
+                return "unknown";
+        } 
+    }
+    
+    //--------------------------------------------------------------------------
+    
+    private function questionTypeToText($number) {
+        switch ($number) {
+            case QUESTION_TYPE_SINGLE:
+                return "single";
+            case QUESTION_TYPE_MULTI:
+                return "multi";
+            case QUESTION_TYPE_NUM:
+                return "numeric";
+            case QUESTION_TYPE_TEXT:
+                return "text";
+            default:
+                return "unknown";
         }
     }
 }

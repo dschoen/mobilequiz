@@ -51,6 +51,10 @@ define("CHOICE_TYPE_INCORRECT", "0");   // Wrong Choice
 define("CHOICE_TYPE_CORRECT",   "1");   // Correct Choice
 define("CHOICE_TYPE_NEUTRAL",   "2");   // Neutral Choice
 
+define("ROUND_STATUS_INACTIVE", "inactive");
+define("ROUND_STATUS_ACTIVE",   "active");
+define("ROUND_STATUS_PASSIVE",  "passive");
+
 define("NUMERIC_MAX_NUMBER_OF_BUCKETS", "20"); // max number of Buckets displayed in Numeric Questions
 
 ?>

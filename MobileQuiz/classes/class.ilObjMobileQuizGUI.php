@@ -407,13 +407,13 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI {
         global $ilUser, $tpl, $ilTabs, $ilCtrl;
         $ilTabs->activateTab("showResults");
 
-        if(isset($_GET['round_id']) && is_numeric($_GET['round_id'])){
-            $round_id = $_GET['round_id'];
-
-            $this->object->changeRoundStatus($round_id);
+        if(isset($_GET['round_id']) 
+                && is_numeric($_GET['round_id'])
+                && isset($_GET['status'])) {
+            
+            $this->object->setRoundStatus($_GET['round_id'], $_GET['status']);
+            
             $ilTabs->activateTab("showResults");
-
-
             ilUtil::sendSuccess($this->txt("results_round_status_change_success"), true);
             $ilCtrl->redirect($this, "showResults");
         }
@@ -446,22 +446,19 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI {
      * Writes the all Quiz Results into an Excel file.
      */
     private function exportResults() {   
-        $export_file_name = "MobileQuiz_Export.xls";
-        
-        $excel = new ilExcel();
+        $export_file_name = "MobileQuiz_Export.xls";        
+        $excel = new ilExcel();        
+        $rounds = $this->object->getRounds(); // Get rounds from database
 
-        // Get rounds from the Database
-        $rounds = $this->object->getRounds();
-
-        // each round a new sheet
+        // a new sheet for each round
         foreach($rounds as $round){
             
             $excel->addSheet('round_'.$round['round_id']);  // create sheet            
             $excel->setCellArray(["question", "type", "choice", "correctness", "quantity"], 'A1');  // add titles
             
-            $rows = array();
+            $rows = array();            
+            $questions  = $this->object->getQuestionsOfQuiz($this->object->getId());   
             
-            $questions  = $this->object->getQuestionsOfQuiz($this->object->getId());            
             if(!count($questions) == 0) {
                 foreach ($questions as $question){            
                     $choices = $this->object->getChoicesOfQuestion($question['question_id']);
@@ -505,13 +502,11 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI {
                                             $values[$value] = 1;
                                         }                                            
                                     }
-                                       
-                                    // Sort values from low to high
-                                    ksort($values);
+                                                                        
+                                    ksort($values); // Sort values from low to high
                                     
-                                    // Write values in Sheet
-                                    foreach ($values as $value => $count) {
-                                        // write into sheet-template
+                                    // write into sheet-template
+                                    foreach ($values as $value => $count) {                                        
                                         $rows[] = array(
                                                 $question['text'], 
                                                 $this->questionTypeToText($question['type']), 
@@ -530,9 +525,8 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI {
                     		$choice = $choices[0];
                     		$answers = $this->object->getAnswersToChoice($round['round_id'], $choice['choice_id']);                    		
                     		
-                    		// write into sheet
-                    		foreach ($answers as $answer) {
-                    		    //write into sheet-template
+                    		//write into sheet-template
+                    		foreach ($answers as $answer) {                    		    
                     		    $rows[] = array(
                     		          $question['text'], 
                     		          $this->questionTypeToText($question['type']),
@@ -546,8 +540,7 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI {
                     $rows[] = array('', '', '', '', '');
                 }
             }
-            // Write sheet-template of this round into current sheet
-            $excel->setCellArray($rows, 'A2');            
+            $excel->setCellArray($rows, 'A2'); // Write sheet-template of this round into current sheet
         }
         $excel->sendToClient($export_file_name); // return file to client
         exit();
@@ -589,9 +582,10 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI {
 
         $tbl->setOrderColumn('text');
 
-        $tbl->addColumn($this->txt("results_round"), 'text', '25%');
+        $tbl->addColumn($this->txt("results_round"), 'text', '10%');
         $tbl->addColumn($this->txt("results_no_of_answers"), 'type', '15%');
-        $tbl->addColumn($this->txt("results_start_date"), 'text', '20%');
+        $tbl->addColumn($this->txt("results_start_date"), 'text', '15%');
+        $tbl->addColumn($this->txt("results_end_date"), 'text', '15%');
         $tbl->addColumn($this->txt("results_status"), 'text', '15%');
         $tbl->addColumn($this->txt("results_round_options"), 'text', '25%');
 
@@ -610,60 +604,57 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI {
                 $round["open_quiz"] = $this->txt("rounds_open_quiz");                
                 
                 $this->ctrl->setParameter($this,'round_id',$round['round_id']);
-                $action_status = $this->ctrl->getLinkTarget($this,'changeRoundStatus');
-                $action_status = $this->ctrl->appendRequestTokenParameterString($action_status);
-                $round["status"] = '<select class="change-status" onchange="javascript:if ( $(this).val() != \'no-follow\' ) window.location.href = $(this).val();"><option value="no-follow">'.$this->txt("results_status_inactive").'</option>';
-
-                $round["change_status"] = ''.$this->txt("results_status_passive")."</option><option value='".$action_status."&activate=true'>".$this->txt("results_status_activate")."</option>";
+                
+                
+                // Round Results
                 $action_show_round_results = $this->ctrl->getLinkTarget($this,'showRoundResults');
                 $action_show_round_results = $this->ctrl->appendRequestTokenParameterString($action_show_round_results);
-                $round['show_round_results_href'] = "<a href=".$action_show_round_results.">";
-
+                $round['show_round_results_href'] = $action_show_round_results;
+                
+                // Round Name
+                if ($this->object->getRoundStatus($round['round_id']) == ROUND_STATUS_INACTIVE) {
+                    $round["round_name"] = $this->txt("results_round_name_inactive");
+                } else {
+                    $round["round_name"] = $this->txt("results_round_name_active");
+                }
+          
+                // Answer Count
                 $round["answer_count"] = count($this->object->getDistinctAnswers($round['round_id']));
+                
+                // Start-date and End-Date
+                $user_language = $ilUser->getLanguage();
+                if($user_language == 'de') {
+                    $round["start_date"]    = date("d.m.Y - H:i:s",strtotime($round["start_date"]));
+                    $round["end_date"]      = empty($round["end_date"]) ? '-' : date("d.m.Y - H:i:s",strtotime($round["end_date"]));
+                } else {
+                    $round["start_date"]    = date("m/d/Y - H:i:s",strtotime($round["start_date"]));
+                    $round["end_date"]      = empty($round["end_date"]) ? '-' : date("m/d/Y - H:i:s",strtotime($round["end_date"]));
+                }
+                
+                // Status
+                $round_status = $this->object->getRoundStatus($round['round_id']);
+                $action_status = $this->ctrl->getLinkTarget($this,'changeRoundStatus');
+                $action_status = $this->ctrl->appendRequestTokenParameterString($action_status);
+                $round["status_inactive"] = $this->txt("results_status_inactive");
+                $round["status_active"]   = $this->txt("results_status_active");
+                $round["status_passive"]  = $this->txt("results_status_passive");                
+                $round["status_inactive_href"]  = $action_status."&status=".ROUND_STATUS_INACTIVE;
+                $round["status_active_href"]    = $action_status."&status=".ROUND_STATUS_ACTIVE;
+                $round["status_passive_href"]   = $action_status."&status=".ROUND_STATUS_PASSIVE;
+                $round["status_inactive_selected"]  = ($round_status == ROUND_STATUS_INACTIVE) ? "selected" : "";
+                $round["status_active_selected"]    = ($round_status == ROUND_STATUS_ACTIVE) ? "selected" : "";
+                $round["status_passive_selected"]   = ($round_status == ROUND_STATUS_PASSIVE) ? "selected" : "";
 
-                // delete link
+                // Action: Delete link
                 $this->ctrl->setParameter($this,'round_id',$round['round_id']);
                 $action_delete = $this->ctrl->getLinkTarget($this,'deleteRound');
                 $action_delete = $this->ctrl->appendRequestTokenParameterString($action_delete);
-                $round["delete_round_href"] = "<a href=".$action_delete.">";
-                $round["delete_round_txt"] = $this->txt("results_round_delete");
+                $round["delete_round_href"]     = $action_delete;
+                $round["delete_round_txt"]      = $this->txt("results_round_delete");
+                $round["delete_round_message"]  = $this->txt("results_round_delete_message");
 
-                // date format depends on the user's language
-                $user_language = $ilUser->getLanguage();
-                $endDate = strtotime($round["end_date"]);
-                if($user_language == 'de') {
-                    // for german user dd.MM.YYYY
-                    $round["date"] = date("d.m.Y",strtotime($round["start_date"]));
-                    $round["enddate"] = date("d.m.Y",strtotime($round["end_date"]));
-                } else {
-                    // for all other users MM.dd.YYYY
-                    $round["date"] = date("m.d.Y",strtotime($round["start_date"]));
-                    $round["enddate"] = date("m.d.Y",strtotime($round["end_date"]));
-                }
-
-                $round["round_name"] = $this->txt("results_round")." ".$this->txt("results_round_on")." ".
-                    $round["enddate"]." ".$this->txt("results_round_at")." ".
-                    date("H:i",strtotime($round["end_date"]));
-
-                $action_status = $this->ctrl->getLinkTarget($this,'changeRoundStatus');
-                $action_status = $this->ctrl->appendRequestTokenParameterString($action_status);
-                $round["change_status_href"] = '<option value="'.$action_status.'">';
-
-                // Zeigt "Aktuelle Runde" an, wenn Runde noch nicht beendet wurde
-                if ( empty( $endDate ) ){
-                    $round["status"] = '<select class="change-status" onchange="javascript:if ( $(this).val() != \'no-follow\' ) window.location.href = $(this).val();"><option value="no-follow">'.$this->txt("results_status_active").'</option>';
-                    $round["change_status"] = $this->txt("results_status_passive")."</option>  <option value='".$action_status."&deactivate=true'>".$this->txt("results_status_deactivate").'</option>';
-                    $round["round_name"] = $this->txt("current_round");
-                    $round["date"] = $this->txt("current")." (".$round["date"].")";
-                }
-                if ( $round["type"] == "passive" ) {
-                    $round["change_status_href"] = "<option value='".$action_status."&activate=true'>";
-                    $round["status"] = "<select class=\"change-status\" onchange=\"javascript:if ( $(this).val() != 'no-follow' ) window.location.href = $(this).val();\"><option value=\no-follow\">".$this->txt("results_status_passive")."</option>";
-                    $round["change_status"] = $this->txt("results_status_activate")."</option> <option value='".$action_status."&deactivate=true'>".$this->txt("results_status_deactivate")."</option>";
-                }
                 $this->ctrl->clearParameters($this);
                 $result[] = $round;
-                $round_name--;
             }
         }
 

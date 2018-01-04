@@ -30,7 +30,8 @@ include_once("./Customizing/global/plugins/Services/Repository/RepositoryObject/
 /**
  * Application class for MobileQuiz repository object.
  *
- * @author Stephan Schulz <stschulz@mail.uni-mannheim.de>
+ * @author Daniel Schön <daniel.schoen@uni-mannheim.de>
+ * @author Stephan Schulz
  *
  * $Id$
  */
@@ -511,21 +512,21 @@ class ilObjMobileQuiz extends ilObjectPlugin
     // -------------------------------------------------------------------------
     
     /**
-     * End current round. This will finish the current round. Therefore an endDate is inserted to the round entry into the db.
+     * End current round.
      */
     public function endCurrentRound(){
         global $ilDB;
 
-        $now = new ilDateTime(time(),IL_CAL_UNIX);
         $currentRound = $this->getCurrentRound($this->getId());
         $round_id = $currentRound['round_id'];
-        $ilDB->manipulate("UPDATE rep_robj_xuiz_rounds SET end_date= ".$ilDB->quote($now->get(IL_CAL_DATETIME), "timestamp")." WHERE round_id = ".$ilDB->quote($round_id, "integer"));
+        
+        $this->setRoundStatus($round_id, ROUND_STATUS_INACTIVE);
     }
 
     // -------------------------------------------------------------------------
     
     /**
-     * Begin current round. That will create a new round entry with the current dateTime as start_date.
+     * Begin new round. That will create a new round entry with the current dateTime as start_date.
      * Then temporary directory will be created.
      * Then QR Code image will be created and stored to filesystem into the temporary directory.
      */
@@ -815,10 +816,9 @@ class ilObjMobileQuiz extends ilObjectPlugin
     
     /**
      * Change to status of a round to active, inactive or passive
-     *
      * @param	int	round_id
      */
-    public function changeRoundStatus($round_id) {
+    public function setRoundStatus($round_id, $status) {
         global $ilDB, $ilUser;
 
         $ilDB->setLimit(1);
@@ -827,29 +827,55 @@ class ilObjMobileQuiz extends ilObjectPlugin
             	          FROM rep_robj_xuiz_rounds
             	          WHERE round_id = ".$ilDB->quote($round_id, "integer")." ORDER BY round_id DESC");
 
-        while ($rec = $ilDB->fetchAssoc($set)){
-
-            if ( empty( $_GET['activate'] ) && empty( $_GET['deactivate'] ) ) {
-                $ilDB->manipulate("UPDATE rep_robj_xuiz_rounds SET type = 'passive' WHERE ".
+        while ($rec = $ilDB->fetchAssoc($set)){            
+            switch ($status) {
+                case ROUND_STATUS_ACTIVE:
+                    $ilDB->manipulate("UPDATE rep_robj_xuiz_rounds SET type = 'normal' WHERE ".
                         " round_id = ".$ilDB->quote($round_id, "integer")
-                );
-                $ilDB->manipulate("UPDATE rep_robj_xuiz_rounds SET end_date = NULL WHERE ".
-                        " round_id = ".$ilDB->quote($round_id, "integer")
-                );
-            } else {
-                $ilDB->manipulate("UPDATE rep_robj_xuiz_rounds SET type = 'normal' WHERE ".
-                        " round_id = ".$ilDB->quote($round_id, "integer")
-                );
-                if ( !empty( $rec["end_date"] ) || !empty( $_GET['activate'] )) {
+                    );
                     $ilDB->manipulate("UPDATE rep_robj_xuiz_rounds SET end_date = NULL WHERE ".
-                            " round_id = ".$ilDB->quote($round_id, "integer")
+                        " round_id = ".$ilDB->quote($round_id, "integer")
+                        );
+                    break;
+                case ROUND_STATUS_INACTIVE:
+                    $ilDB->manipulate("UPDATE rep_robj_xuiz_rounds SET type = 'normal' WHERE ".
+                        " round_id = ".$ilDB->quote($round_id, "integer")
                     );
-                } else {
                     $ilDB->manipulate("UPDATE rep_robj_xuiz_rounds SET end_date = NOW() WHERE ".
-                            " round_id = ".$ilDB->quote($round_id, "integer")
+                        " round_id = ".$ilDB->quote($round_id, "integer")
+                        );
+                    break;
+                case ROUND_STATUS_PASSIVE:
+                    $ilDB->manipulate("UPDATE rep_robj_xuiz_rounds SET type = 'passive' WHERE ".
+                        " round_id = ".$ilDB->quote($round_id, "integer")
                     );
-                }
+                    $ilDB->manipulate("UPDATE rep_robj_xuiz_rounds SET end_date = NULL WHERE ".
+                        " round_id = ".$ilDB->quote($round_id, "integer")
+                        );
+                    break;                
             }
+        }
+    }
+    
+    public function getRoundStatus($round_id) {
+        global $ilDB;
+        $ilDB->setLimit(1);
+        $set = $ilDB->query("
+			  SELECT *
+	          FROM rep_robj_xuiz_rounds
+	          WHERE round_id = ".$ilDB->quote($round_id, "integer").";" );
+        
+        $rec = $ilDB->fetchAssoc($set);
+        $round = $this->fetchRoundFromResult($rec);
+        
+        if (!empty($round['end_date'])) {
+            return ROUND_STATUS_INACTIVE;
+        } else if ( empty($round['end_date']) && empty($round['type']) ) {
+            return ROUND_STATUS_ACTIVE;
+        } else if ( empty($round['end_date']) && ($round['type'] == 'normal') ) {
+            return ROUND_STATUS_ACTIVE;
+        } else if ( empty($round['end_date']) && ($round['type'] == 'passive') ) {
+            return ROUND_STATUS_PASSIVE;
         }
     }
 }

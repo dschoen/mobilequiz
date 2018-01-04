@@ -1,18 +1,23 @@
 <tr class="{CSS_ROW}">
     <td>
-        {VAL_SHOW_ROUND_RESULTS_HREF}
+        <a href="{VAL_SHOW_ROUND_RESULTS_HREF}">
         {VAL_ROUND_NAME}
+        </a>        
     </td>
     <td>
         {VAL_ANSWER_COUNT}
     </td>
     <td>
-        {VAL_DATE}
+        {VAL_START_DATE}
     </td>
     <td>
-        {VAL_STATUS}
-        {VAL_CHANGE_STATUS_HREF}
-        {VAL_CHANGE_STATUS}
+        {VAL_END_DATE}
+    </td>
+    <td>
+    	<select class="change-status" onchange="javascript: window.location.href = $(this).val();">
+    		<option value="{VAL_STATUS_INACTIVE_HREF}" {VAL_STATUS_INACTIVE_SELECTED}>{VAL_STATUS_INACTIVE}</option>
+	        <option value="{VAL_STATUS_ACTIVE_HREF}" {VAL_STATUS_ACTIVE_SELECTED}>{VAL_STATUS_ACTIVE}</option>
+	        <option value="{VAL_STATUS_PASSIVE_HREF}" {VAL_STATUS_PASSIVE_SELECTED}>{VAL_STATUS_PASSIVE}</option>
         </select>
     </td>
     <td>
@@ -20,8 +25,7 @@
         |
         <a href="{VAL_QUIZ_URL}" target="_blank" >{VAL_OPEN_QUIZ}</a>
         |
-        {VAL_DELETE_ROUND_HREF}
-        {VAL_DELETE_ROUND_TXT}
+        <a href="{VAL_DELETE_ROUND_HREF}" onclick="if(!confirm('{VAL_DELETE_ROUND_MESSAGE}')) {return false; }" >{VAL_DELETE_ROUND_TXT}</a>        
     </td>
 </tr>
 

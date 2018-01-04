@@ -110,12 +110,15 @@ results_out_of#:#mal
 results_table_head#:#Runde zur Auswertung auswählen:
 results_show_results#:#Auswertung ansehen
 results_round#:#Runde
+results_round_name_inactive#:#Runde beendet
+results_round_name_active#:#Aktive Runde
 results_round_on#:#endete am
 results_round_at#:#um
 results_no_of_answers#:#Anzahl der Antworten
-results_end_date#:#Datum
+results_end_date#:#Enddatum
 results_start_date#:#Startdatum
 results_round_delete#:#Löschen
+results_round_delete_message#:#Wirklich löschen?
 results_round_correct#:#Richtig
 results_round_out_of#:#von
 results_round_status_change_success#:#Der Status der Runde wurde erfolgreich geändert.

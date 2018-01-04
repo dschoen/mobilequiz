@@ -109,12 +109,15 @@ results_out_of#:#times
 results_table_head#:#Choose round to show results:
 results_show_results#:#See result
 results_round#:#Round
+results_round_name_inactive#:#Round closed
+results_round_name_active#:#Active round
 results_round_on#:# ended
 results_round_at#:#at
 results_no_of_answers#:#Number of answers
-results_end_date#:#Date
+results_end_date#:#End Date
 results_start_date#:#Start date
 results_round_delete#:#Delete
+results_round_delete_message#:#Really delete?
 results_round_correct#:#Correct
 results_round_out_of#:#out of
 results_round_status_change_success#:#The status of the round is successfully changed.

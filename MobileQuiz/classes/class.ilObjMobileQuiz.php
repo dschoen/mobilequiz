@@ -505,7 +505,7 @@ class ilObjMobileQuiz extends ilObjectPlugin
 			          FROM rep_robj_xuiz_choices
 			          WHERE question_id = ".$ilDB->quote($question_id, "integer")
         );
-        $row = $result->fetchRow(DB_FETCHMODE_ASSOC);
+        $row = $result->fetchRow(ilDBConstants::FETCHMODE_ASSOC);
         return $row["cnt"];
     }
 

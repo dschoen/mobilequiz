@@ -1516,9 +1516,9 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI {
     private function choiceCorrectnessToText($number) {
         switch ($number) {
             case CHOICE_TYPE_INCORRECT:
-                return "true";
-            case CHOICE_TYPE_CORRECT: 
                 return "false";
+            case CHOICE_TYPE_CORRECT: 
+                return "true";
             case CHOICE_TYPE_NEUTRAL:
                 return "neutral";
             default:

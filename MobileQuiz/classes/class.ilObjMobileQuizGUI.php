@@ -317,7 +317,7 @@ class ilObjMobileQuizGUI extends ilObjectPluginGUI {
 
         $quiz_id = $this->object->getId();
         $currentRound = $this->object->getCurrentRound($quiz_id);
-        $round_id = $currentRound[round_id];
+        $round_id = $currentRound['round_id'];
 
         // does not have end_date --> current round still running
         if ($currentRound && !$currentRound['end_date']){

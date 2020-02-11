@@ -505,7 +505,7 @@ class ilObjMobileQuiz extends ilObjectPlugin
 			          FROM rep_robj_xuiz_choices
 			          WHERE question_id = ".$ilDB->quote($question_id, "integer")
         );
-        $row = $result->fetchRow(DB_FETCHMODE_ASSOC);
+        $row = $result->fetchRow(ilDBConstants::FETCHMODE_ASSOC);
         return $row["cnt"];
     }
 
@@ -543,7 +543,7 @@ class ilObjMobileQuiz extends ilObjectPlugin
         // Get relevant IDs
         $quiz_id = $this->getId();
         $currentRound = $this->getCurrentRound($quiz_id);
-        $round_id = $currentRound[round_id];
+        $round_id = $currentRound['round_id'];
         
         // get hostname and check if proxy is used
 		$hostname = (!empty($_SERVER['HTTP_X_FORWARDED_HOST'])) ? $_SERVER['HTTP_X_FORWARDED_HOST'] : $_SERVER['SERVER_NAME'];
